@@ -1,0 +1,37 @@
+@use '../../utils' as *;
+
+/*----------------------------------------*/
+/*  7.14 progress css
+/*----------------------------------------*/
+.progress {
+	--progress: 0%;
+	width: 100%;
+	height: 10px;
+  }
+  
+  .progress .bar {
+	width: var(--progress);
+	height: 100%;
+	background: linear-gradient(#ffbf42, #ffbf42, #ffbf42);
+	background-repeat: repeat;
+	box-shadow: 0 0 10px 0px orange;
+	animation: 
+	  shine .5s ease-in infinite,
+	  end .5s ease-out .5s;
+	transition: width .5s ease;
+  }
+  
+  @property --progress {
+	syntax: "<length>";
+	initial-value: 0%;
+	inherits: true;
+  }
+  
+  @keyframes shine {
+	0% { background-position: 0 0; }
+	100% { background-position: 0 50px; }
+  }
+  
+  @keyframes end {
+	0%, 100% { box-shadow: 0 0 10px 0px orange; }
+  }

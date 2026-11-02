@@ -1,0 +1,29 @@
+@use '../../utils' as *;
+
+/*----------------------------------------*/
+/*  4.2 Meanmenu css
+/*----------------------------------------*/
+
+.homemenu-thumb img {
+	width: 100%;
+}
+.tp-submenu {
+	&.submenu {
+		&.has-homemenu {
+			width: 700px;
+			padding: 30px;
+			padding-bottom: 18px;
+		}
+	}
+}
+.tp-main-menu-mobile{
+	& .tp-submenu {
+		&.submenu {
+			&.has-homemenu {
+				width: 0px;
+				padding: 10px;
+				padding-bottom: 18px;
+			}
+		}
+	}
+}

@@ -1,0 +1,345 @@
+@use '../../utils' as *;
+
+/*----------------------------------------*/
+/*  6.1 Footer Style 1
+/*----------------------------------------*/
+.tp-footer {
+    &__text {
+        & p {
+            color: #9898a0;
+
+        }
+    }
+    &-col-2 {
+        margin-left: 50px;
+    }
+    &-col-4 {
+        margin-left: 40px;
+        @media #{$lg} {
+            margin-left: 0px;
+          }
+    }
+    &__contact-info {
+        & ul {
+            & li {
+                position: relative;
+                list-style-type: none;
+                padding-left: 35px;
+                margin-bottom: 10px;
+
+                & a {
+                    font-weight: 400;
+                    font-size: 14px;
+                    line-height: 20px;
+                    color: #9898a0;
+
+                    &:hover {
+                        color: var(--tp-common-white);
+                    }
+                }
+
+                & span {
+                    position: absolute;
+                    top: 8px;
+                    left: 0;
+                    color: var(--tp-theme-2);
+                    line-height: 1;
+                }
+
+                &:first-child a {
+                    font-weight: 500;
+                    font-size: 14px;
+                }
+
+            }
+        }
+    }
+    
+    &__widget-title {
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--tp-common-white);
+        padding-bottom: 25px;
+    }
+    &__copyright {
+        @media #{$xs} {
+            margin-bottom: 15px;
+          }
+    }
+
+    &__content {
+        .menu-footer-menu-container {
+            & ul {
+                & li {
+                    list-style-type: none;
+                    margin-bottom: 8px;
+    
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+                    & cite {
+                        color: #fff;
+                    }
+                    & a {
+                        font-weight: 500;
+                        font-size: 14px;
+                        color: rgba(245, 245, 250, 0.6);
+                        transition: 0.3s;
+    
+                        & i {
+                            opacity: 0;
+                            visibility: hidden;
+                            transition: .3s;
+                        }
+    
+                        &:hover {
+                            color: var(--tp-theme-1);
+                            margin-left: 20px;
+    
+                            & i {
+                                opacity: 1;
+                                visibility: visible;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+      
+    }
+
+    &__input {
+        @media #{$lg} {
+            margin-bottom: 30px;
+         }
+        & input {
+            background-color: transparent;
+            border: 1px solid #3b3b4b;
+            padding: 0 120px 0 15px;
+            font-size: 12px;
+            color: #9898a0;
+            height: 40px;
+            @media #{$lg} {
+                padding: 0 60px 0 15px;
+             }
+        }
+
+        & button {
+            position: absolute;
+            top: 50%;
+            right: -10px;
+            transform: translateY(-50%);
+            line-height: 40px;
+            text-align: center;
+            background-color: var(--tp-theme-2);
+            color: var(--tp-common-white);
+            padding: 0 25px;
+            font-size: 12px;
+            font-weight: 700;
+            @media #{$lg} {
+               left: 0;
+               transform: translateY(0%);
+               position: static;
+            }
+        }
+    }
+
+    &__subscribe-text {
+        & p {
+            color: #9898a0;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 26px;
+        }
+    }
+
+    &__social {
+        & ul {
+            & li {
+                list-style: none;
+                display: inline-block;
+                margin-right: 20px;
+
+                & a {
+                    color: var(--tp-common-white);
+                    font-size: 14px;
+                    transition: .3s;
+
+                    &:hover {
+                        color: var(--tp-theme-1);
+                    }
+                }
+
+            }
+        }
+    }
+
+    &__fw-insta ul li a:hover .tp-footer__fw-insta ul li::before {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    &__fw-insta ul li a {
+        display: block;
+        position: relative;
+        transition: 0.3s;
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: rgba(247, 207, 90, 0.9);
+            display: inline-block;
+            opacity: 0;
+            visibility: hidden;
+            -webkit-transition: 0.5s;
+            -o-transition: 0.5s;
+            transition: 0.5s;
+            -webkit-transform: perspective(400px) rotateX(-90deg) scale(0.2);
+            -ms-transform: perspective(400px) rotateX(-90deg) scale(0.2);
+            transform: perspective(400px) rotateX(-90deg) scale(0.2);
+            -webkit-transform-origin: top;
+            -ms-transform-origin: top;
+            transform-origin: top;
+            z-index: 1;
+        }
+
+        &:hover {
+            &::before {
+                -webkit-transform: perspective(400px) rotateX(0deg) scale(1);
+                -ms-transform: perspective(400px) rotateX(0deg) scale(1);
+                transform: perspective(400px) rotateX(0deg) scale(1);
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    }
+
+    &__fw-insta {
+        & ul {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 0 -7.5px -15px -7.5px;
+
+            & li {
+                padding: 0 7.5px 15px 7.5px;
+                width: 33.333%;
+                flex: 0 0 33.333%;
+                list-style: none;
+                z-index: 1;
+                position: relative;
+                @media #{$md} {
+                    flex: 0 0 27.333%;
+                }
+                & a {
+
+
+                    & i {
+                        position: absolute;
+                        top: 50%;
+                        left: 0;
+                        transform: translateY(-50%);
+                        text-align: center;
+                        opacity: 0;
+                        visibility: hidden;
+                        transition: 0.7s;
+                        line-height: 45%;
+                        z-index: 3;
+                        right: 0;
+                    }
+
+                    & img {
+                        width: 100%;
+                        height: auto;
+
+                        @media #{$lg} {
+                            width: 60px;
+                            height: 60px;
+                        }
+                    }
+                }
+
+                &:hover a i {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+        }
+    }
+
+    &__right-bg {
+        position: absolute;
+        left: 0;
+        top: 83px;
+    }
+
+
+    &__bottom {
+        background: #1d1d29;
+    }
+
+    &__copyright {
+        & p {
+            color: #9898a0;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        & a {
+            color: var(--tp-common-white);
+
+            &:hover {
+                color: var(--tp-theme-2);
+            }
+        }
+    }
+
+    &__menu {
+        & ul {
+            & li {
+                display: inline-block;
+                list-style: none;
+                margin-right: 60px;
+                @media #{$xs} {
+                    margin-right: 20px;
+                }
+                & a {
+                    color: #9898a0;
+                    font-size: 14px;
+                    transition: .3s;
+
+                    &:hover {
+                        color: var(--tp-theme-2);
+                    }
+                }
+
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+
+    &__shape-1 {
+        position: absolute;
+        bottom: -3px;
+        right: 0;
+        left: 0;
+        max-width: 300px;
+    }
+
+    &__widget {
+        @media #{$xs} {
+            margin-left: 0;
+        }
+    }
+}
+
+.movingX {
+    -webkit-animation: movingX 10s linear infinite;
+    animation: movingX 10s linear infinite;
+}

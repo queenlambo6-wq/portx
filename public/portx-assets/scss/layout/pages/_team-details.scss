@@ -1,0 +1,188 @@
+@use '../../utils' as *;
+
+/*----------------------------------------*/
+/*  7.21 team details css
+/*----------------------------------------*/
+.team-details_comment-input input:focus, .team-details_comment-input textarea:focus {
+	border: 1px solid red;
+}
+.team-details {
+    &_comment-form-title {
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--tp-heading-1);
+    }
+
+    &_comment-form {
+        & p {
+            color: #767676;
+            font-size: 14px;
+            margin-bottom: 35px;
+        }
+    }
+
+    &_comment-form {
+        background: var(--tp-grey-1);
+        padding: 70px;
+        @media #{$sm} {
+            padding: 40px
+        }
+        @media #{$xs} {
+            padding: 25px;
+        }
+    }
+
+    &_comment-input {
+        margin-bottom: 20px;
+
+        & textarea {
+            height: 150px;
+        }
+    }
+&__img {
+    @media #{$md, $xs, $sm} {
+        margin-right: 0px;
+        margin-left: 0px;
+        margin-bottom: 40px;
+    }
+}
+    &__wrap {
+        @media #{$md, $sm, $xs} {
+            margin-left: 0px;
+        }
+    }
+
+    &-border {
+        border: 2px solid #df8488;
+        padding: 85px 110px;
+
+        @media #{$md} {
+            padding: 30px;
+        }
+        @media #{$sm} {
+            padding: 35px 35px;
+        }
+        @media #{$xs} {
+            padding: 25px;
+        }
+    }
+
+    &_title {
+        font-size: 36px;
+        font-weight: 700;
+    }
+    &-list {
+        @media #{$md} {
+            margin-bottom: 0px;
+        }
+    }
+    &_right-prograss {
+        @media #{$md, $sm, $xs} {
+            margin-left: 0px;
+        }
+    }
+    &-title {
+        font-size: 48px;
+        font-weight: 700;
+        @media #{$md} {
+            font-size: 35px;
+        }
+        @media #{$xs} {
+            font-size: 30px;
+        }
+    }
+
+    &__wrap {
+        & span {
+            color: var(--tp-theme-2);
+            font-size: 18px;
+            display: inline-block;
+        }
+
+        & p {
+            margin-bottom: 25px;
+        }
+    }
+
+    &-list {
+        & ul {
+            & li {
+                list-style: none;
+
+                & span {
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: var(--tp-heading-1);
+                    margin-right: 24px;
+                }
+
+                color: #767676;
+                font-size: 16px;
+                margin-bottom: 21px;
+                @media #{$md} {
+                    margin-bottom: 10px;
+                }
+            }
+        }
+    }
+
+    &-social {
+        & ul {
+            & li {
+                list-style: none;
+                display: inline-block;
+                margin-right: 20px;
+
+                & a {
+                    color: var(--tp-heading-1);
+                    transition: .3s;
+
+                    &:hover {
+                        color: var(--tp-theme-2);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.team-details__progress-bar span {
+    margin-bottom: 10px;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.team-details__bar-progress {
+    position: relative;
+}
+
+.team-details__bar-item .progress {
+    height: 4px;
+    background-color: var(--tp-grey-1);
+    overflow: visible;
+}
+
+.team-details__bar-item .progress .progress-bar {
+    background-color: var(--tp-theme-2);
+    position: relative;
+    overflow: visible;
+}
+
+.team-details__bar-item .progress .progress-bar span {
+    position: absolute;
+    right: 14px;
+    top: -30px;
+    transform: translateX(50%);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 30px;
+    width: 36px;
+    height: 30px;
+    color: #767676;
+}
+
+.team-details__progress-bar span {
+    margin-bottom: 10px;
+    display: inline-block;
+    font-size: 16px;
+}

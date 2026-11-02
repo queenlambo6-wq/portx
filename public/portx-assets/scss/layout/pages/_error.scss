@@ -1,0 +1,20 @@
+@use '../../utils' as *;
+
+/*----------------------------------------*/
+/*  7.9 error css
+/*----------------------------------------*/
+.tp-error {
+    &__content {
+       & h4 {
+        font-size: 48px;
+        color: var(--tp-heading-1);
+        margin-bottom: 20px;
+       }
+       & p {
+            margin-bottom: 40px;
+       }
+    }
+    &__content img {
+        max-width: 100%;
+      }
+}

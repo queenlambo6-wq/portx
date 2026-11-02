@@ -1,0 +1,135 @@
+@use '../../utils' as *;
+/*----------------------------------------*/
+/*  3.1 Header Style 1
+/*----------------------------------------*/
+.tp-header {
+    &__main-menu {
+        & nav {
+            & ul {
+                & li {
+                    &:last-child{
+                        margin-right: 0px !important;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.tp-header {
+    & .header-sticky {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        box-shadow: 0px 4px 10px rgba(3, 4, 28, 0.1);
+        animation: 0.95s ease 0s normal forwards 1 running headerSlideDown;
+        transition: 0.4s ease;
+        z-index: 9;
+        background: var(--tp-common-black);
+        & .main-menu {
+            & ul {
+                & li {
+                    & .sub-menu {
+                        & li {
+                            & a {
+                                padding: 10px 25px;
+                            }
+                            
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &__wrapper-inner {
+        position: relative;
+        display: block;
+        z-index: 1;
+    }
+
+    &__icon {
+        color: #767676;
+        font-size: 25px;
+        transition: .3s;
+        background: var(--tp-grey-1);
+        height: 58px;
+        width: 58px;
+        text-align: center;
+        line-height: 64px;
+        border-radius: 30px;
+
+        & i {
+            color: #3a3a4a;
+        }
+    }
+
+    &__icon-info {
+        & label {
+            font-size: 16px;
+            color: #9898a0;
+            display: block;
+            transition: .3s;
+            
+        }
+
+        & span {
+            font-size: 16px;
+            color: #767676;
+            transition: .4s;
+
+            &:hover {
+                color: var(--tp-theme-2);
+            }
+        }
+    } 
+}
+
+.search-img {
+    color: var(--tp-common-white);
+    font-size: 20px;
+    line-height: 20px;
+}
+
+.tp-menu-bar {
+    background: var(--tp-theme-1);
+    color: var(--tp-heading-1);
+    padding: 15px 21px;
+    font-size: 20px;
+}
+
+.main-logo::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--tp-theme-1);
+    width: 37%;
+    height: 100%;
+    content: '';
+    z-index: -1;
+    clip-path: polygon(0 0, 92% 0, 100% 100%, 0% 100%);
+
+    @media #{$xl} {
+        width: 22%;
+    }
+    @media #{$lg, $md, $sm, $xs} {
+        clip-path: polygon(0 0, 89% 0, 142% 100%, 0% 100%);
+    }
+
+    @media #{$sm} {
+        width: 47%;
+        height: 78%;
+    }
+
+    @media #{$xs} {
+        width: 70%;
+        height: 78%;
+        display: none;
+    }
+}
+
+.tp-header .header-sticky .main-menu > nav > ul > li > a {
+	padding: 30px 0;
+}

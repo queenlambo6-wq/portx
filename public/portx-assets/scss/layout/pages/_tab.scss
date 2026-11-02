@@ -1,0 +1,194 @@
+@use '../../utils' as *;
+
+/*----------------------------------------*/
+/*  7.20 tab css
+/*----------------------------------------*/
+.tp-tab {
+    &__thumb {
+        @media #{$xs} {
+            margin-top: 40px;
+        }
+    }
+    &__item-info {
+        margin-right: 40px;
+        padding: 15px 30px;
+        border: 1px solid #9898a0;
+        background-color: #bc353500;
+        color: var(--tp-common-white);
+        font-size: 16px;
+        font-weight: 600;
+        z-index: 1;
+        position: relative;
+
+        @media #{$md} {
+            margin-right: 21px;
+            padding: 15px 18px;
+        }
+
+        @media #{$sm} {
+            margin-right: 20px;
+            padding: 15px 22px;
+            margin-bottom: 20px;
+
+        }
+
+        @media #{$xs} {
+            margin-right: 10px;
+            padding: 15px 15px;
+        }
+
+        & i {
+            font-size: 20px;
+            margin-left: 20px;
+        }
+    }
+
+    &__item {
+        @media #{$md, $sm, $xs} {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    }
+
+    &_content {
+        background: var(--tp-common-white);
+        width: 1400px;
+        margin: 0 auto;
+        margin-top: 0px;
+        margin-top: -167px;
+        z-index: 1;
+        position: relative;
+        background-color: rgb(255, 255, 255);
+        box-shadow: 0px 4px 60px 0px rgba(35, 35, 49, 0.04);
+
+        @media #{$xl} {
+            width: 97%;
+            padding: 27px;
+        }
+
+        @media #{$lg} {
+            width: 100%;
+        }
+
+        @media #{$md, $xs, $sm} {
+            width: 100%;
+        }
+    }
+
+    &__ptb {
+        padding-bottom: 250px;
+    }
+
+    &-title-3 {
+        font-size: 48px;
+        color: var(--tp-heading-1);
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 25px;
+
+        @media #{$xs} {
+            font-size: 39px;
+        }
+    }
+
+    &__item {
+        @media #{$xs} {
+            margin-bottom: 12px;
+        }
+
+        & p {
+            font-size: 16px;
+            color: #767676;
+            margin-right: 88px;
+            margin-bottom: 40px;
+            line-height: 30px;
+
+            @media #{$xs} {
+                margin-right: 0px;
+            }
+        }
+    }
+
+    &__shap-img {
+        position: absolute;
+        bottom: -41px;
+        left: -67px;
+        transform: rotate(-3deg);
+        filter: brightness(1);
+        animation: heartbeat 1.5s infinite alternate;
+        @media #{$md, $sm, $md, $xs} {
+            display: none;
+        }
+    }
+
+    &__video-icon {
+        & a {
+            & i {
+                position: relative;
+                background: var(--tp-heading-1);
+                color: var(--tp-common-white);
+                width: 60px;
+                height: 60px;
+                text-align: center;
+                line-height: 64px;
+                display: inline-block;
+                border-radius: 50%;
+                z-index: 2;
+                transform: translateY(1px);
+            }
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                width: 80px;
+                height: 80px;
+                background: var(--tp-theme-1);
+                border-radius: 50%;
+                z-index: -1;
+            }
+        }
+    }
+
+    &__video-icon {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        z-index: 3;
+
+        @media #{$md, $sm, $xs} {
+            left: 50%;
+        }
+    }
+
+    &__section-title {
+        & p {
+            font-size: 16px;
+            color: #9898a0;
+        }
+    }
+
+    &__shap-2 {
+        position: absolute;
+        top: 0;
+        left: 55px;
+
+        @media #{$md, $xs} {
+            display: none;
+        }
+
+        @media #{$xl, $lg, $md} {
+            left: 0;
+        }
+    }
+}
+
+.active .tp-tab__item-info {
+    background-color: var(--tp-theme-1);
+    color: var(--tp-heading-1);
+    border: 1px solid var(--tp-theme-1);
+
+}

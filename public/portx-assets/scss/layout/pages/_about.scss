@@ -1,0 +1,411 @@
+@use '../../utils' as *;
+
+/*----------------------------------------*/
+/*  7.1 About css
+/*----------------------------------------*/
+
+.tp-about {
+	&__lg-img{
+		@media #{$md} {
+			margin-left: 0;
+		}
+	}
+	&__sm-img {
+		position: absolute;
+		bottom: -70px;
+		left: -152px;
+		border: 20px solid rgb(255, 255, 255);
+		border-bottom: 0;
+
+		@media #{$xl} {
+			left: -41px;
+		}
+
+		@media #{$xl} {
+			left: -15px;
+		}
+
+		@media #{$lg} {
+			bottom: -215px;
+			left: -57px;
+		}
+
+		@media #{$md} {
+			left: 20px;
+			bottom: 20px;
+		}
+		@media #{$xs} {
+			position: static;
+			border: 0;
+			margin-top: 15px;
+		}
+	}
+
+	&__lg-img {
+		@media #{$xs} {
+			margin-left: 0;
+		}
+	}
+
+	&__content {
+		& p {
+			& br {
+				@media #{$lg} {
+					display: none;
+				}
+			}
+		}
+	}
+
+	&__icon {
+		& i {
+			background-color: var(--tp-theme-1);
+			height: 48px;
+			width: 48px;
+			text-align: center;
+			line-height: 55px;
+			display: inline-block;
+			border-radius: 30px;
+			font-size: 25px;
+		}
+	}
+
+	&__text {
+		color: var(--tp-heading-1);
+		font-size: 22px;
+		font-weight: 700;
+		@media #{$xs} {
+			font-size: 20px;
+		}
+	}
+
+	&__wrap {
+		background: var(--tp-common-white);
+		width: 1480px;
+		margin: 0 auto;
+		z-index: 2;
+		position: relative;
+
+		@media #{$xxl} {
+			width: 100%;
+		}
+
+		@media #{$xl} {
+			width: 100%;
+		}
+
+		@media #{$lg} {
+			margin-top: 0px;
+			width: 100%;
+		}
+
+		@media #{$md} {
+			margin-top: 0px;
+			width: 100%;
+		}
+
+		@media #{$sm} {
+			margin-top: 0px;
+			width: 100%;
+		}
+
+		@media #{$xs} {
+			margin-top: 0px;
+			width: 100%;
+		}
+	}
+}
+
+.tpabout {
+	&__sm-img img {
+		@media #{$xs} {
+			max-width: 100%;
+		}
+	}
+
+	&__lg-img img {
+		@media #{$xs} {
+			max-width: 100%;
+		}
+	}
+
+	&__btn-box {
+		@media #{$md, $sm, $xs} {
+			margin-bottom: 51px;
+		}
+	}
+
+	&__section-title {
+		& span {
+			font-size: 24px;
+			color: var(--tp-theme-2);
+			margin-bottom: 40px;
+			display: inline-block;
+			line-height: 1.4;
+		}
+
+		& p {
+			font-size: 16px;
+			color: #767676;
+			font-weight: 400;
+		}
+	}
+
+	&__btn-box {
+		& span {
+			padding-bottom: 5px;
+			border-bottom: 1px solid #f0f0f2;
+			font-size: 16px;
+			color: var(--tp-heading-1);
+			transition: 0.3s;
+			@media #{$xs} {
+				margin-top: 20px;
+				display: inline-block;
+			}
+			&:hover {
+				color: var(--tp-theme-2);
+			}
+		}
+	}
+
+	&__progress-bar {
+		font-size: 20px;
+		font-weight: 700;
+		color: var(--tp-heading-1);
+	}
+
+	&__sm-img {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		margin-bottom: -40px;
+
+		@media #{$md} {
+			margin-bottom: 0px;
+			margin-left: 0;
+		}
+		@media #{$sm} {
+			margin-bottom: 0px;
+			margin-left: 0;
+		}
+	}
+
+	&__lg-img {
+		width: inherit;
+		margin-right: -90px;
+		position: relative;
+		z-index: -1;
+
+		@media #{$xl, $lg, $md, $sm, $xs} {
+			margin-right: 0px;
+		}
+
+	}
+
+	& .thumb-shape-logo {
+		-webkit-animation: rotate-infinite 15s linear infinite;
+		animation: rotate-infinite 15s linear infinite;
+
+		@at-root {
+			@include keyframes(rotate-infinite) {
+				0% {
+					transform: rotate(0deg);
+				}
+
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+		}
+	}
+
+	&__thumb-shape-logo {
+		-webkit-animation: rotate-infinite 15s linear infinite;
+		animation: rotate-infinite 15s linear infinite;
+		-webkit-animation: rotate-infinite 15s linear infinite;
+		animation: rotate-infinite 15s linear infinite;
+		position: absolute;
+		left: 177px;
+		top: -5px;
+		z-index: 2;
+
+		@media #{$xl} {
+			left: 91px;
+		}
+
+		@media #{$lg} {
+			left: 37px;
+		}
+
+		@media #{$md} {
+			left: 260px;
+			top: -19px;
+		}
+
+		@media #{$xs} {
+			left: 90px;
+		}
+	}
+
+	&__thumb-shape-logo-icon {
+		position: absolute;
+		left: 224px;
+		top: 48px;
+
+		@media #{$xl} {
+			left: 138px;
+		}
+
+		@media #{$lg} {
+			left: 83px;
+		}
+
+		@media #{$md} {
+			left: 307px;
+			top: 37px;
+		}
+
+		@media #{$xs} {
+			left: 136px;
+		}
+	}
+
+	&__bar-progress {
+		position: relative;
+
+		& .progress-bar {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			overflow: hidden;
+			color: #767676;
+			text-align: center;
+			white-space: nowrap;
+			background-color: var(--tp-theme-1);
+			transition: width .6s ease;
+		}
+	}
+
+	&__bar-item .progress .progress-bar span {
+		position: absolute;
+		right: 13px;
+		top: -30px;
+		transform: translateX(50%);
+		font-weight: 500;
+		font-size: 14px;
+		line-height: 30px;
+		width: 36px;
+		height: 30px;
+	}
+
+	&__bar-item .progress {
+		height: 10px;
+		background-color: var(--tp-grey-1);
+		overflow: visible;
+	}
+
+
+	&__bar-item .progress .progress-bar {
+		background-color: var(--tp-theme-1);
+		position: relative;
+		overflow: visible;
+	}
+
+	&__progress-bar {
+		& span {
+			margin-bottom: 10px;
+			display: inline-block;
+		}
+	}
+}
+
+
+.tpabout-3 {
+	&__single-item {
+		@media #{$xs} {
+			margin-right: 14px;
+		}
+
+		&:hover {
+			& .icon {
+				& span {
+					color: var(--tp-theme-1);
+				}
+			}
+		}
+
+		& .icon {
+			& span {
+				font-size: 60px;
+				font-weight: 900;
+				transition: .3s;
+			}
+		}
+
+		& .text {
+			& h3 {
+				font-size: 22px;
+				font-weight: 700;
+			}
+		}
+	}
+
+	&__section-title {
+		& p {
+			font-size: 16px;
+			color: #9898a0;
+			padding-right: 42px;
+			margin-bottom: 35px;
+
+			@media #{$xs} {
+				padding-right: 0px;
+			}
+		}
+
+		& span {
+			padding-bottom: 5px;
+			border-bottom: 1px solid #f0f0f2;
+			font-size: 16px;
+			color: var(--tp-heading-1);
+			transition: .3s;
+
+			@media #{$xs} {
+				margin-top: 20px;
+				display: inline-block;
+			}
+
+			&:hover {
+				color: var(--tp-theme-2);
+			}
+		}
+	}
+
+	&__thumb {
+		margin-right: -26px;
+
+		@media #{$xl} {
+			margin-right: 0px;
+		}
+
+		@media #{$md} {
+			margin-right: 0;
+			margin-left: 0;
+		}
+		@media #{$sm, $xs} {
+			margin-right: 0;
+			margin-left: 0;
+		}
+
+
+		& img {
+			width: inherit;
+		}
+	}
+
+	&__shap-img {
+		position: absolute;
+		top: 0;
+		animation: tpupdown 2.3s ease-in-out 2.3s forwards infinite alternate;
+		z-index: -1;
+	}
+}

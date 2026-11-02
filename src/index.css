@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+:root {
+  /* PortX Original Reverse-Engineered Color Palette */
+  --portx-theme-1: #ffbf42;      /* Golden maritime cargo amber */
+  --portx-orange: #ea580c;       /* Signature high-visibility orange */
+  --portx-orange-hover: #c2410c; /* Deep cargo orange */
+  --portx-red: #ca1f26;          /* Maritime vessel red accent */
+  --portx-dark: #232331;         /* PortX deep charcoal navy */
+  --portx-dark-light: #2c2c3d;   /* Charcoal naval elevation */
+  --portx-grey-bg: #f8f5f1;      /* PortX warm off-white surface */
+  --portx-black: #3e3e47;        /* Secondary charcoal */
+  --portx-text: #767676;         /* PortX muted text */
+}
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #232331;
+    background-color: #f8f5f1;
+  }
+  h1, h2, h3, h4, .font-heading {
+    font-family: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+    color: #232331;
+  }
+}
+
+/* Crisp commercial scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f8f5f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4cfc7;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ea580c;
+}
+
+/* Utility classes for PortX theme */
+.bg-portx-dark {
+  background-color: #232331;
+}
+.bg-portx-grey {
+  background-color: #f8f5f1;
+}
+.bg-portx-orange {
+  background-color: #ea580c;
+}
+.text-portx-dark {
+  color: #232331;
+}
+.text-portx-orange {
+  color: #ea580c;
+}
+.text-portx-red {
+  color: #ca1f26;
+}
+.border-portx-orange {
+  border-color: #ea580c;
+}

@@ -1,0 +1,393 @@
+@use '../../utils' as *;
+
+/*----------------------------------------*/
+/*  3.2 Header Style 1
+/*----------------------------------------*/
+.tpheader {
+    & nav {
+        & ul {
+            & li {
+                & .tp-submenu {
+                    & .homemenu-btn {
+                        & .tp-menu-btn {
+                            padding: 1px 17px;
+                        }
+                    }
+
+                    & .homemenu-title {
+                        & a {
+                            padding: 0;
+
+                            &:hover {
+                                color: var(--tp-theme-2);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.tpheader {
+    &__main-menu {
+        @media #{$xxxxl} {
+            margin-right: 30px;
+        }
+    }
+    & .header-sticky {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        box-shadow: 0px 4px 10px rgba(3, 4, 28, 0.1);
+        animation: 0.95s ease 0s normal forwards 1 running headerSlideDown;
+        transition: 0.4s ease;
+        z-index: 9;
+        background: var(--tp-common-white);
+    }
+
+    &__info {
+        & ul {
+            & li {
+                list-style: none;
+                display: inline-block;
+                margin-right: 40px;
+
+                & a {
+                    font-size: 14px;
+                    color: #9898a0;
+
+                    & i {
+                        margin-right: 10px;
+                        font-size: 15px;
+                        color: var(--tp-common-white);
+                    }
+
+                    &:hover {
+                        color: var(--tp-common-white);
+                    }
+                }
+            }
+        }
+    }
+
+    &__main-logo {
+        padding: 32px 160px;
+
+        @media #{$xxl, $xl} {
+            padding: 32px 20px;
+        }
+
+        @media #{$lg} {
+            padding: 32px 10px;
+        }
+
+        @media #{$md} {
+            padding: 32px 10px;
+        }
+
+        @media #{$sm} {
+            padding: 32px 0px;
+        }
+
+        @media #{$xs} {
+            padding: 32px 0px;
+        }
+    }
+
+    &__bottom-wrap {
+        @media #{$xxl, $xl} {
+            padding-right: 20px;
+        }
+    }
+
+    &__main-logo {
+        &::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: var(--tp-theme-1);
+            width: 500px;
+            height: 100%;
+            content: "";
+            z-index: 1;
+            clip-path: polygon(100% 0%, 88% 50%, 100% 100%, 0 100%, 0% 50%, 0 0);
+
+            @media #{$xxl, $xl} {
+                width: 300px;
+            }
+
+            @media #{$lg} {
+                height: 111px;
+                width: 300px;
+            }
+
+            @media #{$md} {
+                height: 111px;
+                width: 300px;
+            }
+
+            @media #{$xs, $sm} {
+                display: none;
+            }
+
+        }
+
+        &::after {
+            position: absolute;
+            bottom: -1px;
+            width: 12px;
+            height: 56px;
+            background: red;
+            z-index: -1;
+            content: "";
+            left: 470px;
+            transform: rotate(-1deg) skew(46deg);
+
+            @media #{$xxl} {
+                left: 282px;
+                transform: rotate(-1deg) skew(32deg);
+            }
+
+            @media #{$xl} {
+                left: 282px;
+                transform: rotate(-1deg) skew(33deg);
+            }
+
+            @media #{$lg} {
+                bottom: -12px;
+                left: 285px;
+                transform: rotate(-1deg) skew(32deg);
+                height: 67px;
+            }
+
+            @media #{$md} {
+                left: 281px;
+                transform: rotate(-1deg) skew(31deg);
+            }
+
+            @media #{$xs, $sm} {
+                display: none;
+            }
+        }
+    }
+
+    &__top-menu {
+        & ul {
+            & li {
+                list-style: none;
+                display: inline-block;
+
+                & a {
+                    color: #9898a0;
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+
+    &__social {
+        & ul {
+            & li {
+                list-style: none;
+                display: inline-block;
+                margin-right: 20px;
+
+                & a {
+                    color: var(--tp-common-white);
+                    transition: .3s;
+
+                    &:hover {
+                        color: var(--tp-theme-1);
+                    }
+                }
+            }
+        }
+    }
+
+    &__search {
+        & span {
+            font-size: 25px;
+            color: var(--tp-heading-1);
+            margin-right: 30px;
+            padding-right: 30px;
+
+            &::after {
+                content: '';
+                position: absolute;
+                width: 1px;
+                height: 40px;
+                background-color: #d9d9d9;
+                top: -6px;
+                right: 30px;
+            }
+
+            & i {
+                display: inline-block;
+                transform: translateY(16%);
+            }
+        }
+    }
+
+    &__shop {
+        & a {
+            font-size: 25px;
+            color: var(--tp-heading-1);
+
+            & i {
+                line-height: 0;
+                display: inline-block;
+                transform: translateY(16%);
+            }
+        }
+
+        & span {
+            background-color: var(--tp-theme-2);
+            height: 20px;
+            width: 20px;
+            text-align: center;
+            line-height: 20px;
+            display: inline-block;
+            border-radius: 30px;
+            color: #fff;
+            position: absolute;
+            top: 0px;
+            right: -6px;
+            z-index: 2;
+            font-size: 16px;
+        }
+    }
+
+    &__main-menu {
+        @media #{$xxxl,$xxl, $xl} {
+            margin-right: 0px;
+        }
+
+        & .main-menu {
+            & ul {
+                & li {
+                    position: relative;
+                    list-style: none;
+                    display: inline-block;
+                    margin-right: 41px;
+                    @media #{$xxxxl} {
+                        margin-right: 35px;
+                    }
+                    @media #{$xxxl} {
+                        margin-right: 29px;
+                    }
+
+                    @media #{$xl} {
+                        margin-right: 30px;
+                    }
+
+                    & a {
+                        display: inline-block;
+                        font-size: 16px;
+                        color: #04171a;
+                        padding: 42px 0;
+                    }
+
+                    & .sub-menu {
+                        position: absolute;
+                        top: 120%;
+                        left: 0;
+                        width: 200px;
+                        background: var(--tp-common-white);
+                        z-index: 99;
+                        visibility: hidden;
+                        opacity: 0;
+                        box-shadow: 0px 30px 70px 0px rgba(11, 6, 70, 0.08);
+                        padding: 9px 5px;
+                        @extend %tp-transition-common;
+
+                        & li {
+                            display: block;
+                            width: 100%;
+                            margin: 0;
+
+                            & a {
+                                padding: 5px 25px;
+                                font-size: 16px;
+                                position: relative;
+                                z-index: 1;
+                                color: var(--tp-common-black);
+                                width: 100%;
+
+                                &::before {
+                                    position: absolute;
+                                    content: '';
+                                    top: 0;
+                                    left: auto;
+                                    right: 0;
+                                    width: 0;
+                                    height: 100%;
+                                    background-color: var(--tp-theme-primary);
+                                    z-index: -1;
+
+                                }
+
+                            }
+
+                            & .sub-menu {
+                                left: 120%;
+                                top: 0;
+                                visibility: hidden;
+                                opacity: 0;
+                                font-size: 15px;
+                            }
+
+                            &:hover {
+                                &>a {
+                                    color: var(--tp-theme-2);
+
+                                    &::after {
+                                        color: var(--tp-theme-1);
+                                    }
+
+                                    &::before {
+                                        left: 0;
+                                        right: auto;
+                                        width: 100%;
+                                    }
+                                }
+
+                                &>.sub-menu {
+                                    left: 100%;
+                                    visibility: visible;
+                                    opacity: 1;
+                                }
+                            }
+                        }
+                    }
+
+                    &:hover {
+                        &>a {
+                            color: var(--tp-theme-2);
+                        }
+
+                        &>.sub-menu {
+                            top: 100%;
+                            visibility: visible;
+                            opacity: 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &__ptb {
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+
+    &__top {
+        @media #{$xxl, $xl} {
+            padding-right: 0;
+            padding-left: 0;
+        }
+    }
+}

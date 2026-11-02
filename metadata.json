@@ -1,0 +1,8 @@
+{
+  "name": "PortX - Global Cargo & Logistics Platform",
+  "description": "Professional shipping, freight forwarding, live cargo tracking, and comprehensive logistics operations admin panel.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

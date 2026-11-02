@@ -1,0 +1,78 @@
+@use '../../utils' as *;
+
+/*----------------------------------------*/
+/*  7.4 challenges css
+/*----------------------------------------*/
+.tp-challenges {
+    &__icon {
+        font-size: 52px;
+        color: var(--tp-theme-2);
+        border-bottom: 1px solid #f2f2f2;
+
+        &::before {
+            position: absolute;
+            content: '';
+            width: 20px;
+            height: 3px;
+            background: var(--tp-theme-2);
+            bottom: 0;
+            right: 0;
+
+          
+        }
+        
+    }
+
+    &__number {
+        padding: 40px;
+
+        & h3 {
+            font-size: 100px;
+            color: #f2f2f2;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            @media #{$md}{
+                font-size: 80px;
+                top: 5px;
+            }
+        }
+
+        & span {
+            z-index: 2;
+            position: relative;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--tp-heading-1);
+        }
+    }
+
+    &__join-over {
+        & p {
+            color: #767676;
+            font-size: 16px;
+            font-weight: 400;
+        }
+        & button {
+            color: var(--tp-theme-2);
+            font-weight: 700;
+            &:hover {
+                color: var(--tp-theme-1);
+            }
+        }
+    }
+    &__item-last {
+        & .tp-challenges__icon::before {
+            display: none;
+        }
+    }
+    &__item-last-none {
+        & .tp-challenges__icon::before {
+            @media #{$sm, $xs}{
+                display: none;
+            }
+        }
+    }
+}

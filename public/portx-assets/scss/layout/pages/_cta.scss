@@ -1,0 +1,89 @@
+@use '../../utils' as *;
+
+/*----------------------------------------*/
+/*  7.8 cta css
+/*----------------------------------------*/
+.cta {
+    &-title-1 {
+        font-size: 60px;
+        color: var(--tp-common-white);
+        font-weight: 700;
+        margin-bottom: 52px;
+        line-height: 1;
+        @media #{$sm} {
+            font-size: 50px;
+        }
+        & br {
+            @media #{$sm, $xs} {
+                display: none;
+            }
+        }
+
+        @media #{$xs} {
+            font-size: 35px;
+        }
+    }
+    &__content {
+        & span {
+            color: var(--tp-theme-1);
+            font-weight: 700;
+            line-height: 0;
+            margin-bottom: 40px;
+            display: inline-block;
+        }
+    }
+
+    &_opacity::before {
+        content: '';
+        background: #070613;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        opacity: 40%;
+    }
+}
+
+.tp-cta {
+    &-title-2 {
+        font-size: 42px;
+        color: var(--tp-common-white);
+        font-weight: 700;
+        position: relative;
+        z-index: 2;
+        @media #{$xs} {
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+        & br {
+            @media #{$lg, $sm, $xs} {
+                display: none;
+            }
+        }
+    }
+
+    &__shap-3 {
+        position: absolute;
+        left: 0;
+        bottom: -29px;
+    }
+
+    &__lg-circel {
+        position: absolute;
+        right: 40px;
+        top: 88px;
+        animation: tp-hotspot 3s cubic-bezier(.4, 0, 1, 1) infinite;
+        animation-delay: 0s;
+        animation-delay: 0s;
+    }
+
+    &__sm-circel {
+        position: absolute;
+        top: -46px;
+        left: 54%;
+        animation: tp-hotspot 3s cubic-bezier(.4, 0, 1, 1) infinite;
+        animation-delay: 0s;
+        animation-delay: 0s;
+    }
+}
