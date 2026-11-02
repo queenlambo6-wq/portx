@@ -7,9 +7,10 @@ import {
   FileText,
   Activity,
   ArrowUpRight,
-  ShieldAlert,
   ArrowRight,
-  Plus
+  ShieldAlert,
+  Plus,
+  Heart
 } from 'lucide-react';
 import { ShipmentStatus } from '../../types';
 
@@ -216,20 +217,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 {shipments.map((shipment) => (
                   <tr key={shipment.id} className="hover:bg-stone-50 transition-colors">
                     <td className="py-3 px-3">
-                      <div className="font-mono font-bold text-[#232331] text-xs">
-                        {shipment.trackingNumber}
+                      <div className="font-mono font-bold text-[#232331] text-xs flex items-center gap-1">
+                        <Heart className="w-3 h-3 fill-orange-600 text-orange-600" />
+                        <span>{shipment.petInfo ? `${shipment.petInfo.petName} (${shipment.trackingNumber})` : shipment.trackingNumber}</span>
                       </div>
                       <div className="text-[10px] text-[#767676] font-mono mt-0.5">
-                        {shipment.containerNumber}
+                        {shipment.petInfo?.breed || shipment.containerNumber}
                       </div>
                     </td>
 
                     <td className="py-3 px-3">
-                      <div className="font-bold text-[#232331]">
-                        {shipment.origin.city} → {shipment.destination.city}
+                      <div className="font-bold text-[#232331] truncate max-w-[200px]">
+                        {shipment.origin.city} → {shipment.doorstepDelivery?.receiverCity || shipment.destination.city}
                       </div>
-                      <div className="text-[10px] text-[#767676] capitalize">
-                        {shipment.mode.replace('_', ' ')} · {shipment.cargo.weightKg.toLocaleString()} kg
+                      <div className="text-[10px] text-orange-800 font-medium truncate max-w-[200px]">
+                        Puerta: {shipment.doorstepDelivery?.receiverDoorAddress || shipment.destination.portName}
                       </div>
                     </td>
 

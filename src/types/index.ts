@@ -14,6 +14,48 @@ export interface Milestone {
   checkpointType?: 'origin_port' | 'departure' | 'in_transit_hub' | 'customs' | 'destination_port' | 'final_delivery';
 }
 
+export interface PetDetails {
+  petName: string;
+  species: 'dog' | 'cat' | 'bird' | 'other';
+  speciesLabel: string;
+  breed: string;
+  age: string;
+  gender?: 'Macho' | 'Hembra' | 'Male' | 'Female';
+  microchipNumber: string;
+  healthPassportNumber: string;
+  rabiesVaccinationValid: boolean;
+  vetClearanceApproved: boolean;
+  crateModel: string;
+  feedingInstructions: string;
+  specialCareNotes: string;
+  lastHydrationTime: string;
+  lastWalkOrRestStop?: string;
+  companionHandlerName: string;
+  avatarUrl?: string;
+}
+
+export interface DoorstepDeliveryInfo {
+  isDoorstepDelivery: boolean;
+  doorstepStatus: 'preparing_dispatch' | 'in_local_van' | 'arriving_at_door' | 'delivered_at_doorstep';
+  receiverDoorAddress: string;
+  receiverCity: string;
+  receiverProvince: string;
+  receiverPostalCode?: string;
+  receiverContactPerson: string;
+  receiverPhone: string;
+  estimatedDoorArrivalTime: string;
+  courierHandlerName: string;
+  courierHandlerPhone: string;
+  vanVehiclePlate: string;
+  handoverProof?: {
+    deliveredAt: string;
+    signedBy: string;
+    signatureVerified: boolean;
+    photoAtDoorTaken: boolean;
+    petWelfareRating: string;
+  };
+}
+
 export interface CargoItem {
   description: string;
   pieces: number;
@@ -91,6 +133,8 @@ export interface Shipment {
   notes?: string;
   customsCleared: boolean;
   createdAt: string;
+  petInfo?: PetDetails;
+  doorstepDelivery?: DoorstepDeliveryInfo;
 }
 
 export interface PortHub {

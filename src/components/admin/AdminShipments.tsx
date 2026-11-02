@@ -12,7 +12,9 @@ import {
   Clock,
   Layers,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
+  Heart,
+  Home
 } from 'lucide-react';
 import { Shipment, ShipmentStatus, TransportMode } from '../../types';
 
@@ -44,14 +46,24 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const filteredShipments = shipments.filter((s) => {
+    const term = searchTerm.toLowerCase();
+    const petNameMatch = s.petInfo?.petName.toLowerCase().includes(term);
+    const petBreedMatch = s.petInfo?.breed.toLowerCase().includes(term);
+    const chipMatch = s.petInfo?.microchipNumber.toLowerCase().includes(term);
+    const doorstepMatch = s.doorstepDelivery?.receiverDoorAddress.toLowerCase().includes(term);
+
     const matchesSearch =
-      s.trackingNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.containerNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.bolNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.sender.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.consignee.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.origin.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.destination.city.toLowerCase().includes(searchTerm.toLowerCase());
+      s.trackingNumber.toLowerCase().includes(term) ||
+      s.containerNumber.toLowerCase().includes(term) ||
+      s.bolNumber.toLowerCase().includes(term) ||
+      s.sender.company.toLowerCase().includes(term) ||
+      s.consignee.name.toLowerCase().includes(term) ||
+      s.origin.city.toLowerCase().includes(term) ||
+      s.destination.city.toLowerCase().includes(term) ||
+      !!petNameMatch ||
+      !!petBreedMatch ||
+      !!chipMatch ||
+      !!doorstepMatch;
 
     const matchesStatus = statusFilter === 'all' || s.status === statusFilter;
     const matchesMode = modeFilter === 'all' || s.mode === modeFilter;
@@ -62,17 +74,17 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
   const getStatusBadge = (status: ShipmentStatus) => {
     switch (status) {
       case 'delivered':
-        return <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded border border-emerald-200">{language === 'es' ? 'Entregado' : language === 'de' ? 'Zugestellt' : 'Delivered'}</span>;
+        return <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded border border-emerald-200">{language === 'es' ? 'Entregado en Puerta' : language === 'de' ? 'Zugestellt' : 'Delivered at Door'}</span>;
       case 'in_transit':
-        return <span className="text-[10px] font-bold text-blue-800 bg-blue-100 px-2.5 py-0.5 rounded border border-blue-200">{language === 'es' ? 'En Tránsito' : language === 'de' ? 'In Transit' : 'In Transit'}</span>;
+        return <span className="text-[10px] font-bold text-blue-800 bg-blue-100 px-2.5 py-0.5 rounded border border-blue-200">{language === 'es' ? 'En Tránsito 21°C' : language === 'de' ? 'In Transit' : 'In Transit 21°C'}</span>;
       case 'customs_hold':
-        return <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded border border-amber-200">{language === 'es' ? 'Retención Aduana' : language === 'de' ? 'Zollprüfung' : 'Customs Hold'}</span>;
+        return <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded border border-amber-200">{language === 'es' ? 'Revisión Veterinaria' : language === 'de' ? 'Zollprüfung' : 'Vet Check'}</span>;
       case 'out_for_delivery':
-        return <span className="text-[10px] font-bold text-purple-800 bg-purple-100 px-2.5 py-0.5 rounded border border-purple-200">{language === 'es' ? 'En Reparto' : language === 'de' ? 'In Zustellung' : 'Out for Delivery'}</span>;
+        return <span className="text-[10px] font-bold text-orange-900 bg-orange-100 px-2.5 py-0.5 rounded border border-orange-300 shadow-2xs">{language === 'es' ? 'En Furgoneta a Domicilio' : language === 'de' ? 'In Haustür-Zustellung' : 'Van to Doorstep'}</span>;
       case 'exception':
-        return <span className="text-[10px] font-bold text-rose-800 bg-rose-100 px-2.5 py-0.5 rounded border border-rose-200">{language === 'es' ? 'Excepción' : language === 'de' ? 'Ausnahme' : 'Exception'}</span>;
+        return <span className="text-[10px] font-bold text-rose-800 bg-rose-100 px-2.5 py-0.5 rounded border border-rose-200">{language === 'es' ? 'Atención Especial' : language === 'de' ? 'Ausnahme' : 'Care Alert'}</span>;
       default:
-        return <span className="text-[10px] font-bold text-stone-700 bg-stone-100 px-2.5 py-0.5 rounded border border-stone-200">{language === 'es' ? 'Reservado' : language === 'de' ? 'Gebucht' : 'Booked'}</span>;
+        return <span className="text-[10px] font-bold text-stone-700 bg-stone-100 px-2.5 py-0.5 rounded border border-stone-200">{language === 'es' ? 'Registrado' : language === 'de' ? 'Gebucht' : 'Booked'}</span>;
     }
   };
 
@@ -86,11 +98,12 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
       {/* Top Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-[#232331] font-heading tracking-tight">
-            {language === 'es' ? 'Directorio de Envíos y Manifiestos' : language === 'de' ? 'Frachtsendungen & Manifeste' : 'Shipment Directory & Fleet Manifests'}
+          <h1 className="text-2xl font-black text-[#232331] font-heading tracking-tight flex items-center gap-2">
+            <Heart className="w-6 h-6 fill-orange-600 text-orange-600" />
+            <span>{language === 'es' ? 'Gestión de Mascotas en Ruta y Reparto a Domicilio' : language === 'de' ? 'Haustier-Transporte & Hauszustellung' : 'Pet Transport & Doorstep Dispatch'}</span>
           </h1>
           <p className="text-xs text-[#767676] mt-0.5">
-            {language === 'es' ? 'Gestión comercial de conocimientos de embarque, estados de carga y precintos.' : language === 'de' ? 'Verwaltung von Frachtbriefen, Containern und Meilensteinen.' : 'Manage commercial waybills, cargo status transitions, and container seals.'}
+            {language === 'es' ? 'Control de furgonetas climatizadas, microchips, cartillas veterinarias y entregas en mano en la puerta del receptor.' : language === 'de' ? 'Verwaltung von Tiertransporten, Mikrochips und Haustür-Übergaben.' : 'Manage climate-controlled vans, microchips, veterinary clearances, and doorstep handovers.'}
           </p>
         </div>
 
@@ -108,7 +121,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
         <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-center justify-between text-xs">
           <div className="flex items-center gap-2 text-rose-800 font-bold">
             <AlertTriangle className="w-4 h-4 text-rose-600" />
-            <span>{language === 'es' ? '¿Confirmar eliminación permanente de este envío?' : language === 'de' ? 'Möchten Sie diese Frachtsendung wirklich löschen?' : 'Confirm permanent deletion of this shipment?'}</span>
+            <span>{language === 'es' ? '¿Confirmar eliminación permanente de este registro de mascota?' : language === 'de' ? 'Möchten Sie diesen Eintrag wirklich löschen?' : 'Confirm permanent deletion of this pet transport record?'}</span>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -134,7 +147,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
             <Search className="w-4 h-4 text-stone-400 mr-2 shrink-0" />
             <input
               type="text"
-              placeholder={language === 'es' ? 'Buscar por Tracking #, B/L, Contenedor, Remitente...' : language === 'de' ? 'Suche nach B/L, Tracking-Nr., Container, Versender...' : 'Search by Tracking #, B/L, Container ID, Shipper, Destination...'}
+              placeholder={language === 'es' ? 'Buscar por Nombre de Mascota, Raza, Microchip, Dirección de Puerta...' : language === 'de' ? 'Suche nach Tiername, Rasse, Chip, Haustüradresse...' : 'Search by Pet Name, Breed, Microchip, Doorstep Address...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="bg-transparent text-xs text-[#232331] placeholder-stone-400 focus:outline-none w-full font-medium"
@@ -148,12 +161,11 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
               className="bg-[#f8f5f1] text-[#232331] text-xs font-semibold rounded-xl border border-stone-300 px-3.5 py-2.5 focus:border-orange-500 focus:outline-none"
             >
               <option value="all">{language === 'es' ? 'Todos los Estados' : language === 'de' ? 'Alle Status' : 'All Statuses'}</option>
-              <option value="booked">{language === 'es' ? 'Reservado' : language === 'de' ? 'Gebucht' : 'Booked'}</option>
-              <option value="in_transit">{language === 'es' ? 'En Tránsito' : language === 'de' ? 'In Transit' : 'In Transit'}</option>
-              <option value="customs_hold">{language === 'es' ? 'Retención Aduana' : language === 'de' ? 'Zollprüfung' : 'Customs Hold'}</option>
-              <option value="out_for_delivery">{language === 'es' ? 'En Reparto' : language === 'de' ? 'In Zustellung' : 'Out for Delivery'}</option>
-              <option value="delivered">{language === 'es' ? 'Entregado' : language === 'de' ? 'Zugestellt' : 'Delivered'}</option>
-              <option value="exception">{language === 'es' ? 'Excepción' : language === 'de' ? 'Ausnahme' : 'Exception'}</option>
+              <option value="booked">{language === 'es' ? 'Registrado' : language === 'de' ? 'Gebucht' : 'Booked'}</option>
+              <option value="in_transit">{language === 'es' ? 'En Tránsito 21°C' : language === 'de' ? 'In Transit' : 'In Transit'}</option>
+              <option value="customs_hold">{language === 'es' ? 'Revisión Médica' : language === 'de' ? 'Zollprüfung' : 'Vet Check'}</option>
+              <option value="out_for_delivery">{language === 'es' ? 'En Furgoneta a Domicilio' : language === 'de' ? 'In Haustür-Zustellung' : 'Van to Doorstep'}</option>
+              <option value="delivered">{language === 'es' ? 'Entregado en Puerta' : language === 'de' ? 'Zugestellt' : 'Delivered'}</option>
             </select>
 
             <select
@@ -161,13 +173,11 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
               onChange={(e) => setModeFilter(e.target.value)}
               className="bg-[#f8f5f1] text-[#232331] text-xs font-semibold rounded-xl border border-stone-300 px-3.5 py-2.5 focus:border-orange-500 focus:outline-none"
             >
-              <option value="all">{language === 'es' ? 'Todos los Modos' : language === 'de' ? 'Alle Modi' : 'All Modes'}</option>
-              <option value="ocean_fcl">Ocean FCL</option>
-              <option value="ocean_lcl">Ocean LCL</option>
-              <option value="air_freight">Air Freight</option>
-              <option value="rail_freight">Rail Cargo</option>
-              <option value="road_transport">Road Transport</option>
-              <option value="cold_chain">Cold Chain</option>
+              <option value="all">{language === 'es' ? 'Todas las Modalidades' : language === 'de' ? 'Alle Modi' : 'All Modes'}</option>
+              <option value="road_transport">Furgoneta Puerta a Puerta</option>
+              <option value="air_freight">Pet Nanny Aéreo</option>
+              <option value="cold_chain">Cachorros / Adopciones</option>
+              <option value="ocean_fcl">Reubicación Internacional</option>
             </select>
           </div>
         </div>
@@ -179,11 +189,11 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
           <table className="w-full text-left text-xs">
             <thead className="bg-[#f8f5f1] text-[#232331] uppercase font-bold text-[10px] tracking-wider border-b border-stone-200">
               <tr>
-                <th className="py-3.5 px-4">{t.trackingCodeCol}</th>
-                <th className="py-3.5 px-4">{t.shipperConsigneeCol}</th>
-                <th className="py-3.5 px-4">{t.routingCol}</th>
-                <th className="py-3.5 px-4">{t.containerSpecsCol}</th>
-                <th className="py-3.5 px-4">{t.statusProgressCol}</th>
+                <th className="py-3.5 px-4">Código / Mascota</th>
+                <th className="py-3.5 px-4">Destinatario & Dirección Puerta</th>
+                <th className="py-3.5 px-4">Ruta y Ciudad</th>
+                <th className="py-3.5 px-4">Raza / Microchip / Cabina</th>
+                <th className="py-3.5 px-4">Estado en Puerta</th>
                 <th className="py-3.5 px-4 text-right">{t.actionsCol}</th>
               </tr>
             </thead>
@@ -191,19 +201,26 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
               {filteredShipments.map((s) => (
                 <tr key={s.id} className="hover:bg-stone-50 transition-colors">
                   <td className="py-3.5 px-4 font-mono">
-                    <div className="font-bold text-xs text-[#232331]">{s.trackingNumber}</div>
-                    <div className="text-[10px] text-stone-500">B/L: {s.bolNumber}</div>
+                    <div className="font-bold text-xs text-[#232331] flex items-center gap-1.5">
+                      <Heart className="w-3.5 h-3.5 fill-orange-600 text-orange-600 shrink-0" />
+                      <span>{s.petInfo?.petName || s.trackingNumber}</span>
+                    </div>
+                    <div className="text-[10px] text-stone-500 font-mono mt-0.5">{s.trackingNumber}</div>
                     <span className="inline-block mt-1 text-[10px] px-1.5 py-0.2 rounded bg-orange-50 text-orange-700 border border-orange-200 font-bold uppercase">
-                      {s.mode.replace('_', ' ')}
+                      {s.mode === 'road_transport' ? 'Furgoneta Puerta a Puerta' : s.mode.replace('_', ' ')}
                     </span>
                   </td>
 
                   <td className="py-3.5 px-4">
-                    <div className="font-bold text-[#232331] truncate max-w-[170px]">
-                      {s.sender.company}
+                    <div className="font-bold text-[#232331]">
+                      {s.consignee.name}
                     </div>
-                    <div className="text-[10px] text-stone-500 truncate max-w-[170px] mt-0.5 font-medium">
-                      To: {s.consignee.company}
+                    <div className="text-[11px] text-orange-900 font-medium truncate max-w-[210px] mt-0.5 flex items-center gap-1">
+                      <Home className="w-3 h-3 text-orange-600 shrink-0" />
+                      <span>{s.doorstepDelivery?.receiverDoorAddress || s.destination.portName}</span>
+                    </div>
+                    <div className="text-[10px] text-stone-500 mt-0.5">
+                      Tel: {s.consignee.phone || '+34602493512'}
                     </div>
                   </td>
 
@@ -212,22 +229,20 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
                       {s.origin.city} → {s.destination.city}
                     </div>
                     <div className="text-[10px] text-stone-500 mt-0.5 truncate max-w-[160px]">
-                      Loc: {s.currentLocation.name}
+                      {s.currentLocation.name}
                     </div>
                   </td>
 
                   <td className="py-3.5 px-4">
-                    <div className="font-mono text-xs text-orange-700 font-bold">
-                      {s.containerNumber}
+                    <div className="font-bold text-xs text-stone-900">
+                      {s.petInfo ? `${s.petInfo.breed} (${s.petInfo.age})` : s.cargo.description}
                     </div>
-                    <div className="text-[10px] text-stone-500 mt-0.5">
-                      {s.cargo.weightKg.toLocaleString()} kg · {s.cargo.volumeCbm} CBM
+                    <div className="text-[10px] text-stone-500 mt-0.5 font-mono">
+                      Chip: {s.petInfo?.microchipNumber || s.sealNumber}
                     </div>
-                    {s.temperatureCelsius !== undefined && (
-                      <span className="text-[10px] text-cyan-700 font-mono font-bold block mt-0.5">
-                        ❄ {s.temperatureCelsius}°C
-                      </span>
-                    )}
+                    <span className="text-[10px] text-orange-700 font-mono font-bold block mt-0.5">
+                      Cabina: {s.temperatureCelsius || 21.5}°C
+                    </span>
                   </td>
 
                   <td className="py-3.5 px-4">
@@ -238,6 +253,13 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
                         style={{ width: `${s.progressPercent}%` }}
                       ></div>
                     </div>
+                    <span className="text-[10px] text-stone-500 block mt-0.5">
+                      {s.doorstepDelivery?.doorstepStatus === 'delivered_at_doorstep'
+                        ? 'Firma en puerta confirmada'
+                        : s.doorstepDelivery?.doorstepStatus === 'in_local_van'
+                        ? 'En furgoneta hacia la puerta'
+                        : 'Llegando al domicilio'}
+                    </span>
                   </td>
 
                   <td className="py-3.5 px-4 text-right">
@@ -245,15 +267,15 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
                       <button
                         onClick={() => onOpenMilestoneModal(s.id)}
                         className="px-2.5 py-1 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded text-xs font-bold border border-orange-200 transition-colors cursor-pointer"
-                        title="Update status & milestone"
+                        title="Actualizar estado de cuidado o entrega"
                       >
-                        Dispatch
+                        Actualizar
                       </button>
 
                       <button
                         onClick={() => onOpenEditModal(s)}
                         className="p-1.5 text-stone-500 hover:text-[#232331] rounded hover:bg-stone-100 cursor-pointer"
-                        title="Edit shipment details"
+                        title="Editar ficha de la mascota"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
                       </button>
@@ -261,7 +283,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
                       <button
                         onClick={() => setSelectedShipmentForPrint(s)}
                         className="p-1.5 text-stone-500 hover:text-[#232331] rounded hover:bg-stone-100 cursor-pointer"
-                        title="Print Bill of Lading"
+                        title="Imprimir certificado de viaje"
                       >
                         <Printer className="w-3.5 h-3.5" />
                       </button>
@@ -273,7 +295,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
                           setActiveView('track');
                         }}
                         className="p-1.5 text-stone-500 hover:text-[#232331] rounded hover:bg-stone-100 cursor-pointer"
-                        title="View customer tracking"
+                        title="Ver seguimiento de cliente"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                       </button>
@@ -281,7 +303,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
                       <button
                         onClick={() => setPendingDeleteId(s.id)}
                         className="p-1.5 text-stone-400 hover:text-rose-600 rounded hover:bg-stone-100 cursor-pointer"
-                        title="Delete shipment"
+                        title="Eliminar registro"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -293,7 +315,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
               {filteredShipments.length === 0 && (
                 <tr>
                   <td colSpan={6} className="text-center py-10 text-stone-500">
-                    {language === 'es' ? 'No hay envíos que coincidan con la búsqueda.' : language === 'de' ? 'Keine Sendungen gefunden.' : 'No shipments match the current filters or search query.'}
+                    {language === 'es' ? 'No hay mascotas que coincidan con la búsqueda.' : language === 'de' ? 'Keine Tiere gefunden.' : 'No pet shipments match the current filters or search query.'}
                   </td>
                 </tr>
               )}

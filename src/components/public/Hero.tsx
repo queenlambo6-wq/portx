@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import { useShipping } from '../../context/ShippingContext';
 import {
   Search,
-  Ship,
+  Truck,
   Plane,
-  Train,
+  Heart,
   ArrowRight,
-  Globe2,
-  Anchor,
   Calculator,
   ChevronRight,
   ShieldCheck,
-  Compass
+  Thermometer,
+  Home,
+  MapPin
 } from 'lucide-react';
 
 export const Hero: React.FC = () => {
@@ -43,10 +43,10 @@ export const Hero: React.FC = () => {
 
   return (
     <div className="relative bg-[#f8f5f1] border-b border-stone-200/80 pt-10 pb-16 lg:pt-16 lg:pb-24 overflow-hidden">
-      {/* PortX Grid Background Motif */}
+      {/* Background Motif */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e0d8_1px,transparent_1px),linear-gradient(to_bottom,#e5e0d8_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] pointer-events-none opacity-40"></div>
       
-      {/* Warm maritime amber glow */}
+      {/* Warm orange glow */}
       <div className="absolute -top-24 right-0 w-[550px] h-[550px] bg-orange-200/40 rounded-full blur-3xl pointer-events-none"></div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,6 +57,7 @@ export const Hero: React.FC = () => {
             {/* Top Tagline */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white border border-stone-200 text-orange-600 text-xs font-bold uppercase tracking-wider mb-5 shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-orange-600 animate-pulse"></span>
+              <Heart className="w-3.5 h-3.5 fill-orange-600" />
               <span>{t.heroBadge}</span>
             </div>
 
@@ -71,8 +72,16 @@ export const Hero: React.FC = () => {
               {t.heroDescription}
             </p>
 
+            {/* Local Doorstep Delivery Guarantee Pill */}
+            <div className="mt-5 inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-orange-50 border border-orange-200/80 text-orange-950 text-xs font-semibold shadow-2xs">
+              <Home className="w-4 h-4 text-orange-600 shrink-0" />
+              <span>
+                <strong>Compromiso Puerta a Puerta:</strong> La furgoneta local entrega a tu mascota directamente en la puerta del receptor con aviso previo.
+              </span>
+            </div>
+
             {/* Tracking Search Card - Clean White with Orange Button */}
-            <div className="mt-8 bg-white border-2 border-orange-200 rounded-2xl p-5 sm:p-6 shadow-xl relative z-10">
+            <div className="mt-7 bg-white border-2 border-orange-200 rounded-2xl p-5 sm:p-6 shadow-xl relative z-10">
               <div className="flex items-center justify-between mb-3 text-xs">
                 <span className="font-bold uppercase tracking-wider text-[#232331] flex items-center gap-1.5">
                   <Search className="w-4 h-4 text-orange-600" />
@@ -103,7 +112,7 @@ export const Hero: React.FC = () => {
                 </button>
               </form>
 
-              {/* Sample Track Codes */}
+              {/* Sample Track Codes with Pet Names */}
               <div className="mt-3.5 flex flex-wrap items-center gap-1.5 text-xs">
                 <span className="text-stone-500 text-[11px] font-medium">{t.quickTestLabel}</span>
                 {shipments.slice(0, 4).map((s) => (
@@ -111,9 +120,10 @@ export const Hero: React.FC = () => {
                     key={s.id}
                     type="button"
                     onClick={() => handleSampleClick(s.trackingNumber)}
-                    className="px-2.5 py-1 rounded bg-[#f8f5f1] hover:bg-orange-50 text-orange-700 border border-stone-200 hover:border-orange-300 text-xs font-mono font-semibold transition-colors cursor-pointer"
+                    className="px-2.5 py-1 rounded bg-[#f8f5f1] hover:bg-orange-50 text-orange-700 border border-stone-200 hover:border-orange-300 text-xs font-mono font-semibold transition-colors cursor-pointer flex items-center gap-1"
                   >
-                    {s.trackingNumber}
+                    <span>{s.trackingNumber}</span>
+                    {s.petInfo && <span className="text-stone-500 font-sans text-[11px]">({s.petInfo.petName})</span>}
                   </button>
                 ))}
               </div>
@@ -139,7 +149,7 @@ export const Hero: React.FC = () => {
                 }}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-stone-100 text-[#232331] text-xs font-bold border border-stone-200 transition-colors cursor-pointer shadow-2xs"
               >
-                <Globe2 className="w-4 h-4 text-orange-600" />
+                <MapPin className="w-4 h-4 text-orange-600" />
                 {t.explorePortsBtn}
                 <ChevronRight className="w-3.5 h-3.5 opacity-60" />
               </button>
@@ -152,25 +162,27 @@ export const Hero: React.FC = () => {
             <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xl relative">
               <div className="flex items-center justify-between pb-4 border-b border-stone-100">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#232331] flex items-center gap-2">
-                  <Anchor className="w-4 h-4 text-orange-600" />
+                  <Truck className="w-4 h-4 text-orange-600" />
                   {t.liveFleetFeedTitle}
                 </span>
-                <span className="text-[11px] font-mono text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">AIS 2.4</span>
+                <span className="text-[11px] font-mono text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
+                  GPS Puerta Activo
+                </span>
               </div>
 
               <div className="space-y-3 mt-4">
                 <div className="p-3.5 bg-[#f8f5f1] rounded-xl border border-stone-200 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center">
-                      <Ship className="w-5 h-5" />
+                      <Truck className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-[#232331]">PortX Explorer IV</div>
-                      <div className="text-[11px] text-[#767676]">Rotterdam → Singapore · 19.4 kts</div>
+                      <div className="text-xs font-bold text-[#232331]">Furgoneta Puerta a Puerta #01</div>
+                      <div className="text-[11px] text-[#767676]">Bella (Golden) · Domicilio Madrid · 21.5°C</div>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200">
-                    {t.onScheduleBadge}
+                  <span className="text-[10px] font-bold text-orange-800 bg-orange-100 px-2 py-0.5 rounded border border-orange-200">
+                    En ruta a puerta
                   </span>
                 </div>
 
@@ -180,8 +192,8 @@ export const Hero: React.FC = () => {
                       <Plane className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-[#232331]">PortX SkyFreighter 777F</div>
-                      <div className="text-[11px] text-[#767676]">Frankfurt → Chicago · FL340</div>
+                      <div className="text-xs font-bold text-[#232331]">Pet Air Nanny Shuttle</div>
+                      <div className="text-[11px] text-[#767676]">Frankfurt → Madrid Barajas · En cabina</div>
                     </div>
                   </div>
                   <span className="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded border border-blue-200">
@@ -191,16 +203,16 @@ export const Hero: React.FC = () => {
 
                 <div className="p-3.5 bg-[#f8f5f1] rounded-xl border border-stone-200 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
-                      <Train className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                      <Home className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-[#232331]">Trans-Eurasia Rail 12</div>
-                      <div className="text-[11px] text-[#767676]">Chongqing → Duisburg</div>
+                      <div className="text-xs font-bold text-[#232331]">Furgoneta Puerta a Puerta #03</div>
+                      <div className="text-[11px] text-[#767676]">Luna (Teckel) · Valencia · Entregada en mano</div>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded border border-amber-200">
-                    {t.customsAuditBadge}
+                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200">
+                    Entregado en puerta
                   </span>
                 </div>
               </div>

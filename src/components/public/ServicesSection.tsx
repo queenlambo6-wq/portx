@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { useShipping } from '../../context/ShippingContext';
 import {
-  Ship,
-  Plane,
   Truck,
-  Train,
-  Thermometer,
+  Plane,
+  Heart,
+  Home,
   ShieldCheck,
   ArrowRight,
-  Boxes,
   CheckCircle2,
-  Maximize2
+  Maximize2,
+  Award
 } from 'lucide-react';
 import { TransportMode } from '../../types';
 
@@ -33,123 +32,83 @@ export const ServicesSection: React.FC<{ onOpenBookingModal: (mode: TransportMod
     if (language === 'de') {
       return [
         {
-          id: 'ocean_fcl',
-          title: 'Seefracht (FCL & LCL)',
-          tagline: 'Weltweite Seecontainer-Linien mit garantierten Liegeplatz-Kapazitäten',
-          description: 'Vollcontainer (FCL) und Sammelladungen (LCL) verbinden alle bedeutenden internationalen Überseehäfen. Feste Fahrpläne mit 24.000 TEU Großcontainerschiffen.',
-          icon: <Ship className="w-6 h-6 text-orange-600" />,
+          id: 'road_transport',
+          title: 'Lokale Haustürzustellung (Klimatisiert 21°C)',
+          tagline: 'Persönliche Übergabe direkt an der Wohnungstür des Empfängers in ganz Spanien',
+          description: 'Spezialausgebaute Transporter mit Mehrzonen-Klimatisierung, Anti-Stress-Atmosphäre und ausgebildeten Tierbetreuern, die Ihr Haustier persönlich bis an die Tür bringen.',
+          icon: <Home className="w-6 h-6 text-orange-600" />,
           specs: [
-            { label: 'Kapazität', value: 'Bis zu 24.000 TEU pro Schiff' },
-            { label: 'Transitzeit', value: '12 - 32 Tage Hafen zu Hafen' },
-            { label: 'Abdeckung', value: 'Über 140 Haupthäfen weltweit' },
-            { label: 'Zollabwicklung', value: 'Digitales Konnossement (B/L) & ISF' }
+            { label: 'Zustellart', value: 'Direkt an die Haustür (Doorstep)' },
+            { label: 'Temperatur', value: 'Konstant 21°C geregelt' },
+            { label: 'Pausenintervall', value: 'Alle 2-3 Stunden Gassi & Wasser' },
+            { label: 'Betreuung', value: 'Zertifizierter Tierpfleger an Bord' }
           ],
-          equipment: ['20ft Standard Dry', '40ft Standard & High Cube', '45ft Pallet-Wide', 'Open Top & Flat Rack'],
+          equipment: ['IATA Sky Kennel Boxen', 'Beruhigende Pheromon-Zerstäuber', 'Trinkspender mit Frischwasser', 'Antirutsch-Bettung'],
           keyFeatures: [
-            'Direkte Liniendienste mit automatischen AIS-ETA-Benachrichtigungen',
-            'Konsolidierte LCL-Verschiffung mit wöchentlichen Abfahrten',
-            'Schwergut- und Projektladung mit Pontonkran-Verladung',
-            'VGM-Zertifizierung direkt am Hafengate'
+            'Telefonische Vorankündigung 15 Minuten vor Ankunft an der Haustür',
+            'Mikrochip-Überprüfung mit Scanner bei persönlicher Übergabe',
+            'Fotobeweis und digitale Empfangsunterschrift an der Tür',
+            'Live-GPS und Temperaturüberwachung für Besitzer'
           ]
         },
         {
           id: 'air_freight',
-          title: 'Luftfracht Express',
-          tagline: 'Prioritäre weltweite Frachtcharter und Linienflug-Kontingente',
-          description: 'Dedizierte Luftfracht-Kapazitäten auf Boeing 777F und 747-8F Frachtflugzeugen für zeitkritische Industrieteile, Pharmazeutika und Hightech.',
+          title: 'Pet Nanny Flugbegleitung & Hauszustellung',
+          tagline: 'Persönliche Begleitung in der Passagierkabine mit anschließender Haustürlieferung',
+          description: 'Für Langstrecken reist unser Tiersitter gemeinsam mit Ihrem Haustier in der Flugzeugkabine und bringt es nach der Landung im privaten Transporter direkt an Ihre Tür.',
           icon: <Plane className="w-6 h-6 text-orange-600" />,
           specs: [
-            { label: 'Laufzeit', value: '24 - 72 Stunden Haus-zu-Haus' },
-            { label: 'Nutzlast', value: 'Bis zu 102 Tonnen Fracht' },
-            { label: 'Drehkreuze', value: 'FRA, AMS, ORD, DXB, HND' },
-            { label: 'Standard', value: 'IATA Cargo Agent Akkreditiert' }
+            { label: 'Reiseklasse', value: 'In der Passagierkabine (In-Cabin)' },
+            { label: 'Dauer', value: 'Schnellste Verbindung am selben Tag' },
+            { label: 'Betreuungsschlüssel', value: '1:1 Persönliche Begleitung' },
+            { label: 'Standard', value: 'IATA LAR Tierschutzkonform' }
           ],
-          equipment: ['PMC / P6P Hauptdeck-Paletten', 'LD3 / AKE Unterdeck-Container', 'Vollcharter', 'Sicherheits-Luftfrachtbehälter'],
+          equipment: ['Atmungsaktive Kabinentaschen', 'Sicherheitsgeschirre', 'Reiseapotheke für Haustiere', 'EU-Heimtierausweis-Hülle'],
           keyFeatures: [
-            'Garantierte Mitnahme auf dem nächsten Flug (Next Flight Out)',
-            'Temperaturgeführte Pharma-Kühlketten am Vorfeld',
-            'Zertifiziertes Gefahrgut-Handling (IATA DGR)',
-            'Direkte Vorfeld-Zollfreigabe'
-          ]
-        },
-        {
-          id: 'road_transport',
-          title: 'Straßengüterverkehr & Containertrucking',
-          tagline: 'Zuverlässige FTL, LTL und Hafennachläufe in ganz Europa',
-          description: 'Zollguttransporte, die Seehäfen mit kontinentalen Logistikzentren verbinden. Moderne Zugmaschinen mit GPS-Telemetrie und ADR-Zulassung.',
-          icon: <Truck className="w-6 h-6 text-orange-600" />,
-          specs: [
-            { label: 'Umfang', value: 'Komplettladung (FTL) & Teilladung (LTL)' },
-            { label: 'Fuhrpark', value: 'Mega-Trailer, Kühlauflieger, Tieflader' },
-            { label: 'Telemetrie', value: 'Live-GPS + Türsensoren' },
-            { label: 'Sicherheit', value: 'ADR-Gefahrgut & TAPA TSR' }
-          ],
-          equipment: ['Container-Chassis', 'Kühlauflieger Doppelstock', 'Tieflader für Schwertransporte', 'Megatrailer 100m³'],
-          keyFeatures: [
-            'Sofortige Containerevakuierung zur Vermeidung von Standgeldern',
-            'Zollgutversand unter Carnet TIR und T1-Verfahren',
-            'Geofencing mit automatischen Ein- und Ausfahrt-Meldungen',
-            'Hebebühnen- und Kranentladung vor Ort'
-          ]
-        },
-        {
-          id: 'rail_freight',
-          title: 'Trans-Eurasien Schienengüterverkehr',
-          tagline: 'Grüner, schneller Schienentransit zwischen Ostasien und Europa',
-          description: 'Direkte Ganzzug-Verbindungen von chinesischen Produktionszentren zu den europäischen Umschlagbahnhöfen Duisburg, Hamburg und Warschau.',
-          icon: <Train className="w-6 h-6 text-orange-600" />,
-          specs: [
-            { label: 'Geschwindigkeit', value: '2x schneller als Seeweg' },
-            { label: 'Kosten', value: '70% günstiger als Luftfracht' },
-            { label: 'Laufzeit', value: '14 - 18 Tage Terminal zu Terminal' },
-            { label: 'CO2-Einsparung', value: 'Bis zu 82% weniger Emissionen' }
-          ],
-          equipment: ['40ft High Cube Container-Waggons', 'Beheizte & isolierte Waggons', 'Schüttgutwaggons'],
-          keyFeatures: [
-            'Reibungsloser Spurwechsel an den Grenzbahnhöfen Dostyk & Brest',
-            'Einheitlicher CIM/SMGS Frachtbrief',
-            'Wöchentlich 5 feste Ganzzug-Abfahrten',
-            'Direkte Rhein-Binnenschiff- und Lkw-Anbindung'
+            'Kontinuierliche Begleitung ohne Frachtraum-Stress',
+            'Schnelle Sicherheitsabfertigung an VIP-Schaltern',
+            'Direkte Anschlussfahrt zur Haustür im Zielgebiet',
+            'Regelmäßige Foto- und Video-Updates per WhatsApp'
           ]
         },
         {
           id: 'cold_chain',
-          title: 'Kühlkette & Pharma-Logistik',
-          tagline: 'Präziser temperaturgeführter Transport (-25°C bis +25°C)',
-          description: 'GDP-zertifizierte Pharma- und Frischelogistik mit ununterbrochener Kühlkette für Impfstoffe, Reagenzien und Gourmet-Lebensmittel.',
-          icon: <Thermometer className="w-6 h-6 text-orange-600" />,
+          title: 'Transport für Welpen & Züchter',
+          tagline: 'Klinisch saubere Betreuung für junge Welpen und Adoptionshunde',
+          description: 'Sanfter Transport für Welpen ab der 8. Woche mit tierärztlicher Erstprüfung, Wärmedecken und freudiger Übergabe an die neue Familie an deren Haustür.',
+          icon: <Heart className="w-6 h-6 text-orange-600" />,
           specs: [
-            { label: 'Temperatur', value: '-30°C bis +25°C Mehrkammer' },
-            { label: 'Richtlinie', value: 'WHO GDP & FDA 21 CFR Part 11' },
-            { label: 'Sensoren', value: 'Echtzeit-IoT-Telemetrie' },
-            { label: 'Ausfallsicherheit', value: 'Aktive Aggregate & Notstrom' }
+            { label: 'Zielgruppe', value: 'Welpen, Kätzchen & Zuchttiere' },
+            { label: 'Hygiene', value: 'Hospital-Grade Desinfektion' },
+            { label: 'Fütterung', value: 'Nach Züchterplan mit Welpenmilch/Starter' },
+            { label: 'Übergabe', value: 'Willkommenspaket an der Haustür' }
           ],
-          equipment: ['Carrier Transicold & Thermo King Kühlcontainer', 'Envirotainer RAP Flugcontainer', 'Trockeneis-Spezialbehälter'],
+          equipment: ['Thermo-Kuscheldecken', 'Welpen-Auslaufgitter für Pausen', 'Desinfizierte Transportboxen', 'Spielzeug mit Muttergeruch'],
           keyFeatures: [
-            'Vorgekühlte Container mit lückenlosem Temperaturzertifikat',
-            'Echtzeitwarnung bei minimalen Temperaturabweichungen',
-            'Kühllager-Crossdocking in Seehafen- und Flughafenterminals',
-            '24/7 Notfalleinsatzteams'
+            'Überprüfung aller Impfungen und Entwurmungen vor Abfahrt',
+            'Sanfte Fahrweise mit speziellem Federungssystem',
+            'Feierliche Übergabe mit Übergabeprotokoll an die Besitzer',
+            '24/7 Notfall-Tierarzt-Bereitschaft auf allen Routen'
           ]
         },
         {
-          id: 'customs_brokerage',
-          title: 'Zollabwicklung & Außenwirtschaft',
-          tagline: 'AEO-F zertifizierte Zollagentur und Zolllagerhaltung',
-          description: 'Zugelassene Zollspezialisten für ATLAS-Verfahren, Tarifeinstufung, Freihandelsabkommen und Zollaufschub.',
-          icon: <ShieldCheck className="w-6 h-6 text-orange-600" />,
+          id: 'ocean_fcl',
+          title: 'Internationale Haustier-Umsiedlung',
+          tagline: 'Weltweite Umzüge mit Haustieren inklusive aller Behördenformalitäten',
+          description: 'Komplette Organisation von Titer-Tests, Quarantäne-Vermeidung, Visa-Dokumenten und Haustür-Abholung sowie Anlieferung im neuen Zuhause weltweit.',
+          icon: <Award className="w-6 h-6 text-orange-600" />,
           specs: [
-            { label: 'Zertifizierung', value: 'AEO-F (Zollrechtliche Vereinfachungen)' },
-            { label: 'Tarifierung', value: 'Automatisierte HS-Code Prüfung' },
-            { label: 'Freigabezeit', value: 'Elektronische Freigabe in < 4 Std.' },
-            { label: 'Zollabgaben', value: 'Zolllager Typ II & Zollrückvergütung' }
+            { label: 'Umfang', value: 'Vollständige Relocation Weltweit' },
+            { label: 'Bürokratie', value: 'Tollwut-Titer, Amtstierarzt & Zoll' },
+            { label: 'Länder', value: 'Spanien, Deutschland, UK, USA & mehr' },
+            { label: 'Garantie', value: 'Rechtskonforme Einreise ohne Verzögerung' }
           ],
-          equipment: ['EDI Direktanbindung (ATLAS, e-Zoll, ACE)', 'Zugelassene Verwahrungslager', 'NCTS Versandverfahren'],
+          equipment: ['IATA Übersee-Transportkennel', 'Doppelte Sicherheitsschlösser', 'Wassernäpfe mit Außenbefüllung', 'Reisedokumenten-Mappe'],
           keyFeatures: [
-            'Vorabverzollung zur Vermeidung von Standzeiten im Hafen',
-            'Prüfung von Präferenzursprungszeugnissen (EUR.1, REX)',
-            'Carnet ATA Abwicklung für Messe- und Montagegut',
-            'Digitale revisionssichere Zollarchivierung'
+            'Komplette Vorbereitung aller amtstierärztlichen Zeugnisse',
+            'Haus-zu-Haus Betreuung vom alten zum neuen Wohnsitz',
+            'Zollabfertigung für lebende Tiere ohne Lagerzeiten',
+            'Feste Ansprechpartner für die gesamte Familie'
           ]
         }
       ];
@@ -158,123 +117,83 @@ export const ServicesSection: React.FC<{ onOpenBookingModal: (mode: TransportMod
     if (language === 'en') {
       return [
         {
-          id: 'ocean_fcl',
-          title: 'Ocean Freight (FCL & LCL)',
-          tagline: 'Global sea container lines with guaranteed berth allocations',
-          description: 'Full Container Load (FCL) and Less-than-Container Load (LCL) consolidation connecting all major international ports via scheduled mega-vessel liner services.',
-          icon: <Ship className="w-6 h-6 text-orange-600" />,
+          id: 'road_transport',
+          title: 'Doorstep Local Delivery (21°C Climate Van)',
+          tagline: 'Personal handover directly to the receiver\'s front door across Spain',
+          description: 'Custom-built pet transport vans featuring multi-zone climate control, soothing music, fresh water dispensers, and certified pet handlers delivering straight to the doorstep.',
+          icon: <Home className="w-6 h-6 text-orange-600" />,
           specs: [
-            { label: 'Capacity', value: 'Up to 24,000 TEU per vessel' },
-            { label: 'Transit Time', value: '12 - 32 Days port-to-port' },
-            { label: 'Coverage', value: '140+ Tier-1 & Tier-2 Ports' },
-            { label: 'Customs Clearance', value: 'Digital B/L & Automated ISF' }
+            { label: 'Delivery Scope', value: 'Direct to Receiver\'s Front Door' },
+            { label: 'Temperature', value: 'Constant 21°C Climate Controlled' },
+            { label: 'Rest Intervals', value: 'Walk & Hydration every 2-3 hours' },
+            { label: 'Care Staff', value: 'Certified Animal Handler Onboard' }
           ],
-          equipment: ['20ft Standard Dry', '40ft Standard & High Cube', '45ft Pallet-Wide', 'Open Top & Flat Rack'],
+          equipment: ['IATA Sky Kennels', 'Soothing Pheromone Diffusers', 'Filtered Water Dispensers', 'Anti-slip Absorbent Bedding'],
           keyFeatures: [
-            'Direct port-to-port liner schedules with automated ETA alerts',
-            'Consolidated LCL shipping with weekly departures',
-            'Breakbulk and out-of-gauge heavy machinery transport',
-            'Verified Gross Mass (VGM) certification at port gates'
+            '15-minute advance phone call before arriving at the doorstep',
+            'Microchip scanner verification upon personal handover',
+            'Photo proof of doorstep delivery and verified digital signature',
+            'Live GPS location and welfare temperature updates'
           ]
         },
         {
           id: 'air_freight',
-          title: 'Air Cargo Express',
-          tagline: 'Priority worldwide freight charters and scheduled freighter slots',
-          description: 'Dedicated air cargo capacity on wide-body Boeing 777F and 747-8F freighters for urgent aerospace, high-tech, and pharmaceutical consignments.',
+          title: 'In-Cabin Pet Nanny & Doorstep Link',
+          tagline: 'Accompanied passenger cabin travel with final doorstep delivery',
+          description: 'For long distances or international flights, a dedicated pet nanny flies with your pet in the passenger cabin and transports them in a private van straight to the receiver\'s door.',
           icon: <Plane className="w-6 h-6 text-orange-600" />,
           specs: [
-            { label: 'Transit Time', value: '24 - 72 Hours door-to-door' },
-            { label: 'Max Payload', value: 'Up to 102 Metric Tons' },
-            { label: 'Airport Hubs', value: 'FRA, ORD, HND, DXB, AMS' },
-            { label: 'Handling Class', value: 'IATA Cargo Agent Accredited' }
+            { label: 'Travel Mode', value: 'In-Cabin Passenger Accompanied' },
+            { label: 'Transit Time', value: 'Fastest Same-Day Connections' },
+            { label: 'Attention', value: '1:1 Dedicated Attendant Care' },
+            { label: 'Regulation', value: 'IATA LAR Welfare Compliant' }
           ],
-          equipment: ['PMC / P6P Main Deck Pallets', 'LD3 / AKE Lower Hold Containers', 'Full Aircraft Charters', 'Secured Vault ULDs'],
+          equipment: ['Soft-Sided Airline Carriers', 'Padded Safety Harnesses', 'Pet First Aid Kit', 'EU Passport Document Wallet'],
           keyFeatures: [
-            'Guaranteed next-flight-out dispatch and priority customs ramp',
-            'Airport-to-airport and door-to-door temperature-monitored courier',
-            'Dangerous Goods (DGR) certified handling and packing',
-            'Charter services for critical industrial project logistics'
-          ]
-        },
-        {
-          id: 'road_transport',
-          title: 'Overland Road Freight & Drayage',
-          tagline: 'Reliable cross-border FTL, LTL and port container drayage',
-          description: 'Bonded intermodal trucking connecting ports to regional distribution centers with GPS-telemetry tracked prime movers and heavy-haul trailers.',
-          icon: <Truck className="w-6 h-6 text-orange-600" />,
-          specs: [
-            { label: 'Service Scope', value: 'Full Truckload (FTL) & LTL' },
-            { label: 'Vehicle Types', value: 'Heavy Haul, Curtain-sider, Reefer' },
-            { label: 'Telemetry', value: 'Real-time GPS + Door Sensors' },
-            { label: 'Driver Safety', value: 'Trained ADR & Certified Drayage' }
-          ],
-          equipment: ['Tri-axle Container Chassis', 'Temperature-Controlled Trailers', 'Lowboy Heavy-Haul Beds', 'Curtain-sided Mega-trailers'],
-          keyFeatures: [
-            'Immediate port container evacuation to beat demurrage and detention',
-            'Cross-border bonded customs transit under TIR carnets',
-            'Real-time automated geofence entry and exit alerts',
-            'Tailgate and crane-assist deliveries for restricted sites'
-          ]
-        },
-        {
-          id: 'rail_freight',
-          title: 'Trans-Eurasia Rail Freight',
-          tagline: 'Cost-effective, green transit bridging East Asia and Europe',
-          description: 'Direct block-train freight services connecting major manufacturing hubs in China and Southeast Asia to European rail terminals in Duisburg and Hamburg.',
-          icon: <Train className="w-6 h-6 text-orange-600" />,
-          specs: [
-            { label: 'Speed vs Ocean', value: '2x Faster than Ocean Sea Route' },
-            { label: 'Cost vs Air', value: '70% Lower Cost than Air Cargo' },
-            { label: 'Transit Days', value: '14 - 18 Days terminal-to-terminal' },
-            { label: 'Carbon Reduction', value: 'Up to 82% Lower CO2 Emissions' }
-          ],
-          equipment: ['40ft High Cube Container Wagons', 'Heated & Insulated Rail Boxes', 'Bulk Hopper Wagons'],
-          keyFeatures: [
-            'Seamless gauge changeover at Dostyk and Brest frontier hubs',
-            'CIM/SMGS unified railway consignment documentation',
-            'Scheduled block train departures 5 times weekly',
-            'Direct connection to Rhine barge and European road feeder networks'
+            'Zero cargo hold stress; pet stays next to attendant in cabin',
+            'Expedited airport clearance via VIP passenger channels',
+            'Direct private vehicle transfer to the recipient\'s door',
+            'Real-time WhatsApp photos, videos, and comfort updates'
           ]
         },
         {
           id: 'cold_chain',
-          title: 'Cold Chain & Pharma Logistics',
-          tagline: 'Precision climate-controlled transport (-25°C to +25°C)',
-          description: 'Dedicated GDP-compliant cold chain logistics for pharmaceutical biologicals, vaccines, fresh produce, and food with live IoT telemetry.',
-          icon: <Thermometer className="w-6 h-6 text-orange-600" />,
+          title: 'Puppy & Adoption Doorstep Transport',
+          tagline: 'Hygienic and gentle relocation for newly adopted puppies and kittens',
+          description: 'Specialized neonatal care transport for puppies from certified breeders and shelters. Complete with pre-trip veterinary check and an exciting handover right at their new home.',
+          icon: <Heart className="w-6 h-6 text-orange-600" />,
           specs: [
-            { label: 'Temp Range', value: '-30°C to +25°C Multi-Zone' },
-            { label: 'Compliance', value: 'WHO GDP & FDA 21 CFR Part 11' },
-            { label: 'Sensors', value: 'Live Cloud IoT Telemetry' },
-            { label: 'Backup', value: 'Active Genset & Dual Refrigeration' }
+            { label: 'Age Group', value: 'Puppies (8+ weeks) & Kittens' },
+            { label: 'Sanitation', value: 'Hospital-Grade Van Disinfection' },
+            { label: 'Feeding', value: 'Follows Breeder Feeding Schedule' },
+            { label: 'Handover', value: 'Welcome Kit & Unboxing at Doorstep' }
           ],
-          equipment: ['Carrier Transicold & Thermo King Reefers', 'Envirotainer e2 & RAP Active Air Boxes', 'Cryogenic Dry Ice Shippers'],
+          equipment: ['Thermal Comfort Fleece', 'Portable Exercise Playpen', 'Sanitized Travel Pods', 'Litter Scent Blanket'],
           keyFeatures: [
-            'Pre-conditioned containers with multi-point temperature certification',
-            'Real-time temperature telemetry with automated excursion warnings',
-            'Cold-room cross-docking at bonded airport and seaport terminals',
-            'Dedicated emergency power backup at every transit checkpoint'
+            'Thorough verification of vaccinations, deworming, and microchip',
+            'Extra-soft air suspension vans for gentle movement',
+            'Celebratory handover with health booklet and signature at door',
+            '24/7 on-call veterinary support along all transit corridors'
           ]
         },
         {
-          id: 'customs_brokerage',
-          title: 'Customs Clearance & Brokerage',
-          tagline: 'Authorized trade compliance, duty drawback, and bonded warehousing',
-          description: 'Licensed in-house customs brokers handling automated import/export documentation, tariff classification, preferential trade agreements, and bonded storage worldwide.',
-          icon: <ShieldCheck className="w-6 h-6 text-orange-600" />,
+          id: 'ocean_fcl',
+          title: 'International Pet Relocation',
+          tagline: 'Worldwide pet moves including all governmental paperwork and door delivery',
+          description: 'End-to-end relocation handling: rabies antibody titers, import permits, EU health passports, customs clearance, and direct doorstep delivery to your new home abroad.',
+          icon: <Award className="w-6 h-6 text-orange-600" />,
           specs: [
-            { label: 'License', value: 'AEO-F & C-TPAT Certified Broker' },
-            { label: 'HS Classification', value: 'Automated Tariff Code Audit' },
-            { label: 'Processing Speed', value: 'Electronic release in < 4 hours' },
-            { label: 'Duty Management', value: 'Bonded storage & Duty Drawback' }
+            { label: 'Coverage', value: 'Global Cross-Border Pet Moves' },
+            { label: 'Documentation', value: 'Titer Tests, Rabies, Health Certs' },
+            { label: 'Countries', value: 'Spain, UK, USA, Germany & Worldwide' },
+            { label: 'Guarantee', value: 'Zero Quarantine Delay Entry' }
           ],
-          equipment: ['EDI Direct Customs Portals (ATLAS, ACE, TradeNet)', 'Bonded Warehouse Facilities', 'TIR Carnet Processing'],
+          equipment: ['IATA Wooden & Rigid Travel Kennels', 'Dual Spring Latches', 'Exterior Fill Water Bowls', 'Custom Pet Cargo Passports'],
           keyFeatures: [
-            'Pre-arrival electronic declaration filing to prevent terminal delays',
-            'Free Trade Agreement (FTA) origin certificate verification',
-            'Temporary import under ATA Carnet for exhibition and project freight',
-            'Complete audit-ready digital document archiving'
+            'Government veterinary approval and consular paperwork handled',
+            'Door-to-door escort from departure home to arrival doorstep',
+            'Fast-track customs clearance with no warehouse waiting',
+            'Single dedicated pet coordinator for your family'
           ]
         }
       ];
@@ -283,123 +202,83 @@ export const ServicesSection: React.FC<{ onOpenBookingModal: (mode: TransportMod
     // Default: Spanish ('es')
     return [
       {
-        id: 'ocean_fcl',
-        title: 'Transporte Marítimo (FCL y LCL)',
-        tagline: 'Líneas marítimas internacionales de contenedores con atraque garantizado',
-        description: 'Carga completa de contenedor (FCL) y grupaje marítimo consolidado (LCL) conectando los principales puertos del mundo en buques portacontenedores de hasta 24.000 TEU.',
-        icon: <Ship className="w-6 h-6 text-orange-600" />,
+        id: 'road_transport',
+        title: 'Entrega Local en Puerta (Furgoneta Climatizada 21°C)',
+        tagline: 'Entrega en mano en la misma puerta del receptor en cualquier ciudad de España',
+        description: 'Furgonetas adaptadas con climatización independiente a 21°C, suspensión suave, bebederos automáticos antigoteo y cuidadores certificados que suben directamente a la puerta de tu domicilio.',
+        icon: <Home className="w-6 h-6 text-orange-600" />,
         specs: [
-          { label: 'Capacidad', value: 'Hasta 24.000 TEU por buque' },
-          { label: 'Tiempo de Tránsito', value: '12 - 32 Días puerto a puerto' },
-          { label: 'Cobertura', value: 'Más de 140 puertos mundiales' },
-          { label: 'Despacho Aduanero', value: 'Conocimiento Digital (B/L) e ISF' }
+          { label: 'Modalidad de Entrega', value: 'Directo en la Puerta del Destinatario' },
+          { label: 'Temperatura en Cabina', value: '21°C Constante y Monitorizada' },
+          { label: 'Paradas de Paseo', value: 'Cada 2 a 3 horas con hidratación' },
+          { label: 'Personal a Bordo', value: 'Cuidador Canino / Felino Titulado' }
         ],
-        equipment: ['20 pies Estándar', '40 pies Estándar y High Cube', '45 pies Pallet-Wide', 'Open Top y Flat Rack'],
+        equipment: ['Transportines IATA Sky Kennel', 'Difusores de Feromonas Calmantes', 'Bebederos Antigoteo', 'Alfombrillas Térmicas Absorbentes'],
         keyFeatures: [
-          'Horarios directos de línea con alertas satelitales automáticas de ETA',
-          'Consolidación LCL con salidas semanales fijas garantizadas',
-          'Transporte de carga sobredimensionada y maquinaria pesada de proyecto',
-          'Certificación de Masa Bruta Verificada (VGM) en terminal portuaria'
+          'Aviso telefónico al destinatario 15 minutos antes de llegar al portal',
+          'Comprobación del microchip con escáner oficial en el momento de la entrega',
+          'Firma digital en tablet y comprobante de entrega feliz en puerta',
+          'GPS en vivo y reporte de temperatura accesible para remitente y receptor'
         ]
       },
       {
         id: 'air_freight',
-        title: 'Carga Aérea Exprés',
-        tagline: 'Chárter de carga prioritaria y cupos reservados en vuelos de línea regular',
-        description: 'Capacidad de bodega garantizada en aviones cargueros Boeing 777F y 747-8F para repuestos industriales urgentes, tecnología de alto valor y suministros farmacéuticos.',
+        title: 'Pet Nanny Aéreo Acompañado & Enlace a Domicilio',
+        tagline: 'Un especialista viaja junto a tu mascota en cabina y la entrega en su puerta',
+        description: 'Para distancias largas o conexiones internacionales. Nuestro especialista viaja con la mascota como pasajero acompañante en cabina, y al aterrizar la traslada en furgoneta privada hasta la puerta del receptor.',
         icon: <Plane className="w-6 h-6 text-orange-600" />,
         specs: [
-          { label: 'Tiempo de Tránsito', value: '24 - 72 Horas puerta a puerta' },
-          { label: 'Carga Útil Máxima', value: 'Hasta 102 toneladas métricas' },
-          { label: 'Centros Aéreos', value: 'MAD, FRA, AMS, ORD, DXB' },
-          { label: 'Acreditación', value: 'Agente de Carga IATA Certificado' }
+          { label: 'Acomodación', value: 'En Cabina de Pasajeros (In-Cabin)' },
+          { label: 'Tiempo de Viaje', value: 'Conexión más rápida en el mismo día' },
+          { label: 'Ratio de Cuidado', value: '1:1 Atención Exclusiva Individual' },
+          { label: 'Certificación', value: 'Homologación IATA Live Animals (LAR)' }
         ],
-        equipment: ['Palets de Cubierta Principal PMC / P6P', 'Contenedores de Bodega LD3 / AKE', 'Chárteres Completos', 'Contenedores Blindados'],
+        equipment: ['Bolsos de Viaje Homologados para Cabina', 'Arneses Ergonómicos Acolchados', 'Kit de Primeros Auxilios Veterinarios', 'Funda Portadocumentos UE'],
         keyFeatures: [
-          'Embarque garantizado en el próximo vuelo disponible (Next Flight Out)',
-          'Custodia con temperatura controlada directa en pista de aeropuerto',
-          'Gestión y embalaje homologado de Mercancías Peligrosas (IATA DGR)',
-          'Servicios de chárter aéreo exclusivo para logística industrial crítica'
-        ]
-      },
-      {
-        id: 'road_transport',
-        title: 'Transporte Terrestre y Arrastre Portuario',
-        tagline: 'Flota multimodal de camiones FTL, LTL y acarreo de contenedores',
-        description: 'Transporte por carretera en régimen aduanero que conecta puertos marítimos con almacenes centrales y polígonos industriales, con trazabilidad GPS continua.',
-        icon: <Truck className="w-6 h-6 text-orange-600" />,
-        specs: [
-          { label: 'Modalidad', value: 'Carga Completa (FTL) y Fraccionada (LTL)' },
-          { label: 'Flota', value: 'Tractocamiones, Lonas, Frigoríficos' },
-          { label: 'Telemetría', value: 'GPS en Vivo + Sensores de Apertura' },
-          { label: 'Seguridad', value: 'Conductores ADR y Seguro CMR' }
-        ],
-        equipment: ['Chasis portacontenedores de 3 ejes', 'Semirremolques frigoríficos', 'Góndolas para maquinaria pesada', 'Megatrailers de 100 m³'],
-        keyFeatures: [
-          'Evacuación inmediata del contenedor portuario evitando paralizaciones',
-          'Tránsito aduanero internacional bajo convenios TIR y documento T1',
-          'Alertas automáticas por geolocalización a la entrada del muelle',
-          'Plataformas elevadoras y grúa autoportante para descargas complejas'
-        ]
-      },
-      {
-        id: 'rail_freight',
-        title: 'Transporte Ferroviario Trans-Euroasiático',
-        tagline: 'Conexión ecológica y económica entre Asia Oriental y Europa',
-        description: 'Trenes de mercancías en bloque que unen centros industriales con terminales ferroviarias de Valencia, Duisburgo, Hamburgo y Varsovia.',
-        icon: <Train className="w-6 h-6 text-orange-600" />,
-        specs: [
-          { label: 'Velocidad vs Mar', value: 'El doble de rápido que el barco' },
-          { label: 'Coste vs Aire', value: '70% más económico que el avión' },
-          { label: 'Tiempo de Tránsito', value: '14 - 18 Días terminal a terminal' },
-          { label: 'Huella de Carbono', value: 'Hasta un 82% menos de emisiones CO2' }
-        ],
-        equipment: ['Vagones plataforma para contenedores 40ft HC', 'Contenedores aislados y calefactados', 'Vagones tolva para graneles'],
-        keyFeatures: [
-          'Cambio de ancho de vía fluido en pasos fronterizos internacionales',
-          'Documento único de transporte ferroviario internacional CIM/SMGS',
-          'Cinco salidas semanales regulares en trenes de bloque directos',
-          'Conexión multimodal directa con gabarras fluviales y camiones'
+          'Cero estrés: la mascota viaja a los pies del cuidador con caricias continuas',
+          'Paso prioritario por filtros de seguridad y controles de aeropuerto',
+          'Traslado final inmediato en furgoneta climatizada hasta el domicilio',
+          'Fotos y vídeos en tiempo real por WhatsApp durante todo el trayecto'
         ]
       },
       {
         id: 'cold_chain',
-        title: 'Cadena de Frío y Logística Pharma',
-        tagline: 'Transporte con control de temperatura estricto (-25°C a +25°C)',
-        description: 'Logística de temperatura controlada conforme a normas GDP para vacunas, reactivos biológicos, productos perecederos y alimentos de alta gama.',
-        icon: <Thermometer className="w-6 h-6 text-orange-600" />,
+        title: 'Traslado Especial de Cachorros y Adopciones',
+        tagline: 'Transporte delicado y afectuoso para cachorros y animales adoptados',
+        description: 'Servicio diseñado para cachorros a partir de las 8 semanas de vida y animales procedentes de protectoras o criadores oficiales. Chequeo médico previo y entrega emocionante en su nuevo hogar.',
+        icon: <Heart className="w-6 h-6 text-orange-600" />,
         specs: [
-          { label: 'Rango Térmico', value: '-30°C a +25°C multizona' },
-          { label: 'Homologación', value: 'Normativa OMS GDP y FDA 21 CFR Part 11' },
-          { label: 'Monitoreo', value: 'Sensores IoT en tiempo real' },
-          { label: 'Seguridad', value: 'Generadores redundantes de reserva' }
+          { label: 'Destinado a', value: 'Cachorros, Gatitos y Adopciones' },
+          { label: 'Nivel Higiénico', value: 'Desinfección Hospitalaria Grado Veterinario' },
+          { label: 'Alimentación', value: 'Pienso starter pautado por el criador' },
+          { label: 'Entrega', value: 'Kit de Bienvenida y entrega festiva en puerta' }
         ],
-        equipment: ['Contenedores Reefer Carrier Transicold & Thermo King', 'Contenedores aéreos activos Envirotainer', 'Embalajes criogénicos con nieve carbónica'],
+        equipment: ['Mantas con Olor a Madre y Camada', 'Corrales Plegables para Pausas en Césped', 'Habitáculos Aislados del Frío y Ruido', 'Juguetes Estimulantes'],
         keyFeatures: [
-          'Preenfriamiento verificado de contenedores con certificado digital',
-          'Alarmas automáticas inmediatas ante variaciones de temperatura',
-          'Zonas de cross-docking con cámaras frías en puertos y aeropuertos',
-          'Generadores diésel autónomos para mantener el frío en todo el trayecto'
+          'Verificación rigurosa de cartilla de vacunas, desparasitación y microchip',
+          'Furgonetas con amortiguación suave para evitar mareos en cachorros',
+          'Entrega formal con explicación de pautas de adaptación al nuevo dueño',
+          'Línea de consulta veterinaria 24 horas incluida tras la entrega'
         ]
       },
       {
-        id: 'customs_brokerage',
-        title: 'Despacho de Aduanas y Consultoría Arancelaria',
-        tagline: 'Agentes de aduanas OEA colegiados y depósito aduanero',
-        description: 'Gestión aduanera integral: declaraciones DUA de importación y exportación, clasificación arancelaria y exenciones tributarias.',
-        icon: <ShieldCheck className="w-6 h-6 text-orange-600" />,
+        id: 'ocean_fcl',
+        title: 'Reubicación Internacional de Mascotas',
+        tagline: 'Mudanzas globales con gestión completa de aduanas y entrega en el nuevo hogar',
+        description: 'Gestión integral de traslados al extranjero: test de anticuerpos de rabia, pasaporte europeo de animales de compañía, certificados CEXGAN y entrega directa en la puerta de la nueva vivienda.',
+        icon: <Award className="w-6 h-6 text-orange-600" />,
         specs: [
-          { label: 'Autorización', value: 'Operador Económico Autorizado (OEA-F)' },
-          { label: 'Clasificación', value: 'Revisión y asignación de código TARIC' },
-          { label: 'Velocidad', value: 'Levante telemático en menos de 4 horas' },
-          { label: 'Depósito', value: 'Régimen de Depósito Aduanero y Devolución' }
+          { label: 'Alcance', value: 'Reubicaciones Internacionales Completas' },
+          { label: 'Documentación', value: 'Titulación de Rabia, Pasaporte y Trámites CEXGAN' },
+          { label: 'Países', value: 'España, Reino Unido, Alemania, EE.UU., etc.' },
+          { label: 'Garantía', value: 'Entrada legal sin estancias en cuarentena' }
         ],
-        equipment: ['Conexión telemática EDI con la Agencia Tributaria', 'Almacén de Depósito Temporal (ADT)', 'Tramitación de cuadernos ATA y TIR'],
+        equipment: ['Transportines Rígidos IATA para Vuelos Largos', 'Cierres de Seguridad Reforzados', 'Tolvas de Comida y Agua con Acceso Exterior', 'Maletín Documental'],
         keyFeatures: [
-          'Presentación previa de declaraciones telemáticas para evitar retenciones',
-          'Comprobación de certificados de origen y acuerdos de libre comercio',
-          'Importaciones y exportaciones temporales con cuaderno ATA para ferias',
-          'Archivo digital homologado para auditorías aduaneras e inspección'
+          'Gestión directa con veterinarios oficiales de sanidad animal de aduanas',
+          'Servicio integral puerta a puerta: desde la casa de origen a la de destino',
+          'Despacho preferencial de animales vivos sin tiempos de espera en almacén',
+          'Asesor personal dedicado a la tranquilidad de la familia'
         ]
       }
     ];
@@ -408,179 +287,191 @@ export const ServicesSection: React.FC<{ onOpenBookingModal: (mode: TransportMod
   const services = getLocalizedServices();
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-md bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold uppercase tracking-wider mb-2">
-            <Boxes className="w-3.5 h-3.5" />
-            {t.servicesBadge}
+    <section className="py-20 bg-white border-b border-stone-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-md bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold uppercase tracking-wider mb-3">
+            <Heart className="w-3.5 h-3.5 fill-orange-600 text-orange-600" />
+            <span>{t.servicesBadge}</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-[#232331] font-heading tracking-tight">
             {t.servicesHeading}
           </h2>
-          <p className="mt-2 text-sm text-[#767676] max-w-xl">
+          <p className="mt-3 text-base text-[#767676] leading-relaxed">
             {t.servicesSubtitle}
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-[#767676] font-medium bg-white px-3.5 py-2 rounded-lg border border-stone-200 shadow-2xs">
-          <span>AEO / C-TPAT Certified</span>
-          <span>·</span>
-          <span>IATA Accredited</span>
-          <span>·</span>
-          <span>24/7 Operations</span>
-        </div>
-      </div>
-
-      {/* Services Grid with PortX Colors */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {services.map((service) => (
-          <div
-            key={service.id}
-            className="group bg-white rounded-2xl border border-stone-200 hover:border-orange-500 p-6 flex flex-col justify-between transition-all duration-300 hover:shadow-xl shadow-2xs"
-          >
-            <div>
-              {/* Service Icon & Mode Badge */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-[#f8f5f1] border border-stone-200 flex items-center justify-center group-hover:bg-orange-600 transition-all">
-                  <div className="group-hover:text-white transition-colors">
-                    {service.icon}
-                  </div>
+        {/* Services Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {services.map((service) => (
+            <div
+              key={service.id}
+              className="bg-[#f8f5f1] border border-stone-200 hover:border-orange-400 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl flex flex-col justify-between group"
+            >
+              <div>
+                <div className="w-14 h-14 rounded-xl bg-white border border-stone-200 flex items-center justify-center mb-5 shadow-xs group-hover:scale-105 transition-transform">
+                  {service.icon}
                 </div>
-                <span className="text-[11px] font-mono text-stone-600 bg-[#f8f5f1] px-2.5 py-1 rounded border border-stone-200">
-                  {service.specs[1]?.value}
-                </span>
+                <h3 className="text-lg font-bold text-[#232331] font-heading group-hover:text-orange-600 transition-colors">
+                  {service.title}
+                </h3>
+                <p className="text-xs font-semibold text-orange-700 mt-1">
+                  {service.tagline}
+                </p>
+                <p className="text-xs text-[#767676] mt-3 leading-relaxed">
+                  {service.description}
+                </p>
+
+                {/* Key Specs Pills */}
+                <div className="mt-4 pt-4 border-t border-stone-200/80 space-y-2">
+                  {service.specs.slice(0, 2).map((sp, idx) => (
+                    <div key={idx} className="flex justify-between text-[11px]">
+                      <span className="text-[#767676] font-medium">{sp.label}:</span>
+                      <span className="font-bold text-[#232331] text-right">{sp.value}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <h3 className="text-lg font-bold text-[#232331] font-heading group-hover:text-orange-600 transition-colors">
-                {service.title}
-              </h3>
-              <p className="text-xs text-orange-700 font-semibold mt-1">
-                {service.tagline}
-              </p>
-              <p className="text-xs text-[#767676] mt-3 leading-relaxed">
-                {service.description}
-              </p>
-
-              {/* Specs pill list */}
-              <div className="mt-5 pt-4 border-t border-stone-100 space-y-2">
-                {service.specs.slice(0, 3).map((spec, i) => (
-                  <div key={i} className="flex justify-between text-[11px]">
-                    <span className="text-[#767676] font-medium">{spec.label}</span>
-                    <span className="font-bold text-[#232331]">{spec.value}</span>
-                  </div>
-                ))}
+              <div className="mt-6 pt-4 border-t border-stone-200/80 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedService(service)}
+                  className="flex-1 py-2.5 px-3 bg-white hover:bg-stone-100 text-[#232331] text-xs font-bold rounded-xl border border-stone-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                >
+                  <Maximize2 className="w-3.5 h-3.5 text-stone-500" />
+                  <span>{t.fullSpecsBtn}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onOpenBookingModal(service.id as TransportMode)}
+                  className="py-2.5 px-3 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl transition-colors shadow-xs flex items-center justify-center cursor-pointer"
+                  title="Reservar este traslado"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
             </div>
+          ))}
+        </div>
 
-            {/* Bottom Action Buttons */}
-            <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between gap-2">
-              <button
-                onClick={() => setSelectedService(service)}
-                className="text-xs font-bold text-[#232331] hover:text-orange-600 flex items-center gap-1 transition-colors cursor-pointer"
-              >
-                <span>{t.viewSpecsBtn}</span>
-                <Maximize2 className="w-3.5 h-3.5 opacity-60" />
-              </button>
-
-              <button
-                onClick={() => onOpenBookingModal(service.id === 'customs_brokerage' ? 'ocean_fcl' : service.id as TransportMode)}
-                className="px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-lg transition-all flex items-center gap-1 shadow-xs cursor-pointer"
-              >
-                <span>{t.bookModeBtn}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+        {/* Service Guarantees Banner */}
+        <div className="mt-14 p-6 rounded-2xl bg-orange-50 border border-orange-200 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xs">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-orange-600 text-white flex items-center justify-center shrink-0 shadow-md">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="font-bold text-sm text-orange-950">Garantía Total de Bienestar y Entrega en Puerta</h4>
+              <p className="text-xs text-orange-800 mt-0.5 max-w-xl">
+                Todos los traslados incluyen furgoneta climatizada a 21°C, cuidador acreditado, hidratación programada y entrega en mano en la misma puerta del destinatario con aviso telefónico previo.
+              </p>
             </div>
           </div>
-        ))}
+          <div className="flex items-center gap-3 text-xs font-bold text-orange-900 shrink-0">
+            <span className="flex items-center gap-1">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              IATA LAR Certificado
+            </span>
+            <span className="flex items-center gap-1">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              Firma en Puerta
+            </span>
+          </div>
+        </div>
+
       </div>
 
-      {/* Detail Modal */}
+      {/* Modal with Full Service Specs */}
       {selectedService && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#232331]/70 backdrop-blur-xs">
-          <div className="bg-white border border-stone-200 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative shadow-2xl">
-            <button
-              onClick={() => setSelectedService(null)}
-              className="absolute right-4 top-4 text-stone-400 hover:text-[#232331] p-2 rounded-lg bg-[#f8f5f1] cursor-pointer"
-            >
-              ✕
-            </button>
-
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
-                {selectedService.icon}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto border border-stone-200">
+            <div className="flex items-start justify-between pb-4 border-b border-stone-200">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center">
+                  {selectedService.icon}
+                </div>
+                <div>
+                  <h3 className="text-xl font-black text-[#232331] font-heading">{selectedService.title}</h3>
+                  <p className="text-xs text-orange-600 font-semibold">{selectedService.tagline}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-[#232331] font-heading">{selectedService.title}</h3>
-                <p className="text-xs text-orange-600 font-semibold">{selectedService.tagline}</p>
-              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedService(null)}
+                className="text-stone-400 hover:text-stone-700 text-lg font-bold p-1 cursor-pointer"
+              >
+                ✕
+              </button>
             </div>
 
-            <p className="text-xs sm:text-sm text-[#767676] leading-relaxed mb-6">
+            <p className="text-xs text-[#767676] mt-4 leading-relaxed">
               {selectedService.description}
             </p>
 
-            {/* Specifications Grid */}
-            <div className="mb-6">
+            <div className="mt-6">
               <h4 className="text-xs font-bold uppercase tracking-wider text-stone-500 mb-3">
-                {t.techSpecsTitle}
+                {t.operationalMetrics}
               </h4>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                {selectedService.specs.map((s, i) => (
-                  <div key={i} className="p-3 bg-[#f8f5f1] rounded-xl border border-stone-200">
-                    <span className="text-stone-500 block text-[10px] uppercase font-bold">{s.label}</span>
-                    <span className="font-bold text-[#232331] mt-0.5 block">{s.value}</span>
+              <div className="grid grid-cols-2 gap-3">
+                {selectedService.specs.map((sp, idx) => (
+                  <div key={idx} className="p-3 bg-[#f8f5f1] rounded-xl border border-stone-200 text-xs">
+                    <span className="text-[#767676] block mb-0.5">{sp.label}</span>
+                    <strong className="text-[#232331] font-bold">{sp.value}</strong>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Equipment Options */}
-            <div className="mb-6">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-stone-500 mb-3">
-                {t.equipmentTypesTitle}
+            <div className="mt-6">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">
+                {t.supportedEquipment}
               </h4>
-              <div className="flex flex-wrap gap-2">
-                {selectedService.equipment.map((eq, i) => (
-                  <span key={i} className="px-3 py-1.5 rounded-lg bg-[#f8f5f1] text-[#232331] border border-stone-200 text-xs font-semibold">
-                    {eq}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Key Features */}
-            <div className="mb-6">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-stone-500 mb-3">
-                Service Guarantees
-              </h4>
-              <ul className="space-y-2 text-xs text-[#767676]">
-                {selectedService.keyFeatures.map((f, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>{f}</span>
+              <ul className="space-y-1.5 text-xs text-[#232331]">
+                {selectedService.equipment.map((eq, idx) => (
+                  <li key={idx} className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>{eq}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="pt-4 border-t border-stone-200 flex justify-end gap-3">
+            <div className="mt-6">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-stone-500 mb-2">
+                {t.serviceGuarantees}
+              </h4>
+              <ul className="space-y-1.5 text-xs text-[#767676]">
+                {selectedService.keyFeatures.map((feat, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="text-orange-600 font-bold">•</span>
+                    <span>{feat}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="mt-8 pt-4 border-t border-stone-200 flex items-center justify-end gap-3">
               <button
+                type="button"
                 onClick={() => setSelectedService(null)}
-                className="px-4 py-2 rounded-lg bg-[#f8f5f1] text-[#232331] text-xs font-bold hover:bg-stone-200 cursor-pointer"
+                className="px-4 py-2 text-xs font-bold text-[#767676] hover:text-[#232331] cursor-pointer"
               >
-                {t.closeModalBtn}
+                {t.closeBtn}
               </button>
               <button
+                type="button"
                 onClick={() => {
-                  const m = selectedService.id === 'customs_brokerage' ? 'ocean_fcl' : selectedService.id as TransportMode;
+                  const mode = selectedService.id as TransportMode;
                   setSelectedService(null);
-                  onOpenBookingModal(m);
+                  onOpenBookingModal(mode);
                 }}
-                className="px-6 py-2 rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-md cursor-pointer"
+                className="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer"
               >
-                {t.requestQuoteModeBtn}
+                {t.bookModeBtn}
               </button>
             </div>
           </div>

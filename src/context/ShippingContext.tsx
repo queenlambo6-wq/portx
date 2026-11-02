@@ -64,12 +64,23 @@ const DEFAULT_ACCOUNTS = [
   }
 ];
 
+// Purge legacy storage keys to ensure fresh Spanish cities and pet delivery data
+if (typeof window !== 'undefined') {
+  try {
+    ['portx_shipments_v1', 'portx_shipments_v2', 'portx_shipments_v3', 'portx_shipments_v4', 'portx_ports_v1', 'portx_ports_v2', 'portx_ports_v3'].forEach(k => {
+      localStorage.removeItem(k);
+    });
+  } catch (err) {
+    // Ignore storage errors in non-browser environments
+  }
+}
+
 const STORAGE_KEYS = {
-  SHIPMENTS: 'portx_shipments_v1',
-  INQUIRIES: 'portx_inquiries_v1',
-  FLEET: 'portx_fleet_v1',
-  PORTS: 'portx_ports_v1',
-  AUTH_USER: 'portx_auth_user_v1',
+  SHIPMENTS: 'portx_pet_v5_shipments',
+  INQUIRIES: 'portx_pet_v5_inquiries',
+  FLEET: 'portx_pet_v5_fleet',
+  PORTS: 'portx_pet_v5_ports',
+  AUTH_USER: 'portx_pet_v5_auth_user',
   ACCOUNTS: 'portx_auth_accounts_v1',
   LANGUAGE: 'portx_language_v1'
 };
@@ -205,7 +216,7 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [ports] = useState<PortHub[]>(INITIAL_PORTS);
   const [portCalls] = useState<PortCallSchedule[]>(INITIAL_PORT_CALLS);
 
-  const [currentTrackingQuery, setCurrentTrackingQuery] = useState<string>('PTX-849201');
+  const [currentTrackingQuery, setCurrentTrackingQuery] = useState<string>('PET-MAD-8492');
   const [activeView, setActiveView] = useState<string>('home'); // 'home' | 'track' | 'services' | 'calculator' | 'network' | 'about' | 'contact'
   const [isAdminMode, setIsAdminMode] = useState<boolean>(false);
   const [adminSubView, setAdminSubView] = useState<string>('dashboard'); // 'dashboard' | 'shipments' | 'milestones' | 'fleet' | 'inquiries' | 'ports' | 'manifests'

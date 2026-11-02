@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useShipping } from '../../context/ShippingContext';
-import { Ship, Phone, Mail, ArrowRight } from 'lucide-react';
+import { Heart, Home, Phone, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const { setActiveView, setIsAdminMode, t } = useShipping();
@@ -23,67 +23,65 @@ export const Footer: React.FC = () => {
                 />
               ) : (
                 <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-orange-600 text-white p-2 shadow-xs">
-                  <Ship className="w-6 h-6 text-white" />
+                  <Heart className="w-6 h-6 fill-white" />
                 </div>
               )}
               <span className="text-xl font-black tracking-tight text-[#232331] font-heading">
                 PORT<span className="text-orange-600">X</span>
               </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-orange-100 text-orange-800">
+                Pet & Doorstep
+              </span>
             </div>
             <p className="text-[#767676] leading-relaxed max-w-sm">
-              {t.taglineCargo} — Operador logístico internacional especializado en transporte marítimo, aéreo, ferroviario y terrestre con seguimiento satelital.
+              Servicio especializado de transporte de mascotas y animales de compañía. Vehículos climatizados a 21°C, cuidadores veterinarios certificados y entrega en mano en la misma puerta del receptor en toda España y destinos internacionales.
             </p>
 
             <div className="space-y-2 text-[#767676] pt-2">
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-orange-600 shrink-0" />
                 <a href="tel:+34602493512" className="hover:text-orange-600 font-semibold transition-colors">
-                  {t.dispatchHotline}: +34602493512
+                  Atención y Despacho 24/7: +34602493512
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-orange-600 shrink-0" />
-                <a href="mailto:dispatch@portx-global.com" className="hover:text-orange-600 transition-colors">
-                  dispatch@portx-global.com
+                <a href="mailto:mascotas@portx-global.com" className="hover:text-orange-600 transition-colors">
+                  mascotas@portx-global.com
                 </a>
               </div>
             </div>
           </div>
 
-          {/* Cargo Services */}
+          {/* Pet Services */}
           <div>
             <h4 className="text-sm font-bold text-[#232331] font-heading mb-4 uppercase tracking-wider">
               {t.navServices}
             </h4>
             <ul className="space-y-2.5 text-[#767676]">
               <li>
-                <button onClick={() => { setActiveView('services'); setIsAdminMode(false); }} className="hover:text-orange-600 font-medium transition-colors cursor-pointer">
-                  Ocean Freight (FCL/LCL)
+                <button onClick={() => { setActiveView('services'); setIsAdminMode(false); }} className="hover:text-orange-600 font-medium transition-colors cursor-pointer text-left">
+                  Entrega Local en Puerta (21°C)
                 </button>
               </li>
               <li>
-                <button onClick={() => { setActiveView('services'); setIsAdminMode(false); }} className="hover:text-orange-600 font-medium transition-colors cursor-pointer">
-                  Air Cargo Express
+                <button onClick={() => { setActiveView('services'); setIsAdminMode(false); }} className="hover:text-orange-600 font-medium transition-colors cursor-pointer text-left">
+                  Pet Nanny Aéreo en Cabina
                 </button>
               </li>
               <li>
-                <button onClick={() => { setActiveView('services'); setIsAdminMode(false); }} className="hover:text-orange-600 font-medium transition-colors cursor-pointer">
-                  Overland Road Drayage
+                <button onClick={() => { setActiveView('services'); setIsAdminMode(false); }} className="hover:text-orange-600 font-medium transition-colors cursor-pointer text-left">
+                  Cachorros y Adopciones
                 </button>
               </li>
               <li>
-                <button onClick={() => { setActiveView('services'); setIsAdminMode(false); }} className="hover:text-orange-600 font-medium transition-colors cursor-pointer">
-                  Trans-Eurasia Rail
+                <button onClick={() => { setActiveView('services'); setIsAdminMode(false); }} className="hover:text-orange-600 font-medium transition-colors cursor-pointer text-left">
+                  Reubicación Internacional
                 </button>
               </li>
               <li>
-                <button onClick={() => { setActiveView('services'); setIsAdminMode(false); }} className="hover:text-orange-600 font-medium transition-colors cursor-pointer">
-                  Pharma Cold Chain
-                </button>
-              </li>
-              <li>
-                <button onClick={() => { setActiveView('services'); setIsAdminMode(false); }} className="hover:text-orange-600 font-medium transition-colors cursor-pointer">
-                  Customs Brokerage
+                <button onClick={() => { setActiveView('services'); setIsAdminMode(false); }} className="hover:text-orange-600 font-medium transition-colors cursor-pointer text-left">
+                  Pasaporte Veterinario y Microchip
                 </button>
               </li>
             </ul>
@@ -92,7 +90,7 @@ export const Footer: React.FC = () => {
           {/* Quick Links */}
           <div>
             <h4 className="text-sm font-bold text-[#232331] font-heading mb-4 uppercase tracking-wider">
-              {t.networkBadge}
+              Enlaces Directos
             </h4>
             <ul className="space-y-2.5 text-[#767676]">
               <li>
@@ -107,7 +105,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button onClick={() => { setActiveView('network'); setIsAdminMode(false); }} className="hover:text-orange-600 font-medium transition-colors cursor-pointer">
-                  {t.navNetwork}
+                  Bases de Cuidado en España
                 </button>
               </li>
               <li>
@@ -116,48 +114,49 @@ export const Footer: React.FC = () => {
                 </button>
               </li>
               <li>
-                <button onClick={() => setIsAdminMode(true)} className="text-orange-600 hover:text-orange-700 font-bold flex items-center gap-1 cursor-pointer">
-                  <span>{t.adminOperations}</span>
-                  <ArrowRight className="w-3 h-3" />
+                <button onClick={() => { setActiveView('contact'); setIsAdminMode(false); }} className="hover:text-orange-600 font-medium transition-colors cursor-pointer">
+                  {t.navContact}
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Certifications & Badges */}
-          <div>
-            <h4 className="text-sm font-bold text-[#232331] font-heading mb-4 uppercase tracking-wider">
-              {t.accreditationsTitle}
+          {/* Doorstep Commitment Box */}
+          <div className="space-y-3">
+            <h4 className="text-sm font-bold text-[#232331] font-heading uppercase tracking-wider flex items-center gap-1.5">
+              <Home className="w-4 h-4 text-orange-600" />
+              <span>Entrega en Puerta</span>
             </h4>
-            <div className="space-y-3 text-[#767676]">
-              <div className="p-3 bg-[#f8f5f1] rounded-xl border border-stone-200">
-                <div className="text-[#232331] font-bold">FIATA & IATA Certified</div>
-                <div className="text-[10px] text-stone-500 mt-0.5">Air & Multimodal Standard</div>
-              </div>
-              <div className="p-3 bg-[#f8f5f1] rounded-xl border border-stone-200">
-                <div className="text-[#232331] font-bold">C-TPAT Tier 3 / AEO-F</div>
-                <div className="text-[10px] text-stone-500 mt-0.5">Automated Border Clearance</div>
-              </div>
-              <div className="p-3 bg-[#f8f5f1] rounded-xl border border-stone-200">
-                <div className="text-[#232331] font-bold">ISO 9001 & 14001</div>
-                <div className="text-[10px] text-stone-500 mt-0.5">Quality & Environmental Standards</div>
-              </div>
+            <p className="text-[#767676] leading-relaxed">
+              La entrega se efectúa en mano en la misma puerta del receptor con aviso telefónico previo y verificación de microchip.
+            </p>
+            <div className="p-3 bg-orange-50 rounded-xl border border-orange-200">
+              <span className="text-[11px] font-bold text-orange-950 block">Teléfono de Reparto</span>
+              <a href="tel:+34602493512" className="text-sm font-black text-orange-600 font-mono mt-0.5 block hover:underline">
+                +34602493512
+              </a>
             </div>
+            <button
+              onClick={() => setIsAdminMode(true)}
+              className="inline-flex items-center gap-1.5 text-xs text-stone-500 hover:text-orange-600 font-semibold transition-colors cursor-pointer pt-1"
+            >
+              <span>Acceso Administración Operaciones</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
 
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-stone-500 text-[11px]">
-          <div>
-            © {new Date().getFullYear()} PortX Logistics Global NV. Todos los derechos reservados / All rights reserved.
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="hover:text-[#232331] cursor-pointer">Conditions of Carriage</span>
+        {/* Bottom Strip */}
+        <div className="mt-12 pt-8 border-t border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-[#767676]">
+          <p>© {new Date().getFullYear()} PortX Pet Relocation & Doorstep Cargo. Todos los derechos reservados.</p>
+          <div className="flex items-center gap-6">
+            <span className="flex items-center gap-1.5 font-semibold text-stone-700">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              Normativa IATA Live Animals (LAR)
+            </span>
             <span>·</span>
-            <span className="hover:text-[#232331] cursor-pointer">Privacy & Cookie Notice</span>
-            <span>·</span>
-            <span className="hover:text-[#232331] cursor-pointer">Bill of Lading Terms</span>
+            <span>Entrega Local Garantizada a Domicilio</span>
           </div>
         </div>
       </div>

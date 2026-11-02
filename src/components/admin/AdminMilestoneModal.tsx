@@ -56,20 +56,20 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
         </button>
 
         <div className="mb-5">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-orange-600">
-            Real-Time Telemetry Broadcast
+          <span className="text-[10px] font-bold uppercase tracking-wider text-orange-600 font-semibold">
+            Telemetría de Bienestar y Ruta en Tiempo Real
           </span>
           <h2 className="text-xl font-bold text-slate-900 font-heading mt-0.5">
-            Log New Checkpoint Milestone
+            Registrar Hito de Ruta / Parada de Bienestar
           </h2>
           <p className="text-xs text-slate-500 mt-1">
-            Publish an audited milestone to the public tracking portal and update the consignment's current checkpoint.
+            Publica un punto de control auditado visible para la familia en el portal de rastreo público (paseo, revisión veterinaria, reparto a puerta).
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div>
-            <label className="block text-slate-700 font-bold mb-1">Target Shipment *</label>
+            <label className="block text-slate-700 font-bold mb-1">Mascota / Envío Seleccionado *</label>
             <select
               value={shipmentId}
               onChange={(e) => {
@@ -81,34 +81,33 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
             >
               {shipments.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.trackingNumber} - {s.origin.city} → {s.destination.city} ({s.containerNumber})
+                  {s.trackingNumber} - {s.petInfo ? `${s.petInfo.petName} (${s.petInfo.breed})` : s.cargo.description} | {s.origin.city} → {s.destination.city}
                 </option>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="block text-slate-700 font-bold mb-1">Transition Status</label>
+            <label className="block text-slate-700 font-bold mb-1">Estado de la Mascota / Envío</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as ShipmentStatus)}
               className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-orange-500 focus:bg-white focus:outline-none font-bold text-orange-700"
             >
-              <option value="in_transit">In Transit (Active Waypoint)</option>
-              <option value="customs_hold">Customs Hold / Inspection</option>
-              <option value="out_for_delivery">Out for Final Delivery</option>
-              <option value="delivered">Delivered (Final Signed)</option>
-              <option value="exception">Exception / Weather Delay</option>
-              <option value="booked">Booked (Intake)</option>
+              <option value="in_transit">En Tránsito Climatizado (21°C)</option>
+              <option value="customs_hold">Revisión Sanitaria / Control Veterinario</option>
+              <option value="out_for_delivery">En Reparto Local a Puerta del Receptor</option>
+              <option value="delivered">Entregado en Mano en Puerta con Firma</option>
+              <option value="booked">Reserva Registrada / Esperando Recogida</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-slate-700 font-bold mb-1">Checkpoint / Port / Fairway Name *</label>
+            <label className="block text-slate-700 font-bold mb-1">Ubicación / Punto de Control / Ciudad *</label>
             <input
               type="text"
               required
-              placeholder="e.g. Suez Canal Southbound Convoy, Port Said"
+              placeholder="Ej. Área de Descanso A-2 km 140 (Paseo e Hidratación) o Portal Calle Serrano 42"
               value={locationName}
               onChange={(e) => setLocationName(e.target.value)}
               className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-orange-500 focus:bg-white focus:outline-none"
@@ -116,11 +115,11 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-slate-700 font-bold mb-1">Milestone Description & Remarks *</label>
+            <label className="block text-slate-700 font-bold mb-1">Descripción del Estado y Bienestar *</label>
             <textarea
               rows={3}
               required
-              placeholder="e.g. Passed navigation waypoint Alpha on schedule. Sea temperature stable. AIS transponder ping verified."
+              placeholder="Ej. Parada de paseo e hidratación completada con éxito. La mascota se encuentra muy tranquila, alegre y descansada. Furgoneta a 21.5°C constante."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-orange-500 focus:bg-white focus:outline-none"
@@ -128,11 +127,12 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-slate-700 font-bold mb-1">Authorized Dispatch Officer</label>
+            <label className="block text-slate-700 font-bold mb-1">Cuidador / Conductor Asignado</label>
             <input
               type="text"
               value={operator}
               onChange={(e) => setOperator(e.target.value)}
+              placeholder="Carlos Méndez (Cuidador Certificado)"
               className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-orange-500 focus:bg-white focus:outline-none"
             />
           </div>
@@ -143,14 +143,14 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
               onClick={onClose}
               className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs cursor-pointer"
             >
-              Cancel
+              Cancelar
             </button>
             <button
               type="submit"
               className="px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />
-              <span>Broadcast Checkpoint</span>
+              <span>Publicar Hito de Bienestar</span>
             </button>
           </div>
         </form>

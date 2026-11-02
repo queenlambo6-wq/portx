@@ -2,14 +2,15 @@ import React, { useState, useMemo } from 'react';
 import { useShipping } from '../../context/ShippingContext';
 import {
   Calculator,
-  Ship,
-  Plane,
   Truck,
-  Train,
-  Thermometer,
-  Layers,
+  Plane,
+  Heart,
+  Home,
+  CheckCircle2,
   Clock,
-  ArrowRight
+  ArrowRight,
+  ShieldCheck,
+  Award
 } from 'lucide-react';
 import { TransportMode } from '../../types';
 
@@ -28,73 +29,66 @@ interface RateCalculatorProps {
 export const RateCalculator: React.FC<RateCalculatorProps> = ({ onBookRate }) => {
   const { ports, t, language } = useShipping();
 
-  const [origin, setOrigin] = useState<string>('Port of Rotterdam (NLRTM)');
-  const [destination, setDestination] = useState<string>('Port of Singapore (SGSIN)');
-  const [mode, setMode] = useState<TransportMode>('ocean_fcl');
-  const [containerType, setContainerType] = useState<string>('40ft High Cube Container');
-  const [weightKg, setWeightKg] = useState<number>(18500);
-  const [volumeCbm, setVolumeCbm] = useState<number>(55);
+  const [origin, setOrigin] = useState<string>('Frankfurt Animal Lounge & European Vet Hub (DEFRA)');
+  const [destination, setDestination] = useState<string>('Centro de Tránsito y Cuidado de Mascotas Madrid (ESMAD)');
+  const [mode, setMode] = useState<TransportMode>('road_transport');
+  const [petType, setPetType] = useState<string>('Perro Mediano (8 - 25 kg)');
+  const [weightKg, setWeightKg] = useState<number>(18);
+  const [doorstepAddress, setDoorstepAddress] = useState<string>('Calle Velázquez 64, Madrid');
   const [includeInsurance, setIncludeInsurance] = useState<boolean>(true);
-  const [includeCustoms, setIncludeCustoms] = useState<boolean>(true);
-  const [includePortHandling, setIncludePortHandling] = useState<boolean>(true);
+  const [includeVetPassport, setIncludeVetPassport] = useState<boolean>(true);
+  const [includePetNanny, setIncludePetNanny] = useState<boolean>(false);
 
-  // Dynamic Freight Calculation
+  // Dynamic Pet Freight Calculation
   const quoteCalculation = useMemo(() => {
-    let baseRate = 2200;
-    let days = 22;
+    let baseRate = 320;
+    let hoursOrDays = '24-48 horas';
 
     switch (mode) {
-      case 'ocean_fcl':
-        baseRate = containerType.includes('20ft') ? 1850 : 2650;
-        days = 22;
-        break;
-      case 'ocean_lcl':
-        baseRate = volumeCbm * 75 + weightKg * 0.04;
-        days = 28;
+      case 'road_transport':
+        baseRate = petType.includes('Pequeño') ? 290 : petType.includes('Grande') ? 420 : 350;
+        hoursOrDays = '24-48 horas';
         break;
       case 'air_freight':
-        baseRate = Math.max(weightKg, volumeCbm * 167) * 3.8;
-        days = 3;
+        baseRate = 650;
+        hoursOrDays = 'Mismo día (12-24 h)';
         break;
-      case 'rail_freight':
-        baseRate = 3400;
-        days = 16;
+      case 'cold_chain': // Puppies
+        baseRate = 380;
+        hoursOrDays = '24 horas prioritario';
         break;
-      case 'road_transport':
-        baseRate = 1950;
-        days = 5;
+      case 'ocean_fcl': // International
+        baseRate = 780;
+        hoursOrDays = '3 a 5 días';
         break;
-      case 'cold_chain':
-        baseRate = 4200;
-        days = 20;
+      default:
+        baseRate = 340;
         break;
     }
 
-    const bunkerFuelFee = Math.round(baseRate * 0.12);
-    const terminalHandling = includePortHandling ? (mode === 'air_freight' ? 280 : 350) : 0;
-    const customsFee = includeCustoms ? 190 : 0;
-    const insuranceFee = includeInsurance ? Math.round(baseRate * 0.035 + 85) : 0;
-    const total = Math.round(baseRate + bunkerFuelFee + terminalHandling + customsFee + insuranceFee);
+    const nannyFee = includePetNanny ? 150 : 0;
+    const passportFee = includeVetPassport ? 60 : 0;
+    const insuranceFee = includeInsurance ? 45 : 0;
+    const total = Math.round(baseRate + nannyFee + passportFee + insuranceFee);
 
     return {
-      baseRate: Math.round(baseRate),
-      bunkerFuelFee,
-      terminalHandling,
-      customsFee,
+      baseRate,
+      nannyFee,
+      passportFee,
       insuranceFee,
       total,
-      transitDays: days
+      transitEstimate: hoursOrDays
     };
-  }, [origin, destination, mode, containerType, weightKg, volumeCbm, includeInsurance, includeCustoms, includePortHandling]);
+  }, [mode, petType, weightKg, includeInsurance, includeVetPassport, includePetNanny]);
 
   const handleBookNow = () => {
     onBookRate({
       origin,
-      destination,
+      destination: `${destination} (Entrega en Puerta: ${doorstepAddress})`,
       mode,
-      containerType,
+      containerType: petType,
       weightKg,
-      volumeCbm,
+      volumeCbm: 0.25,
       totalCostUsd: quoteCalculation.total
     });
   };
@@ -102,32 +96,26 @@ export const RateCalculator: React.FC<RateCalculatorProps> = ({ onBookRate }) =>
   const getModeLabels = () => {
     if (language === 'de') {
       return [
-        { id: 'ocean_fcl', label: 'See FCL', icon: <Ship className="w-4 h-4" /> },
-        { id: 'ocean_lcl', label: 'See LCL (Sammel)', icon: <Layers className="w-4 h-4" /> },
-        { id: 'air_freight', label: 'Luftfracht', icon: <Plane className="w-4 h-4" /> },
-        { id: 'rail_freight', label: 'Bahnfracht', icon: <Train className="w-4 h-4" /> },
-        { id: 'road_transport', label: 'Lkw-Transport', icon: <Truck className="w-4 h-4" /> },
-        { id: 'cold_chain', label: 'Kühlcontainer', icon: <Thermometer className="w-4 h-4" /> },
+        { id: 'road_transport', label: 'Haustür-Transporter (21°C)', icon: <Home className="w-4 h-4" /> },
+        { id: 'air_freight', label: 'Pet Nanny Flugbegleitung', icon: <Plane className="w-4 h-4" /> },
+        { id: 'cold_chain', label: 'Welpen / Züchter-Express', icon: <Heart className="w-4 h-4" /> },
+        { id: 'ocean_fcl', label: 'Internationale Umsiedlung', icon: <Award className="w-4 h-4" /> },
       ];
     }
     if (language === 'en') {
       return [
-        { id: 'ocean_fcl', label: 'Ocean FCL', icon: <Ship className="w-4 h-4" /> },
-        { id: 'ocean_lcl', label: 'Ocean LCL', icon: <Layers className="w-4 h-4" /> },
-        { id: 'air_freight', label: 'Air Express', icon: <Plane className="w-4 h-4" /> },
-        { id: 'rail_freight', label: 'Rail Cargo', icon: <Train className="w-4 h-4" /> },
-        { id: 'road_transport', label: 'Road Drayage', icon: <Truck className="w-4 h-4" /> },
-        { id: 'cold_chain', label: 'Cold Reefer', icon: <Thermometer className="w-4 h-4" /> },
+        { id: 'road_transport', label: 'Climate Doorstep Van', icon: <Home className="w-4 h-4" /> },
+        { id: 'air_freight', label: 'In-Cabin Pet Nanny', icon: <Plane className="w-4 h-4" /> },
+        { id: 'cold_chain', label: 'Puppy & Adoption Care', icon: <Heart className="w-4 h-4" /> },
+        { id: 'ocean_fcl', label: 'International Relocation', icon: <Award className="w-4 h-4" /> },
       ];
     }
     // Spanish
     return [
-      { id: 'ocean_fcl', label: 'Marítimo FCL', icon: <Ship className="w-4 h-4" /> },
-      { id: 'ocean_lcl', label: 'Marítimo LCL', icon: <Layers className="w-4 h-4" /> },
-      { id: 'air_freight', label: 'Aéreo Exprés', icon: <Plane className="w-4 h-4" /> },
-      { id: 'rail_freight', label: 'Ferrocarril', icon: <Train className="w-4 h-4" /> },
-      { id: 'road_transport', label: 'Carretera FTL', icon: <Truck className="w-4 h-4" /> },
-      { id: 'cold_chain', label: 'Frigorífico', icon: <Thermometer className="w-4 h-4" /> },
+      { id: 'road_transport', label: 'Furgoneta Puerta a Puerta', icon: <Home className="w-4 h-4" /> },
+      { id: 'air_freight', label: 'Pet Nanny Aéreo Cabina', icon: <Plane className="w-4 h-4" /> },
+      { id: 'cold_chain', label: 'Cachorros / Adopciones', icon: <Heart className="w-4 h-4" /> },
+      { id: 'ocean_fcl', label: 'Reubicación Internacional', icon: <Award className="w-4 h-4" /> },
     ];
   };
 
@@ -137,7 +125,7 @@ export const RateCalculator: React.FC<RateCalculatorProps> = ({ onBookRate }) =>
       <div className="text-center max-w-3xl mx-auto mb-14">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-md bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold uppercase tracking-wider mb-2">
           <Calculator className="w-3.5 h-3.5" />
-          {t.calcBadge}
+          <span>{t.calcBadge}</span>
         </div>
         <h2 className="text-3xl sm:text-4xl font-black text-[#232331] font-heading tracking-tight">
           {t.calcHeading}
@@ -150,18 +138,19 @@ export const RateCalculator: React.FC<RateCalculatorProps> = ({ onBookRate }) =>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Form Inputs (7 Cols) */}
         <div className="lg:col-span-7 bg-white rounded-2xl border border-stone-200 p-6 sm:p-8 shadow-sm space-y-6">
+          
           {/* Mode Selector */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-[#232331] mb-2">
               {t.selectModeLabel}
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {getModeLabels().map((m) => (
                 <button
                   key={m.id}
                   type="button"
                   onClick={() => setMode(m.id as TransportMode)}
-                  className={`flex items-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                  className={`flex items-center gap-2.5 p-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                     mode === m.id
                       ? 'bg-orange-600 text-white border-orange-600 shadow-md shadow-orange-600/20'
                       : 'bg-[#f8f5f1] text-[#232331] border-stone-200 hover:bg-stone-200/60'
@@ -185,11 +174,24 @@ export const RateCalculator: React.FC<RateCalculatorProps> = ({ onBookRate }) =>
                 onChange={(e) => setOrigin(e.target.value)}
                 className="w-full bg-[#f8f5f1] text-[#232331] text-xs sm:text-sm font-medium rounded-xl border border-stone-300 p-3 focus:border-orange-500 focus:bg-white focus:outline-none"
               >
-                {ports.map((p) => (
-                  <option key={p.id} value={`${p.name} (${p.code})`}>
-                    {p.name} ({p.code}) - {p.country}
-                  </option>
-                ))}
+                <optgroup label="🇪🇸 Bases y Ciudades de España">
+                  {ports
+                    .filter((p) => p.country === 'España')
+                    .map((p) => (
+                      <option key={p.id} value={`${p.city} - ${p.name} (${p.code})`}>
+                        {p.city} · {p.name} ({p.code})
+                      </option>
+                    ))}
+                </optgroup>
+                <optgroup label="🇪🇺 Conexiones Internacionales Europa">
+                  {ports
+                    .filter((p) => p.country !== 'España')
+                    .map((p) => (
+                      <option key={p.id} value={`${p.city} (${p.country}) - ${p.name} (${p.code})`}>
+                        {p.city} ({p.country}) · {p.name} ({p.code})
+                      </option>
+                    ))}
+                </optgroup>
               </select>
             </div>
 
@@ -202,182 +204,204 @@ export const RateCalculator: React.FC<RateCalculatorProps> = ({ onBookRate }) =>
                 onChange={(e) => setDestination(e.target.value)}
                 className="w-full bg-[#f8f5f1] text-[#232331] text-xs sm:text-sm font-medium rounded-xl border border-stone-300 p-3 focus:border-orange-500 focus:bg-white focus:outline-none"
               >
-                {ports.map((p) => (
-                  <option key={p.id} value={`${p.name} (${p.code})`}>
-                    {p.name} ({p.code}) - {p.country}
-                  </option>
-                ))}
+                <optgroup label="🇪🇸 Ciudades de Destino en España (Entrega en Puerta)">
+                  {ports
+                    .filter((p) => p.country === 'España')
+                    .map((p) => (
+                      <option key={p.id} value={`${p.city} - ${p.name} (${p.code})`}>
+                        {p.city} · {p.name} ({p.code})
+                      </option>
+                    ))}
+                </optgroup>
+                <optgroup label="🇪🇺 Destinos Internacionales Europa">
+                  {ports
+                    .filter((p) => p.country !== 'España')
+                    .map((p) => (
+                      <option key={p.id} value={`${p.city} (${p.country}) - ${p.name} (${p.code})`}>
+                        {p.city} ({p.country}) · {p.name} ({p.code})
+                      </option>
+                    ))}
+                </optgroup>
               </select>
             </div>
           </div>
 
-          {/* Cargo Specifications */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="sm:col-span-1">
+          {/* Doorstep Delivery Address Input */}
+          <div className="p-4 bg-orange-50/70 rounded-xl border border-orange-200">
+            <label className="block text-xs font-bold uppercase tracking-wider text-orange-950 mb-1 flex items-center gap-1.5">
+              <Home className="w-4 h-4 text-orange-600" />
+              <span>Dirección Exacta de la Puerta del Receptor en Destino</span>
+            </label>
+            <input
+              type="text"
+              value={doorstepAddress}
+              onChange={(e) => setDoorstepAddress(e.target.value)}
+              placeholder="Ej: Calle Velázquez 64, 4º Izq, 28001 Madrid"
+              className="w-full bg-white text-[#232331] text-xs sm:text-sm font-medium rounded-xl border border-orange-300 p-2.5 focus:border-orange-500 focus:outline-none"
+            />
+            <span className="text-[11px] text-orange-800 mt-1 block font-medium">
+              ✓ Entrega directa en mano: el conductor sube al domicilio y verifica la identidad y microchip.
+            </span>
+          </div>
+
+          {/* Pet Details */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#232331] mb-1.5">
                 {t.containerUnitLabel}
               </label>
               <select
-                value={containerType}
-                onChange={(e) => setContainerType(e.target.value)}
-                className="w-full bg-[#f8f5f1] text-[#232331] text-xs font-medium rounded-xl border border-stone-300 p-3 focus:border-orange-500 focus:bg-white focus:outline-none"
+                value={petType}
+                onChange={(e) => setPetType(e.target.value)}
+                className="w-full bg-[#f8f5f1] text-[#232331] text-xs sm:text-sm font-medium rounded-xl border border-stone-300 p-3 focus:border-orange-500 focus:bg-white focus:outline-none"
               >
-                <option value="20ft Standard Dry Container">20ft Dry Container</option>
-                <option value="40ft High Cube Container">40ft High Cube</option>
-                <option value="45ft Pallet-Wide Container">45ft Pallet-Wide</option>
-                <option value="40ft Active Reefer (-20°C)">40ft Reefer (-20°C)</option>
-                <option value="Air Freight ULD Pallet">Air Freight ULD Pallet</option>
+                <option value="Perro Pequeño / Toy (< 8 kg)">Perro Pequeño / Toy (&lt; 8 kg) - Box IATA S</option>
+                <option value="Perro Mediano (8 - 25 kg)">Perro Mediano (8 - 25 kg) - Box IATA M/L</option>
+                <option value="Perro Grande (> 25 kg)">Perro Grande (&gt; 25 kg) - Box IATA XL</option>
+                <option value="Gato / Felino Doméstico">Gato / Felino Doméstico - Pod Aislado</option>
+                <option value="Cachorro de Adopción / Criador">Cachorro de Adopción / Criador (8+ semanas)</option>
+                <option value="Ave o Mascota Exótica">Ave o Mascota Exótica</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#232331] mb-1.5">
-                {t.grossWeightKgLabel}
+                {t.grossWeightCalcLabel}
               </label>
               <input
                 type="number"
-                min={100}
-                max={40000}
-                step={100}
                 value={weightKg}
-                onChange={(e) => setWeightKg(Number(e.target.value))}
-                className="w-full bg-[#f8f5f1] text-[#232331] text-xs sm:text-sm font-mono font-bold rounded-xl border border-stone-300 p-3 focus:border-orange-500 focus:bg-white focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#232331] mb-1.5">
-                {t.volumeCbmLabel}
-              </label>
-              <input
-                type="number"
-                min={1}
-                max={120}
-                value={volumeCbm}
-                onChange={(e) => setVolumeCbm(Number(e.target.value))}
-                className="w-full bg-[#f8f5f1] text-[#232331] text-xs sm:text-sm font-mono font-bold rounded-xl border border-stone-300 p-3 focus:border-orange-500 focus:bg-white focus:outline-none"
+                onChange={(e) => setWeightKg(Math.max(1, Number(e.target.value)))}
+                className="w-full bg-[#f8f5f1] text-[#232331] text-xs sm:text-sm font-medium rounded-xl border border-stone-300 p-3 focus:border-orange-500 focus:bg-white focus:outline-none font-mono"
               />
             </div>
           </div>
 
-          {/* Value Added Services */}
+          {/* Additional Welfare Options */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#232331] mb-2">
-              {t.valueAddedOptions}
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#232331] mb-3">
+              {t.optionsHeading}
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <label className="flex items-center gap-2.5 p-3 bg-[#f8f5f1] rounded-xl border border-stone-200 cursor-pointer hover:border-orange-400">
-                <input
-                  type="checkbox"
-                  checked={includePortHandling}
-                  onChange={(e) => setIncludePortHandling(e.target.checked)}
-                  className="rounded text-orange-600 focus:ring-orange-500"
-                />
-                <span className="text-xs text-[#232331] font-semibold">{t.optTerminalHandling}</span>
-              </label>
-
-              <label className="flex items-center gap-2.5 p-3 bg-[#f8f5f1] rounded-xl border border-stone-200 cursor-pointer hover:border-orange-400">
-                <input
-                  type="checkbox"
-                  checked={includeCustoms}
-                  onChange={(e) => setIncludeCustoms(e.target.checked)}
-                  className="rounded text-orange-600 focus:ring-orange-500"
-                />
-                <span className="text-xs text-[#232331] font-semibold">{t.optCustomsBrokerage}</span>
-              </label>
-
-              <label className="flex items-center gap-2.5 p-3 bg-[#f8f5f1] rounded-xl border border-stone-200 cursor-pointer hover:border-orange-400">
+            <div className="space-y-2.5">
+              <label className="flex items-center gap-3 p-3 rounded-xl border border-stone-200 bg-[#f8f5f1] hover:bg-stone-100 cursor-pointer text-xs">
                 <input
                   type="checkbox"
                   checked={includeInsurance}
                   onChange={(e) => setIncludeInsurance(e.target.checked)}
-                  className="rounded text-orange-600 focus:ring-orange-500"
+                  className="w-4 h-4 text-orange-600 rounded border-stone-300 focus:ring-orange-500"
                 />
-                <span className="text-xs text-[#232331] font-semibold">{t.optCargoInsurance}</span>
+                <div className="flex-1">
+                  <span className="font-bold text-[#232331] block">{t.optInsurance}</span>
+                  <span className="text-[11px] text-[#767676]">Cobertura médica veterinaria completa durante todo el trayecto (+45 EUR)</span>
+                </div>
+              </label>
+
+              <label className="flex items-center gap-3 p-3 rounded-xl border border-stone-200 bg-[#f8f5f1] hover:bg-stone-100 cursor-pointer text-xs">
+                <input
+                  type="checkbox"
+                  checked={includeVetPassport}
+                  onChange={(e) => setIncludeVetPassport(e.target.checked)}
+                  className="w-4 h-4 text-orange-600 rounded border-stone-300 focus:ring-orange-500"
+                />
+                <div className="flex-1">
+                  <span className="font-bold text-[#232331] block">{t.optCustoms}</span>
+                  <span className="text-[11px] text-[#767676]">Verificación oficial de cartilla, microchip y pasaporte sanitario (+60 EUR)</span>
+                </div>
+              </label>
+
+              <label className="flex items-center gap-3 p-3 rounded-xl border border-stone-200 bg-[#f8f5f1] hover:bg-stone-100 cursor-pointer text-xs">
+                <input
+                  type="checkbox"
+                  checked={includePetNanny}
+                  onChange={(e) => setIncludePetNanny(e.target.checked)}
+                  className="w-4 h-4 text-orange-600 rounded border-stone-300 focus:ring-orange-500"
+                />
+                <div className="flex-1">
+                  <span className="font-bold text-[#232331] block">{t.optTerminalHandling}</span>
+                  <span className="text-[11px] text-[#767676]">Cuidador veterinario exclusivo con atención individualizada 1:1 (+150 EUR)</span>
+                </div>
               </label>
             </div>
           </div>
         </div>
 
-        {/* Output Quote Summary Box (5 Cols) - PortX Signature Orange Accent Card */}
-        <div className="lg:col-span-5 bg-white rounded-2xl border-2 border-orange-500 p-6 sm:p-8 shadow-xl relative">
-          <div className="flex items-center justify-between pb-4 border-b border-stone-200">
+        {/* Quote Summary Box (5 Cols) */}
+        <div className="lg:col-span-5 bg-white rounded-2xl border-2 border-orange-200 p-6 sm:p-8 shadow-xl space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-stone-100">
             <div>
-              <span className="text-[10px] uppercase font-bold text-orange-600 tracking-wider">
-                {t.quoteResultTitle}
+              <span className="text-[11px] font-bold uppercase tracking-wider text-orange-600 block">
+                {t.guaranteedRateBadge}
               </span>
-              <h3 className="text-lg font-bold text-[#232331] font-heading">
-                PortX Freight Quotation
+              <h3 className="text-xl font-black text-[#232331] font-heading mt-0.5">
+                {t.estimatedQuoteTitle}
               </h3>
             </div>
             <div className="text-right">
-              <span className="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 flex items-center gap-1 font-bold">
-                <Clock className="w-3.5 h-3.5" />
-                ~{quoteCalculation.transitDays} {t.daysTransit}
+              <span className="text-[10px] text-stone-500 font-bold block">{t.transitDaysEstimate}</span>
+              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200 flex items-center gap-1 mt-0.5">
+                <Clock className="w-3 h-3" />
+                {quoteCalculation.transitEstimate}
               </span>
             </div>
           </div>
 
-          {/* Total Cost Highlight */}
-          <div className="my-6 p-5 rounded-xl bg-orange-50/70 border border-orange-200 flex items-center justify-between">
+          {/* Cost Breakdown */}
+          <div className="space-y-3 text-xs border-b border-stone-100 pb-5">
+            <div className="flex justify-between text-stone-600">
+              <span>{t.baseFreightLabel}</span>
+              <span className="font-mono font-bold text-[#232331]">{quoteCalculation.baseRate} EUR</span>
+            </div>
+            <div className="flex justify-between text-stone-600">
+              <span>Climatización Cabina (21°C) y Paseos</span>
+              <span className="font-mono font-bold text-[#232331]">Incluido</span>
+            </div>
+            <div className="flex justify-between text-stone-600">
+              <span>Entrega Directa en la Puerta del Receptor</span>
+              <span className="font-mono font-bold text-emerald-700">Incluido (0 EUR)</span>
+            </div>
+            {includeVetPassport && (
+              <div className="flex justify-between text-stone-600">
+                <span>{t.customsEntryLabel}</span>
+                <span className="font-mono font-bold text-[#232331]">{quoteCalculation.passportFee} EUR</span>
+              </div>
+            )}
+            {includeInsurance && (
+              <div className="flex justify-between text-stone-600">
+                <span>{t.insuranceUnderwritingLabel}</span>
+                <span className="font-mono font-bold text-[#232331]">{quoteCalculation.insuranceFee} EUR</span>
+              </div>
+            )}
+            {includePetNanny && (
+              <div className="flex justify-between text-stone-600">
+                <span>Pet Nanny 1:1 Exclusivo</span>
+                <span className="font-mono font-bold text-[#232331]">{quoteCalculation.nannyFee} EUR</span>
+              </div>
+            )}
+          </div>
+
+          {/* Total Cost Display */}
+          <div className="p-4 bg-orange-50 rounded-xl border border-orange-200 flex items-center justify-between">
             <div>
-              <span className="text-xs text-[#767676] font-semibold block">{t.totalEstimatedCost}</span>
-              <div className="text-3xl font-black text-[#232331] font-mono mt-0.5">
-                ${quoteCalculation.total.toLocaleString()}
-              </div>
+              <span className="text-xs font-bold text-orange-950 block">{t.totalCostLabel}</span>
+              <span className="text-[11px] text-orange-800">Tarifa fija sin cargos sorpresa</span>
             </div>
-            <span className="text-xs font-bold px-2.5 py-1 rounded bg-white text-orange-700 border border-orange-200 shadow-2xs">
-              {t.guaranteedRatePill}
-            </span>
+            <div className="text-3xl font-black text-orange-600 font-heading">
+              {quoteCalculation.total} €
+            </div>
           </div>
 
-          {/* Itemized Breakdown */}
-          <div className="space-y-3 text-xs">
-            <div className="flex justify-between py-1 border-b border-stone-100 text-[#232331]">
-              <span className="text-[#767676]">{t.baseFreightCharge}:</span>
-              <span className="font-mono font-bold text-[#232331]">${quoteCalculation.baseRate.toLocaleString()}</span>
-            </div>
+          <p className="text-[11px] text-stone-500 leading-relaxed">
+            {t.quoteFootnote}
+          </p>
 
-            <div className="flex justify-between py-1 border-b border-stone-100 text-[#232331]">
-              <span className="text-[#767676]">{t.bunkerSurcharge}:</span>
-              <span className="font-mono font-bold text-[#232331]">${quoteCalculation.bunkerFuelFee.toLocaleString()}</span>
-            </div>
-
-            {quoteCalculation.terminalHandling > 0 && (
-              <div className="flex justify-between py-1 border-b border-stone-100 text-[#232331]">
-                <span className="text-[#767676]">{t.terminalHandlingFee}:</span>
-                <span className="font-mono font-bold text-[#232331]">${quoteCalculation.terminalHandling.toLocaleString()}</span>
-              </div>
-            )}
-
-            {quoteCalculation.customsFee > 0 && (
-              <div className="flex justify-between py-1 border-b border-stone-100 text-[#232331]">
-                <span className="text-[#767676]">{t.customsEntryFee}:</span>
-                <span className="font-mono font-bold text-[#232331]">${quoteCalculation.customsFee.toLocaleString()}</span>
-              </div>
-            )}
-
-            {quoteCalculation.insuranceFee > 0 && (
-              <div className="flex justify-between py-1 border-b border-stone-100 text-[#232331]">
-                <span className="text-[#767676]">{t.insuranceUnderwritingFee}:</span>
-                <span className="font-mono font-bold text-[#232331]">${quoteCalculation.insuranceFee.toLocaleString()}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Booking Button */}
-          <div className="mt-8 space-y-3">
-            <button
-              onClick={handleBookNow}
-              className="w-full py-3.5 px-4 bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm rounded-xl transition-all shadow-md shadow-orange-600/25 flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <span>{t.bookAtThisRateBtn}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-            <p className="text-[11px] text-[#767676] text-center font-medium">
-              {t.rateIncludesFooter}
-            </p>
-          </div>
+          <button
+            type="button"
+            onClick={handleBookNow}
+            className="w-full py-3.5 px-6 bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm rounded-xl shadow-md shadow-orange-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>{t.bookConsignmentBtn}</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </section>

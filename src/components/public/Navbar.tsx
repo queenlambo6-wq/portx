@@ -160,7 +160,7 @@ export const Navbar: React.FC = () => {
                   PORT<span className="text-orange-600">X</span>
                 </span>
                 <span className="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-orange-100 text-orange-700 border border-orange-200">
-                  Cargo
+                  Pet & Doorstep
                 </span>
               </div>
               <p className="text-[11px] text-[#767676] font-medium">
