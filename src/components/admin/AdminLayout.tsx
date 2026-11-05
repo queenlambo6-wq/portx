@@ -147,7 +147,7 @@ export const AdminLayout: React.FC = () => {
                 <div key={s.id} className="p-5 bg-white rounded-2xl border border-stone-200 shadow-2xs space-y-4">
                   <div className="flex justify-between items-start">
                     <div>
-                      <span className="text-[10px] font-mono text-orange-600 uppercase font-bold">
+                      <span className="text-[10px] font-mono text-red-600 uppercase font-bold">
                         {s.bolNumber}
                       </span>
                       <h3 className="font-bold text-[#232331] text-sm font-mono mt-0.5">{s.trackingNumber}</h3>
@@ -170,7 +170,7 @@ export const AdminLayout: React.FC = () => {
                     </span>
                     <button
                       onClick={() => setSelectedShipmentForPrint(s)}
-                      className="px-3.5 py-1.5 bg-orange-50 hover:bg-orange-600 text-orange-700 hover:text-white font-bold text-xs rounded-lg border border-orange-200 hover:border-orange-600 transition-all flex items-center gap-1.5 cursor-pointer"
+                      className="px-3.5 py-1.5 bg-red-50 hover:bg-red-600 text-red-700 hover:text-white font-bold text-xs rounded-lg border border-red-200 hover:border-red-600 transition-all flex items-center gap-1.5 cursor-pointer"
                     >
                       <Printer className="w-3.5 h-3.5" />
                       <span>{t.printWaybillBtn}</span>
@@ -218,14 +218,14 @@ export const AdminLayout: React.FC = () => {
           <div className="flex items-center gap-3">
             {/* Officer Profile Badge */}
             <div className="flex items-center gap-2.5 px-3 py-1.5 bg-[#f8f5f1] rounded-xl border border-stone-200">
-              <div className="w-7 h-7 rounded-lg bg-orange-600 text-white flex items-center justify-center font-bold text-xs">
+              <div className="w-7 h-7 rounded-lg bg-red-600 text-white flex items-center justify-center font-bold text-xs">
                 {currentAdminUser?.name.charAt(0) || 'A'}
               </div>
               <div className="text-left hidden md:block">
                 <div className="text-xs font-bold text-[#232331] leading-tight">
                   {currentAdminUser?.name}
                 </div>
-                <div className="text-[10px] text-orange-600 font-semibold leading-tight">
+                <div className="text-[10px] text-red-600 font-semibold leading-tight">
                   {currentAdminUser?.role}
                 </div>
               </div>
@@ -234,7 +234,7 @@ export const AdminLayout: React.FC = () => {
             {/* Change Password Button */}
             <button
               onClick={() => setIsPasswordModalOpen(true)}
-              className="p-2 text-stone-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors border border-transparent hover:border-orange-200 cursor-pointer"
+              className="p-2 text-stone-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-200 cursor-pointer"
               title={language === 'es' ? 'Cambiar Contraseña de Oficial' : 'Change Security Password'}
             >
               <KeyRound className="w-4 h-4" />
@@ -255,10 +255,10 @@ export const AdminLayout: React.FC = () => {
                 setIsAdminMode(false);
                 setActiveView('track');
               }}
-              className="text-xs text-[#232331] hover:text-orange-700 flex items-center gap-1.5 font-bold px-3 py-1.5 rounded-lg bg-[#f8f5f1] hover:bg-orange-50 border border-stone-200 transition-colors cursor-pointer"
+              className="text-xs text-[#232331] hover:text-red-700 flex items-center gap-1.5 font-bold px-3 py-1.5 rounded-lg bg-[#f8f5f1] hover:bg-red-50 border border-stone-200 transition-colors cursor-pointer"
             >
               <span className="hidden sm:inline">{t.viewTrackingSiteBtn}</span>
-              <ExternalLink className="w-3.5 h-3.5 text-orange-600" />
+              <ExternalLink className="w-3.5 h-3.5 text-red-600" />
             </button>
           </div>
         </header>
@@ -305,7 +305,7 @@ export const AdminLayout: React.FC = () => {
             </button>
 
             <div className="mb-4">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-orange-600">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-red-600">
                 {language === 'es' ? 'Gestión de Credenciales de Seguridad' : 'Security Credentials Management'}
               </span>
               <h3 className="text-lg font-bold text-[#232331] font-heading mt-0.5">
@@ -338,7 +338,7 @@ export const AdminLayout: React.FC = () => {
                     placeholder="At least 6 characters"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-orange-500 focus:bg-white focus:outline-none font-mono"
+                    className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-red-500 focus:bg-white focus:outline-none font-mono"
                   />
                 </div>
 
@@ -350,7 +350,7 @@ export const AdminLayout: React.FC = () => {
                     placeholder="Re-enter password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-orange-500 focus:bg-white focus:outline-none font-mono"
+                    className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-red-500 focus:bg-white focus:outline-none font-mono"
                   />
                 </div>
 
@@ -364,7 +364,7 @@ export const AdminLayout: React.FC = () => {
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-md cursor-pointer"
+                    className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md cursor-pointer"
                   >
                     {language === 'es' ? 'Guardar Nueva Contraseña' : 'Save New Password'}
                   </button>

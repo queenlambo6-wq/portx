@@ -61,7 +61,7 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
         </button>
 
         <div className="mb-5">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-orange-600 font-semibold">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-red-600 font-semibold">
             Telemetría de Bienestar y Ruta en Tiempo Real
           </span>
           <h2 className="text-xl font-bold text-slate-900 font-heading mt-0.5">
@@ -82,7 +82,7 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
                 const s = shipments.find((item) => item.id === e.target.value);
                 if (s) setStatus(s.status);
               }}
-              className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-orange-500 focus:bg-white focus:outline-none font-mono font-bold"
+              className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-red-500 focus:bg-white focus:outline-none font-mono font-bold"
             >
               {shipments.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -97,7 +97,7 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as ShipmentStatus)}
-              className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-orange-500 focus:bg-white focus:outline-none font-bold text-orange-700"
+              className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-red-500 focus:bg-white focus:outline-none font-bold text-red-700"
             >
               <option value="in_transit">En Tránsito Climatizado (21°C)</option>
               <option value="customs_hold">Revisión Sanitaria / Control Veterinario</option>
@@ -115,7 +115,7 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
               placeholder="Ej. Área de Descanso A-2 km 140 (Paseo e Hidratación) o Portal Calle Serrano 42"
               value={locationName}
               onChange={(e) => setLocationName(e.target.value)}
-              className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-orange-500 focus:bg-white focus:outline-none"
+              className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-red-500 focus:bg-white focus:outline-none"
             />
           </div>
 
@@ -127,7 +127,7 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
               placeholder="Ej. Parada de paseo e hidratación completada con éxito. La mascota se encuentra muy tranquila, alegre y descansada. Furgoneta a 21.5°C constante."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-orange-500 focus:bg-white focus:outline-none"
+              className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-red-500 focus:bg-white focus:outline-none"
             ></textarea>
           </div>
 
@@ -153,7 +153,7 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
               value={operator}
               onChange={(e) => setOperator(e.target.value)}
               placeholder="Carlos Méndez (Cuidador Certificado)"
-              className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-orange-500 focus:bg-white focus:outline-none"
+              className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-red-500 focus:bg-white focus:outline-none"
             />
           </div>
 
@@ -167,7 +167,7 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer"
+              className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />
               <span>Publicar Hito de Bienestar</span>

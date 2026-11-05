@@ -79,12 +79,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             onClick={() => onOpenMilestoneModal()}
             className="px-3.5 py-2 rounded-xl bg-white hover:bg-stone-50 text-[#232331] text-xs font-bold border border-stone-300 flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
           >
-            <MapPin className="w-3.5 h-3.5 text-orange-600" />
+            <MapPin className="w-3.5 h-3.5 text-red-600" />
             <span>{t.recordCheckpointBtn}</span>
           </button>
           <button
             onClick={onOpenCreateModal}
-            className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-md shadow-orange-600/20 cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-md shadow-red-600/20 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>{t.newShipmentBtn}</span>
@@ -105,7 +105,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               {inTransitCount} {language === 'es' ? 'en tránsito activo' : language === 'de' ? 'im aktiven Transit' : 'in active transit'}
             </span>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center">
             <Package className="w-6 h-6" />
           </div>
         </div>
@@ -133,7 +133,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               {t.inquiriesKpi}
             </span>
             <div className="text-3xl font-black text-[#232331] font-mono mt-1">{inquiries.length}</div>
-            <span className="text-[11px] text-orange-700 mt-1 font-bold">
+            <span className="text-[11px] text-red-700 mt-1 font-bold">
               {pendingInquiriesCount} {language === 'es' ? 'pendientes de cotización' : language === 'de' ? 'Angebote offen' : 'quotes pending'}
             </span>
           </div>
@@ -161,19 +161,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       </div>
 
       {/* Real-time Telemetry AIS Operations Ticker */}
-      <div className="bg-orange-50/70 rounded-2xl border border-orange-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-red-50/70 rounded-2xl border border-red-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="px-2.5 py-1 rounded bg-orange-600 text-white font-black text-[10px] uppercase tracking-wider shrink-0 flex items-center gap-1 shadow-2xs">
+          <span className="px-2.5 py-1 rounded bg-red-600 text-white font-black text-[10px] uppercase tracking-wider shrink-0 flex items-center gap-1 shadow-2xs">
             <Activity className="w-3.5 h-3.5" />
             {t.recentPingsTitle}
           </span>
           <p className="text-xs text-[#232331] font-mono font-medium">
-            Vessel <strong className="text-orange-950 font-bold">PortX Explorer IV</strong> (Voyage 409E) reported waypoint Malacca Strait Approach (Speed 19.4 kts, ETA Nov 05).
+            Vessel <strong className="text-stone-900 font-bold">PortX Explorer IV</strong> (Voyage 409E) reported waypoint Malacca Strait Approach (Speed 19.4 kts, ETA Nov 05).
           </p>
         </div>
         <button
           onClick={() => setAdminSubView('fleet')}
-          className="text-xs font-bold text-orange-700 hover:text-orange-800 shrink-0 flex items-center gap-1 cursor-pointer"
+          className="text-xs font-bold text-red-700 hover:text-red-800 shrink-0 flex items-center gap-1 cursor-pointer"
         >
           <span>Fleet Telemetry</span>
           <ArrowRight className="w-3 h-3" />
@@ -195,7 +195,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
             <button
               onClick={() => setAdminSubView('shipments')}
-              className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 cursor-pointer"
             >
               <span>View All ({shipments.length})</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -218,7 +218,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <tr key={shipment.id} className="hover:bg-stone-50 transition-colors">
                     <td className="py-3 px-3">
                       <div className="font-mono font-bold text-[#232331] text-xs flex items-center gap-1">
-                        <Heart className="w-3 h-3 fill-orange-600 text-orange-600" />
+                        <Heart className="w-3 h-3 fill-red-600 text-red-600" />
                         <span>{shipment.petInfo ? `${shipment.petInfo.petName} (${shipment.trackingNumber})` : shipment.trackingNumber}</span>
                       </div>
                       <div className="text-[10px] text-[#767676] font-mono mt-0.5">
@@ -230,7 +230,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <div className="font-bold text-[#232331] truncate max-w-[200px]">
                         {shipment.origin.city} → {shipment.doorstepDelivery?.receiverCity || shipment.destination.city}
                       </div>
-                      <div className="text-[10px] text-orange-800 font-medium truncate max-w-[200px]">
+                      <div className="text-[10px] text-stone-800 font-medium truncate max-w-[200px]">
                         Puerta: {shipment.doorstepDelivery?.receiverDoorAddress || shipment.destination.portName}
                       </div>
                     </td>
@@ -252,7 +252,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => onOpenMilestoneModal(shipment.id)}
-                          className="px-2.5 py-1 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded text-[11px] font-bold border border-orange-200 transition-colors cursor-pointer"
+                          className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded text-[11px] font-bold border border-red-200 transition-colors cursor-pointer"
                           title="Add tracking milestone / change location"
                         >
                           Dispatch
@@ -299,7 +299,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
               <button
                 onClick={() => setAdminSubView('inquiries')}
-                className="text-xs font-bold text-orange-600 hover:text-orange-700 cursor-pointer"
+                className="text-xs font-bold text-red-600 hover:text-red-700 cursor-pointer"
               >
                 {language === 'es' ? 'Gestionar' : language === 'de' ? 'Verwalten' : 'Manage'}
               </button>
@@ -309,7 +309,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               {inquiries.slice(0, 3).map((inq) => (
                 <div key={inq.id} className="p-3 bg-[#f8f5f1] rounded-xl border border-stone-200 text-xs space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono font-bold text-orange-700">{inq.quoteRef}</span>
+                    <span className="font-mono font-bold text-red-700">{inq.quoteRef}</span>
                     <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded border ${
                       inq.status === 'converted'
                         ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
@@ -330,7 +330,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <span className="text-stone-500 font-mono font-semibold">${inq.estimatedCostUsd.toLocaleString()}</span>
                     <button
                       onClick={() => setAdminSubView('inquiries')}
-                      className="text-orange-600 font-bold hover:underline cursor-pointer"
+                      className="text-red-600 font-bold hover:underline cursor-pointer"
                     >
                       {language === 'es' ? 'Revisar y Convertir →' : language === 'de' ? 'Prüfen & Freigeben →' : 'Review & Convert →'}
                     </button>

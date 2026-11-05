@@ -30,7 +30,7 @@ export const AdminFleet: React.FC = () => {
   const getVehicleIcon = (type: FleetVehicle['type']) => {
     switch (type) {
       case 'vessel':
-        return <Ship className="w-6 h-6 text-orange-600" />;
+        return <Ship className="w-6 h-6 text-red-600" />;
       case 'aircraft':
         return <Plane className="w-6 h-6 text-blue-600" />;
       case 'truck':
@@ -78,7 +78,7 @@ export const AdminFleet: React.FC = () => {
         {fleet.map((vehicle) => (
           <div
             key={vehicle.id}
-            className="bg-white rounded-2xl border border-stone-200 p-6 flex flex-col justify-between hover:border-orange-300 transition-all shadow-2xs hover:shadow-md"
+            className="bg-white rounded-2xl border border-stone-200 p-6 flex flex-col justify-between hover:border-red-300 transition-all shadow-2xs hover:shadow-md"
           >
             <div>
               <div className="flex items-center justify-between mb-4">
@@ -90,7 +90,7 @@ export const AdminFleet: React.FC = () => {
 
               <div className="text-xs font-mono text-stone-400 uppercase font-bold">{vehicle.code}</div>
               <h3 className="text-lg font-bold text-[#232331] font-heading mt-0.5">{vehicle.name}</h3>
-              <p className="text-xs text-orange-700 font-bold mt-1">{vehicle.currentRoute}</p>
+              <p className="text-xs text-red-700 font-bold mt-1">{vehicle.currentRoute}</p>
 
               <div className="mt-5 pt-4 border-t border-stone-100 space-y-2 text-xs">
                 <div className="flex justify-between">
@@ -166,7 +166,7 @@ export const AdminFleet: React.FC = () => {
                 <select
                   value={newStatus}
                   onChange={(e) => setNewStatus(e.target.value as any)}
-                  className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-orange-500 focus:bg-white focus:outline-none font-bold"
+                  className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-red-500 focus:bg-white focus:outline-none font-bold"
                 >
                   <option value="at_sea">At Sea (Bajo Waypoint Activo)</option>
                   <option value="in_flight">In Flight (En Vuelo Comercial)</option>
@@ -182,7 +182,7 @@ export const AdminFleet: React.FC = () => {
                   type="text"
                   value={newLocation}
                   onChange={(e) => setNewLocation(e.target.value)}
-                  className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-orange-500 focus:bg-white focus:outline-none"
+                  className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-red-500 focus:bg-white focus:outline-none"
                 />
               </div>
 
@@ -196,7 +196,7 @@ export const AdminFleet: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold cursor-pointer"
                 >
                   {language === 'es' ? 'Guardar Telemetría' : 'Save Changes'}
                 </button>

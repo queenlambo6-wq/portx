@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useShipping } from '../../context/ShippingContext';
 import {
-  Ship,
   Lock,
   Mail,
   KeyRound,
@@ -11,7 +10,8 @@ import {
   ArrowRight,
   LogOut,
   AlertCircle,
-  Globe
+  Globe,
+  Sparkles
 } from 'lucide-react';
 import { Language } from '../../i18n/translations';
 
@@ -41,19 +41,22 @@ export const AdminLoginGate: React.FC = () => {
       return;
     }
 
-    const ok = loginAdmin(email, password, rememberMe);
-    if (!ok) {
-      // error is handled in context
-    }
+    loginAdmin(email, password, rememberMe);
+  };
+
+  const handleQuickDemoLogin = () => {
+    setEmail('admin@portx.com');
+    setPassword('PortX2026!');
+    loginAdmin('admin@portx.com', 'PortX2026!', true);
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f5f1] flex flex-col justify-center py-12 sm:px-6 lg:px-8 text-[#232331]">
+    <div className="min-h-screen bg-stone-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 text-[#18181b]">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         {/* Brand Mark */}
         <div className="flex justify-center mb-3">
-          <div className="w-14 h-14 rounded-2xl bg-orange-600 text-white flex items-center justify-center shadow-lg shadow-orange-600/25 p-3">
-            <Ship className="w-8 h-8 text-white" />
+          <div className="w-14 h-14 rounded-2xl bg-red-600 text-white flex items-center justify-center shadow-lg shadow-red-600/25 p-3">
+            <Lock className="w-7 h-7 text-white" />
           </div>
         </div>
 
@@ -65,10 +68,10 @@ export const AdminLoginGate: React.FC = () => {
               <button
                 key={lang}
                 onClick={() => setLanguage(lang)}
-                className={`text-[11px] font-bold px-2 py-0.5 rounded transition-all ${
+                className={`text-[11px] font-bold px-2 py-0.5 rounded transition-all cursor-pointer ${
                   language === lang
-                    ? 'bg-orange-600 text-white shadow-2xs'
-                    : 'text-stone-600 hover:text-[#232331]'
+                    ? 'bg-red-600 text-white shadow-2xs'
+                    : 'text-stone-600 hover:text-[#18181b]'
                 }`}
               >
                 {lang === 'es' ? '🇪🇸 ES' : lang === 'en' ? '🇬🇧 EN' : '🇩🇪 DE'}
@@ -77,15 +80,15 @@ export const AdminLoginGate: React.FC = () => {
           </div>
         </div>
 
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold uppercase tracking-wider mb-2">
-          <Lock className="w-3.5 h-3.5" />
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-red-50 text-red-700 border border-red-200 text-xs font-bold uppercase tracking-wider mb-2">
+          <ShieldCheck className="w-3.5 h-3.5" />
           {t.adminLoginRequiredBadge}
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-black text-[#232331] font-heading tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-black text-[#18181b] font-heading tracking-tight">
           {t.adminLoginHeading}
         </h1>
-        <p className="mt-1 text-xs text-[#767676] max-w-sm mx-auto">
+        <p className="mt-1 text-xs text-stone-500 max-w-sm mx-auto">
           {t.adminLoginSubtitle}
         </p>
       </div>
@@ -93,9 +96,19 @@ export const AdminLoginGate: React.FC = () => {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
         <div className="bg-white py-8 px-6 sm:px-10 rounded-2xl border border-stone-200 shadow-xl space-y-6">
           
+          {/* 1-Click Fast Officer Demo Access */}
+          <button
+            type="button"
+            onClick={handleQuickDemoLogin}
+            className="w-full py-2.5 px-3 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
+          >
+            <Sparkles className="w-4 h-4 text-red-600" />
+            <span>Acceso Rápido Oficial (admin@portx.com)</span>
+          </button>
+
           {(authError || localError) && (
-            <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5">
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
               <div>
                 <span className="font-bold block">{language === 'es' ? 'Acceso Denegado' : language === 'de' ? 'Zugriff Verweigert' : 'Authorization Denied'}</span>
                 <span className="text-[11px] mt-0.5 block">{localError || authError}</span>
@@ -105,7 +118,7 @@ export const AdminLoginGate: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             <div>
-              <label className="block text-[#232331] font-bold mb-1.5">
+              <label className="block text-[#18181b] font-bold mb-1.5">
                 {t.officerEmailLabel}
               </label>
               <div className="relative flex items-center">
@@ -113,16 +126,16 @@ export const AdminLoginGate: React.FC = () => {
                 <input
                   type="email"
                   required
-                  placeholder="name@portx.com"
+                  placeholder="admin@portx.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-[#f8f5f1] text-[#232331] pl-9 pr-3 py-2.5 rounded-xl border border-stone-300 focus:border-orange-500 focus:bg-white focus:ring-1 focus:ring-orange-500 focus:outline-none font-medium"
+                  className="w-full bg-stone-50 text-[#18181b] pl-9 pr-3 py-2.5 rounded-xl border border-stone-300 focus:border-red-600 focus:bg-white focus:ring-1 focus:ring-red-600 focus:outline-none font-medium"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[#232331] font-bold mb-1.5 flex justify-between items-center">
+              <label className="block text-[#18181b] font-bold mb-1.5 flex justify-between items-center">
                 <span>{t.passwordLabel}</span>
               </label>
               <div className="relative flex items-center">
@@ -130,10 +143,10 @@ export const AdminLoginGate: React.FC = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
-                  placeholder="••••••••••••"
+                  placeholder="PortX2026!"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-[#f8f5f1] text-[#232331] pl-9 pr-10 py-2.5 rounded-xl border border-stone-300 focus:border-orange-500 focus:bg-white focus:ring-1 focus:ring-orange-500 focus:outline-none font-mono"
+                  className="w-full bg-stone-50 text-[#18181b] pl-9 pr-10 py-2.5 rounded-xl border border-stone-300 focus:border-red-600 focus:bg-white focus:ring-1 focus:ring-red-600 focus:outline-none font-mono"
                 />
                 <button
                   type="button"
@@ -151,9 +164,9 @@ export const AdminLoginGate: React.FC = () => {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded text-orange-600 focus:ring-orange-500"
+                  className="rounded text-red-600 focus:ring-red-500"
                 />
-                <span className="text-[#767676] font-medium text-[11px]">{t.rememberSessionLabel}</span>
+                <span className="text-stone-600 font-medium text-[11px]">{t.rememberSessionLabel}</span>
               </label>
 
               <span className="text-[11px] text-stone-400 flex items-center gap-1">
@@ -164,7 +177,7 @@ export const AdminLoginGate: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-3 px-4 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow-md shadow-orange-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer mt-2"
+              className="w-full py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-md shadow-red-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer mt-2"
             >
               <Lock className="w-4 h-4" />
               <span>{t.verifyLoginBtn}</span>
@@ -176,7 +189,7 @@ export const AdminLoginGate: React.FC = () => {
           <div className="pt-4 border-t border-stone-100 text-center">
             <span className="text-[11px] text-stone-400 flex items-center justify-center gap-1.5 font-medium">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              {language === 'es' ? 'Acceso restringido a oficiales autorizados PortX' : language === 'de' ? 'Zugriff nur für autorisiertes PortX-Personal' : 'Restricted to authorized PortX operations personnel only'}
+              {language === 'es' ? 'Acceso restringido a oficiales autorizados PortX (Clave: PortX2026!)' : 'Restricted to authorized PortX operations personnel (Password: PortX2026!)'}
             </span>
           </div>
 
@@ -186,7 +199,7 @@ export const AdminLoginGate: React.FC = () => {
                 setIsAdminMode(false);
                 setActiveView('home');
               }}
-              className="text-xs text-stone-500 hover:text-orange-600 font-semibold inline-flex items-center gap-1 cursor-pointer"
+              className="text-xs text-stone-500 hover:text-red-600 font-semibold inline-flex items-center gap-1 cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>{t.returnToSiteBtn}</span>

@@ -93,7 +93,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
       case 'customs_hold':
         return <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded border border-amber-200">{language === 'es' ? 'Revisión Veterinaria' : language === 'de' ? 'Zollprüfung' : 'Vet Check'}</span>;
       case 'out_for_delivery':
-        return <span className="text-[10px] font-bold text-orange-900 bg-orange-100 px-2.5 py-0.5 rounded border border-orange-300 shadow-2xs">{language === 'es' ? 'En Furgoneta a Domicilio' : language === 'de' ? 'In Haustür-Zustellung' : 'Van to Doorstep'}</span>;
+        return <span className="text-[10px] font-bold text-red-900 bg-red-100 px-2.5 py-0.5 rounded border border-red-300 shadow-2xs">{language === 'es' ? 'En Furgoneta a Domicilio' : language === 'de' ? 'In Haustür-Zustellung' : 'Van to Doorstep'}</span>;
       case 'exception':
         return <span className="text-[10px] font-bold text-rose-800 bg-rose-100 px-2.5 py-0.5 rounded border border-rose-200">{language === 'es' ? 'Atención Especial' : language === 'de' ? 'Ausnahme' : 'Care Alert'}</span>;
       default:
@@ -112,7 +112,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-[#232331] font-heading tracking-tight flex items-center gap-2">
-            <Heart className="w-6 h-6 fill-orange-600 text-orange-600" />
+            <Heart className="w-6 h-6 fill-red-600 text-red-600" />
             <span>{language === 'es' ? 'Gestión de Mascotas en Ruta y Reparto a Domicilio' : language === 'de' ? 'Haustier-Transporte & Hauszustellung' : 'Pet Transport & Doorstep Dispatch'}</span>
           </h1>
           <p className="text-xs text-[#767676] mt-0.5">
@@ -122,7 +122,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
 
         <button
           onClick={onOpenCreateModal}
-          className="px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-md shadow-orange-600/20 cursor-pointer"
+          className="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-md shadow-red-600/20 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>{t.newShipmentBtn}</span>
@@ -156,7 +156,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
       {/* Filter and Search Bar */}
       <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-2xs space-y-3">
         <div className="flex flex-col md:flex-row gap-3">
-          <div className="flex-1 flex items-center bg-[#f8f5f1] px-3.5 py-2.5 rounded-xl border border-stone-300 focus-within:border-orange-500 focus-within:bg-white focus-within:ring-1 focus-within:ring-orange-500">
+          <div className="flex-1 flex items-center bg-[#f8f5f1] px-3.5 py-2.5 rounded-xl border border-stone-300 focus-within:border-red-500 focus-within:bg-white focus-within:ring-1 focus-within:ring-red-500">
             <Search className="w-4 h-4 text-stone-400 mr-2 shrink-0" />
             <input
               type="text"
@@ -171,7 +171,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-[#f8f5f1] text-[#232331] text-xs font-semibold rounded-xl border border-stone-300 px-3.5 py-2.5 focus:border-orange-500 focus:outline-none"
+              className="bg-[#f8f5f1] text-[#232331] text-xs font-semibold rounded-xl border border-stone-300 px-3.5 py-2.5 focus:border-red-500 focus:outline-none"
             >
               <option value="all">{language === 'es' ? 'Todos los Estados' : language === 'de' ? 'Alle Status' : 'All Statuses'}</option>
               <option value="booked">{language === 'es' ? 'Registrado' : language === 'de' ? 'Gebucht' : 'Booked'}</option>
@@ -184,7 +184,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
             <select
               value={modeFilter}
               onChange={(e) => setModeFilter(e.target.value)}
-              className="bg-[#f8f5f1] text-[#232331] text-xs font-semibold rounded-xl border border-stone-300 px-3.5 py-2.5 focus:border-orange-500 focus:outline-none"
+              className="bg-[#f8f5f1] text-[#232331] text-xs font-semibold rounded-xl border border-stone-300 px-3.5 py-2.5 focus:border-red-500 focus:outline-none"
             >
               <option value="all">{language === 'es' ? 'Todas las Modalidades' : language === 'de' ? 'Alle Modi' : 'All Modes'}</option>
               <option value="road_transport">Furgoneta Puerta a Puerta</option>
@@ -204,7 +204,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
             <div className="flex items-start justify-between gap-2 pb-2.5 border-b border-stone-100">
               <div>
                 <div className="flex items-center gap-1.5 font-bold text-sm text-[#232331]">
-                  <Heart className="w-3.5 h-3.5 fill-orange-600 text-orange-600 shrink-0" />
+                  <Heart className="w-3.5 h-3.5 fill-red-600 text-red-600 shrink-0" />
                   <span>{s.petInfo?.petName || 'Mascota'}</span>
                   {s.petInfo && (
                     <span className="text-[11px] font-normal text-stone-500">
@@ -213,7 +213,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
                   )}
                 </div>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs font-mono font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded border border-orange-200">
+                  <span className="text-xs font-mono font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-200">
                     {s.trackingNumber}
                   </span>
                   <button
@@ -236,10 +236,10 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
               </div>
               <div className="flex items-start justify-between text-stone-600">
                 <span className="shrink-0 flex items-center gap-1">
-                  <Home className="w-3 h-3 text-orange-600" />
+                  <Home className="w-3 h-3 text-red-600" />
                   <span>Puerta:</span>
                 </span>
-                <span className="text-right text-orange-950 font-medium truncate max-w-[200px]">
+                <span className="text-right text-stone-900 font-medium truncate max-w-[200px]">
                   {s.doorstepDelivery?.receiverDoorAddress || s.destination.portName}
                 </span>
               </div>
@@ -249,7 +249,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
               </div>
               <div className="flex items-center justify-between text-stone-600">
                 <span>Cabina / Temp:</span>
-                <span className="font-mono text-orange-700 font-bold">{s.temperatureCelsius || 21.5}°C</span>
+                <span className="font-mono text-red-700 font-bold">{s.temperatureCelsius || 21.5}°C</span>
               </div>
             </div>
 
@@ -257,7 +257,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
             <div className="pt-2.5 border-t border-stone-100 grid grid-cols-2 gap-2">
               <button
                 onClick={() => onOpenMilestoneModal(s.id)}
-                className="py-2 px-3 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold text-center shadow-xs"
+                className="py-2 px-3 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold text-center shadow-xs"
               >
                 Actualizar Hito
               </button>
@@ -269,7 +269,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
                 }}
                 className="py-2 px-3 bg-[#f8f5f1] hover:bg-stone-200 text-[#232331] rounded-xl text-xs font-bold border border-stone-200 flex items-center justify-center gap-1.5"
               >
-                <ExternalLink className="w-3.5 h-3.5 text-orange-600" />
+                <ExternalLink className="w-3.5 h-3.5 text-red-600" />
                 <span>Ver Rastreo</span>
               </button>
             </div>
@@ -326,11 +326,11 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
                 <tr key={s.id} className="hover:bg-stone-50 transition-colors">
                   <td className="py-3.5 px-4 font-mono">
                     <div className="font-bold text-xs text-[#232331] flex items-center gap-1.5">
-                      <Heart className="w-3.5 h-3.5 fill-orange-600 text-orange-600 shrink-0" />
+                      <Heart className="w-3.5 h-3.5 fill-red-600 text-red-600 shrink-0" />
                       <span>{s.petInfo?.petName || s.trackingNumber}</span>
                     </div>
                     <div className="text-[10px] text-stone-500 font-mono mt-0.5">{s.trackingNumber}</div>
-                    <span className="inline-block mt-1 text-[10px] px-1.5 py-0.2 rounded bg-orange-50 text-orange-700 border border-orange-200 font-bold uppercase">
+                    <span className="inline-block mt-1 text-[10px] px-1.5 py-0.2 rounded bg-red-50 text-red-700 border border-red-200 font-bold uppercase">
                       {s.mode === 'road_transport' ? 'Furgoneta Puerta a Puerta' : s.mode.replace('_', ' ')}
                     </span>
                   </td>
@@ -339,8 +339,8 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
                     <div className="font-bold text-[#232331]">
                       {s.consignee.name}
                     </div>
-                    <div className="text-[11px] text-orange-900 font-medium truncate max-w-[210px] mt-0.5 flex items-center gap-1">
-                      <Home className="w-3 h-3 text-orange-600 shrink-0" />
+                    <div className="text-[11px] text-stone-900 font-medium truncate max-w-[210px] mt-0.5 flex items-center gap-1">
+                      <Home className="w-3 h-3 text-red-600 shrink-0" />
                       <span>{s.doorstepDelivery?.receiverDoorAddress || s.destination.portName}</span>
                     </div>
                     <div className="text-[10px] text-stone-500 mt-0.5">
@@ -364,7 +364,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
                     <div className="text-[10px] text-stone-500 mt-0.5 font-mono">
                       Chip: {s.petInfo?.microchipNumber || s.sealNumber}
                     </div>
-                    <span className="text-[10px] text-orange-700 font-mono font-bold block mt-0.5">
+                    <span className="text-[10px] text-red-700 font-mono font-bold block mt-0.5">
                       Cabina: {s.temperatureCelsius || 21.5}°C
                     </span>
                   </td>
@@ -373,7 +373,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
                     {getStatusBadge(s.status)}
                     <div className="w-24 h-2 bg-stone-100 rounded-full mt-2 overflow-hidden border border-stone-200">
                       <div
-                        className="h-full bg-orange-600 rounded-full"
+                        className="h-full bg-red-600 rounded-full"
                         style={{ width: `${s.progressPercent}%` }}
                       ></div>
                     </div>
@@ -390,7 +390,7 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
                     <div className="flex items-center justify-end gap-1.5">
                       <button
                         onClick={() => onOpenMilestoneModal(s.id)}
-                        className="px-2.5 py-1 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded text-xs font-bold border border-orange-200 transition-colors cursor-pointer"
+                        className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded text-xs font-bold border border-red-200 transition-colors cursor-pointer"
                         title="Actualizar estado de cuidado o entrega"
                       >
                         Actualizar

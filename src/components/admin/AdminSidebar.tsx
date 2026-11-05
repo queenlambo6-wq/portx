@@ -64,7 +64,7 @@ export const AdminSidebar: React.FC<{ onOpenCreateModal: () => void }> = ({ onOp
       label: language === 'es' ? 'Solicitudes de Reserva' : language === 'de' ? 'Buchungsanfragen' : 'Booking Inquiries',
       icon: <MessageSquare className="w-4 h-4" />,
       badge: pendingInquiriesCount > 0 ? pendingInquiriesCount : null,
-      badgeColor: 'bg-orange-600 text-white font-bold'
+      badgeColor: 'bg-red-600 text-white font-bold'
     },
     {
       id: 'ports',
@@ -86,12 +86,12 @@ export const AdminSidebar: React.FC<{ onOpenCreateModal: () => void }> = ({ onOp
         {/* Admin Brand Header */}
         <div className="p-5 border-b border-stone-200">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg bg-orange-600 flex items-center justify-center text-white shadow-2xs">
+            <div className="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center text-white shadow-2xs">
               <Ship className="w-5 h-5" />
             </div>
             <div>
               <div className="text-base font-black text-[#232331] font-heading tracking-tight">
-                PORT<span className="text-orange-600">X</span> ADMIN
+                PORT<span className="text-red-600">X</span> ADMIN
               </div>
               <div className="flex items-center gap-1.5 text-[10px] text-stone-500 font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -103,7 +103,7 @@ export const AdminSidebar: React.FC<{ onOpenCreateModal: () => void }> = ({ onOp
           {/* Quick Language Toggle in Sidebar */}
           <div className="mt-3 flex items-center justify-between p-1 bg-[#f8f5f1] rounded-lg border border-stone-200">
             <span className="text-[10px] font-bold text-stone-500 flex items-center gap-1 pl-1">
-              <Globe className="w-3 h-3 text-orange-600" />
+              <Globe className="w-3 h-3 text-red-600" />
               Lang:
             </span>
             <div className="flex items-center gap-1">
@@ -113,7 +113,7 @@ export const AdminSidebar: React.FC<{ onOpenCreateModal: () => void }> = ({ onOp
                   onClick={() => setLanguage(lang)}
                   className={`text-[10px] font-bold px-1.5 py-0.5 rounded transition-all ${
                     language === lang
-                      ? 'bg-orange-600 text-white shadow-2xs'
+                      ? 'bg-red-600 text-white shadow-2xs'
                       : 'text-stone-600 hover:text-[#232331]'
                   }`}
                 >
@@ -126,7 +126,7 @@ export const AdminSidebar: React.FC<{ onOpenCreateModal: () => void }> = ({ onOp
           {/* Quick Create Shipment Button */}
           <button
             onClick={onOpenCreateModal}
-            className="w-full mt-3 py-2.5 px-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow-md shadow-orange-600/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
+            className="w-full mt-3 py-2.5 px-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-md shadow-red-600/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
           >
             <PlusCircle className="w-4 h-4" />
             <span>{t.newShipmentBtn}</span>
@@ -136,7 +136,7 @@ export const AdminSidebar: React.FC<{ onOpenCreateModal: () => void }> = ({ onOp
         {/* Current Dispatch Desk Info */}
         <div className="px-5 py-2.5 bg-[#f8f5f1] border-b border-stone-200 text-[11px] flex items-center justify-between">
           <span className="text-stone-500 font-medium">{currentAdminUser?.station ? currentAdminUser.station.split('(')[0] : 'Central Hub'}:</span>
-          <span className="text-orange-700 font-bold font-mono">PX-9041</span>
+          <span className="text-red-700 font-bold font-mono">PX-9041</span>
         </div>
 
         {/* Navigation Menu */}
@@ -152,12 +152,12 @@ export const AdminSidebar: React.FC<{ onOpenCreateModal: () => void }> = ({ onOp
                 onClick={() => setAdminSubView(item.id)}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-orange-50 text-orange-700 font-bold border border-orange-200'
+                    ? 'bg-red-50 text-red-700 font-bold border border-red-200'
                     : 'text-stone-600 hover:text-[#232331] hover:bg-[#f8f5f1]'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <span className={isActive ? 'text-orange-600' : 'text-stone-400'}>
+                  <span className={isActive ? 'text-red-600' : 'text-stone-400'}>
                     {item.icon}
                   </span>
                   <span>{item.label}</span>
@@ -166,7 +166,7 @@ export const AdminSidebar: React.FC<{ onOpenCreateModal: () => void }> = ({ onOp
                 {item.badge !== null && (
                   <span
                     className={`text-[10px] px-2 py-0.5 rounded-full ${
-                      item.badgeColor || (isActive ? 'bg-orange-200 text-orange-800 font-bold' : 'bg-stone-100 text-stone-600')
+                      item.badgeColor || (isActive ? 'bg-red-200 text-red-800 font-bold' : 'bg-stone-100 text-stone-600')
                     }`}
                   >
                     {item.badge}
@@ -202,7 +202,7 @@ export const AdminSidebar: React.FC<{ onOpenCreateModal: () => void }> = ({ onOp
           onClick={() => setIsAdminMode(false)}
           className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold text-[#232331] hover:text-white bg-[#f8f5f1] hover:bg-[#232331] rounded-lg border border-stone-300 transition-colors cursor-pointer"
         >
-          <LogOut className="w-4 h-4 text-orange-600" />
+          <LogOut className="w-4 h-4 text-red-600" />
           <span>{t.viewTrackingSiteBtn}</span>
         </button>
       </div>

@@ -70,7 +70,7 @@ export const AdminMilestones: React.FC = () => {
         {/* Left 5 Cols: Form to post milestone */}
         <div className="lg:col-span-5 bg-white rounded-2xl border border-stone-200 p-6 sm:p-7 shadow-2xs space-y-5">
           <div>
-            <span className="text-[10px] uppercase font-bold text-orange-600 tracking-wider">
+            <span className="text-[10px] uppercase font-bold text-red-600 tracking-wider">
               {t.actionsCol}
             </span>
             <h2 className="text-lg font-bold text-[#232331] font-heading mt-0.5">
@@ -87,7 +87,7 @@ export const AdminMilestones: React.FC = () => {
               <button
                 type="button"
                 onClick={() => applyPreset('in_transit', 'Suez Canal / Port Said Convoy', language === 'es' ? 'Paso por canal completado. Precintos y telemetría satelital verificados.' : 'Southbound convoy passage cleared. Security seals and satellite telemetry checked.')}
-                className="px-2.5 py-1 bg-[#f8f5f1] hover:bg-orange-50 text-stone-700 hover:text-orange-700 rounded-md border border-stone-200 text-[11px] font-semibold transition-colors cursor-pointer"
+                className="px-2.5 py-1 bg-[#f8f5f1] hover:bg-red-50 text-stone-700 hover:text-red-700 rounded-md border border-stone-200 text-[11px] font-semibold transition-colors cursor-pointer"
               >
                 ⚓ Suez Canal
               </button>
@@ -133,7 +133,7 @@ export const AdminMilestones: React.FC = () => {
                   const selected = shipments.find((s) => s.id === e.target.value);
                   if (selected) setStatus(selected.status);
                 }}
-                className="w-full bg-[#f8f5f1] text-[#232331] text-xs rounded-xl border border-stone-300 p-2.5 focus:border-orange-500 focus:bg-white focus:outline-none font-mono font-bold"
+                className="w-full bg-[#f8f5f1] text-[#232331] text-xs rounded-xl border border-stone-300 p-2.5 focus:border-red-500 focus:bg-white focus:outline-none font-mono font-bold"
               >
                 {shipments.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -149,7 +149,7 @@ export const AdminMilestones: React.FC = () => {
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as ShipmentStatus)}
-                className="w-full bg-[#f8f5f1] text-[#232331] text-xs rounded-xl border border-stone-300 p-2.5 focus:border-orange-500 focus:bg-white focus:outline-none font-bold text-orange-700"
+                className="w-full bg-[#f8f5f1] text-[#232331] text-xs rounded-xl border border-stone-300 p-2.5 focus:border-red-500 focus:bg-white focus:outline-none font-bold text-red-700"
               >
                 <option value="in_transit">In Transit (Marítimo / Aéreo / Tren / Carretera)</option>
                 <option value="customs_hold">Customs Examination Hold (Inspección Aduanera)</option>
@@ -169,7 +169,7 @@ export const AdminMilestones: React.FC = () => {
                 placeholder="e.g. Suez Canal Southbound Convoy, Port Said"
                 value={locationName}
                 onChange={(e) => setLocationName(e.target.value)}
-                className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-orange-500 focus:bg-white focus:outline-none"
+                className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-red-500 focus:bg-white focus:outline-none"
               />
             </div>
 
@@ -182,7 +182,7 @@ export const AdminMilestones: React.FC = () => {
                 placeholder={language === 'es' ? 'Detalles de atraque, paso de aduanas, verificación de precintos...' : 'Berthing details, customs inspection notes...'}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-orange-500 focus:bg-white focus:outline-none"
+                className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-red-500 focus:bg-white focus:outline-none"
               ></textarea>
             </div>
 
@@ -193,13 +193,13 @@ export const AdminMilestones: React.FC = () => {
                 type="text"
                 value={operator}
                 onChange={(e) => setOperator(e.target.value)}
-                className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-orange-500 focus:bg-white focus:outline-none"
+                className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-red-500 focus:bg-white focus:outline-none"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow-md shadow-orange-600/20 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+              className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-md shadow-red-600/20 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
             >
               <Send className="w-4 h-4" />
               <span>{t.recordCheckpointBtn}</span>
@@ -211,7 +211,7 @@ export const AdminMilestones: React.FC = () => {
         <div className="lg:col-span-7 bg-white rounded-2xl border border-stone-200 p-6 sm:p-7 shadow-2xs space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-stone-100">
             <div>
-              <span className="text-[10px] uppercase font-bold text-orange-600 tracking-wider">
+              <span className="text-[10px] uppercase font-bold text-red-600 tracking-wider">
                 Auditoría en Tiempo Real
               </span>
               <h2 className="text-lg font-bold text-[#232331] font-heading mt-0.5">
@@ -226,7 +226,7 @@ export const AdminMilestones: React.FC = () => {
           <div className="space-y-4">
             {activeShipment?.milestones.map((m, index) => (
               <div key={m.id} className="p-4 rounded-xl border border-stone-200 bg-[#f8f5f1] flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0 mt-0.5">
                   <MapPin className="w-4 h-4" />
                 </div>
                 <div className="flex-1">
