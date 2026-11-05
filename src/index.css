@@ -1,27 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  /* PortX Original Reverse-Engineered Color Palette */
-  --portx-theme-1: #ffbf42;      /* Golden maritime cargo amber */
-  --portx-orange: #ea580c;       /* Signature high-visibility orange */
-  --portx-orange-hover: #c2410c; /* Deep cargo orange */
-  --portx-red: #ca1f26;          /* Maritime vessel red accent */
-  --portx-dark: #232331;         /* PortX deep charcoal navy */
-  --portx-dark-light: #2c2c3d;   /* Charcoal naval elevation */
-  --portx-grey-bg: #f8f5f1;      /* PortX warm off-white surface */
-  --portx-black: #3e3e47;        /* Secondary charcoal */
-  --portx-text: #767676;         /* PortX muted text */
+  /* PortX Official Red and White Corporate Identity */
+  --portx-primary: #dc2626;      /* Signature vibrant red */
+  --portx-primary-hover: #b91c1c;/* Deep crimson red */
+  --portx-red: #dc2626;          /* Company Red */
+  --portx-dark: #18181b;         /* Charcoal base */
+  --portx-grey-bg: #fdfdfd;      /* Pure crisp white surface */
+  --portx-text: #52525b;         /* Muted text */
 }
 
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    color: #232331;
-    background-color: #f8f5f1;
+    color: #18181b;
+    background-color: #ffffff;
   }
   h1, h2, h3, h4, .font-heading {
     font-family: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
-    color: #232331;
+    color: #18181b;
   }
 }
 
@@ -31,35 +28,69 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f8f5f1;
+  background: #f4f4f5;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d4cfc7;
+  background: #d4d4d8;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #ea580c;
+  background: #dc2626;
 }
 
 /* Utility classes for PortX theme */
 .bg-portx-dark {
-  background-color: #232331;
+  background-color: #18181b;
 }
 .bg-portx-grey {
-  background-color: #f8f5f1;
+  background-color: #fafafa;
 }
-.bg-portx-orange {
-  background-color: #ea580c;
+.bg-portx-red {
+  background-color: #dc2626;
 }
 .text-portx-dark {
-  color: #232331;
-}
-.text-portx-orange {
-  color: #ea580c;
+  color: #18181b;
 }
 .text-portx-red {
-  color: #ca1f26;
+  color: #dc2626;
 }
-.border-portx-orange {
-  border-color: #ea580c;
+.border-portx-red {
+  border-color: #dc2626;
 }
+
+/* Infinite Marquee Review Animations matching Gradlyn Global */
+@keyframes marquee-slide {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-slide-reverse {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-marquee-infinite {
+  display: flex;
+  width: max-content;
+  animation: marquee-slide 38s linear infinite;
+}
+
+.animate-marquee-infinite-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee-slide-reverse 42s linear infinite;
+}
+
+.animate-marquee-infinite:hover,
+.animate-marquee-infinite-reverse:hover {
+  animation-play-state: paused;
+}
+

@@ -8,6 +8,7 @@ import { RateCalculator } from './components/public/RateCalculator';
 import { GlobalNetworkMap } from './components/public/GlobalNetworkMap';
 import { AboutSection } from './components/public/AboutSection';
 import { Footer } from './components/public/Footer';
+import { GradlynShowcase } from './components/public/GradlynShowcase';
 import { BookingModal } from './components/public/BookingModal';
 import { WaybillModal } from './components/public/WaybillModal';
 import { AdminLayout } from './components/admin/AdminLayout';
@@ -56,9 +57,9 @@ const MainAppContent: React.FC = () => {
     return <AdminLayout />;
   }
 
-  // Otherwise, render the Public Logistics Web App in PortX Orange & Warm White
+  // Otherwise, render the Public Logistics Web App in PortX Red & White
   return (
-    <div className="min-h-screen bg-[#f8f5f1] text-[#232331] flex flex-col selection:bg-orange-500 selection:text-white">
+    <div className="min-h-screen bg-white text-[#18181b] flex flex-col selection:bg-red-600 selection:text-white">
       {/* Main Navigation */}
       <Navbar />
 
@@ -68,37 +69,13 @@ const MainAppContent: React.FC = () => {
           <div>
             <Hero />
             
-            {/* Quick Live Tracking Anchor Section */}
-            <div className="bg-white border-b border-stone-200">
-              <TrackingSection />
-            </div>
-
-            {/* Services Showcase */}
-            <div className="bg-[#f8f5f1]">
-              <ServicesSection onOpenBookingModal={handleOpenBooking} />
-            </div>
-
-            {/* Rate & Route Calculator */}
-            <div className="bg-white border-y border-stone-200">
-              <RateCalculator onBookRate={handleBookFromCalculator} />
-            </div>
-
-            {/* Global Port Network */}
-            <div className="bg-[#f8f5f1]">
-              <GlobalNetworkMap />
-            </div>
-
-            {/* About & Trust */}
-            <div className="bg-white border-t border-stone-200">
-              <AboutSection />
-            </div>
+            {/* Gradlyn Global Showcase (Explore our expertise, Why PortX, Core Service, Reviews Marquee, Map CTA) */}
+            <GradlynShowcase onOpenBookingModal={() => handleOpenBooking()} />
           </div>
         )}
 
         {activeView === 'track' && (
-          <div className="py-6 bg-[#f8f5f1] min-h-screen">
-            <TrackingSection />
-          </div>
+          <TrackingSection />
         )}
 
         {activeView === 'services' && (

@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { useShipping } from '../../context/ShippingContext';
 import {
-  Ship,
-  Search,
-  Phone,
-  Mail,
-  LayoutDashboard,
   Menu,
   X,
-  Calculator,
-  ChevronRight,
-  Globe
+  ArrowRight,
+  Globe,
+  Phone,
+  Mail,
+  Search,
+  LayoutDashboard,
+  ShieldCheck,
+  ChevronRight
 } from 'lucide-react';
 import { Language } from '../../i18n/translations';
 
@@ -28,18 +28,17 @@ export const Navbar: React.FC = () => {
     inquiries
   } = useShipping();
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [quickTrackInput, setQuickTrackInput] = useState('');
-  const [logoImgError, setLogoImgError] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [navTrackInput, setNavTrackInput] = useState('');
 
-  const handleQuickTrackSubmit = (e: React.FormEvent) => {
+  const handleTrackSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (quickTrackInput.trim()) {
-      setCurrentTrackingQuery(quickTrackInput.trim());
+    if (navTrackInput.trim()) {
+      setCurrentTrackingQuery(navTrackInput.trim());
       setIsAdminMode(false);
       setActiveView('track');
-      setQuickTrackInput('');
-      setMobileMenuOpen(false);
+      setNavTrackInput('');
+      setMenuOpen(false);
     }
   };
 
@@ -53,275 +52,211 @@ export const Navbar: React.FC = () => {
     { id: 'contact', label: t.navContact },
   ];
 
-  const pendingInquiriesCount = inquiries.filter((i) => i.status === 'pending').length;
-
   return (
-    <header className="sticky top-0 z-40 w-full bg-white border-b border-stone-200 text-[#232331] shadow-xs">
-      {/* Top Advisory Strip - Reverse-engineered PortX warm bar with orange & dark accents */}
-      <div className="bg-[#f8f5f1] border-b border-stone-200/80 px-4 py-1.5 text-xs hidden md:block">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4 text-[#767676]">
-            <span className="flex items-center gap-1.5 font-semibold text-[#232331]">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              {t.advisoryText}
-            </span>
-            <span className="text-stone-300">|</span>
-            <a href="tel:+34602493512" className="flex items-center gap-1.5 hover:text-orange-600 transition-colors">
-              <Phone className="w-3.5 h-3.5 text-orange-600" />
-              <span>{t.dispatchHotline}:</span> <strong className="text-[#232331] font-semibold">+34602493512</strong>
-            </a>
-            <span className="text-stone-300">|</span>
-            <span className="flex items-center gap-1.5">
-              <Mail className="w-3.5 h-3.5 text-orange-600" />
-              <span>cargo.ops@portx-global.com</span>
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* Language Switcher Selector (ES - Default, EN, DE) */}
-            <div className="flex items-center bg-white rounded-md border border-stone-200 p-0.5 shadow-2xs">
-              <Globe className="w-3 h-3 text-stone-400 ml-1.5 mr-1" />
-              {(['es', 'en', 'de'] as Language[]).map((lang) => (
-                <button
-                  key={lang}
-                  onClick={() => setLanguage(lang)}
-                  className={`text-[11px] font-bold px-2 py-0.5 rounded transition-all ${
-                    language === lang
-                      ? 'bg-orange-600 text-white shadow-2xs'
-                      : 'text-stone-600 hover:text-[#232331] hover:bg-stone-100'
-                  }`}
-                  title={lang === 'es' ? 'Español (Predeterminado)' : lang === 'en' ? 'English' : 'Deutsch'}
-                >
-                  {lang === 'es' ? '🇪🇸 ES' : lang === 'en' ? '🇬🇧 EN' : '🇩🇪 DE'}
-                </button>
-              ))}
-            </div>
-
-            <span className="text-stone-300">|</span>
-
-            {/* Quick Tracking Fast Jumper */}
-            <form onSubmit={handleQuickTrackSubmit} className="flex items-center bg-white rounded-md px-2.5 py-0.5 border border-stone-200 focus-within:border-orange-500 focus-within:ring-1 focus-within:ring-orange-500 transition-all shadow-2xs">
-              <Search className="w-3 h-3 text-stone-400 mr-1.5" />
-              <input
-                type="text"
-                placeholder={t.quickTrackPlaceholder}
-                value={quickTrackInput}
-                onChange={(e) => setQuickTrackInput(e.target.value)}
-                className="bg-transparent text-xs text-[#232331] placeholder-stone-400 focus:outline-none w-36"
-              />
-              <button type="submit" className="text-[10px] text-orange-600 hover:text-orange-700 font-bold uppercase px-1">
-                {t.quickTrackGo}
-              </button>
-            </form>
-
-            <span className="text-stone-300">|</span>
-
-            {/* Direct Admin Panel Switcher */}
-            <button
-              onClick={() => setIsAdminMode(true)}
-              className="flex items-center gap-1.5 text-xs px-2.5 py-0.5 bg-[#232331] hover:bg-orange-600 text-white rounded font-semibold transition-all shadow-2xs"
-              title="PortX Admin Operations Center"
+    <>
+      {/* Sleek, Uncrowded Navigation Bar matching Gradlyn Global */}
+      <header className="sticky top-0 z-40 w-full bg-white border-b border-stone-200/80 shadow-2xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            
+            {/* Logo Icon and Company Name - Aligned and Close */}
+            <div
+              className="flex items-center gap-2.5 cursor-pointer group select-none"
+              onClick={() => { setActiveView('home'); setIsAdminMode(false); }}
             >
-              <LayoutDashboard className="w-3.5 h-3.5 text-orange-400" />
-              <span>{t.adminOperations}</span>
-              {pendingInquiriesCount > 0 && (
-                <span className="bg-orange-600 text-white font-bold px-1.5 py-0.2 rounded-full text-[10px]">
-                  {pendingInquiriesCount}
-                </span>
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo with PortX authentic visual - icon and text aligned and close */}
-          <div
-            className="flex items-center gap-2.5 cursor-pointer group select-none"
-            onClick={() => { setActiveView('home'); setIsAdminMode(false); }}
-          >
-            <div className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-orange-50 border border-orange-200/90 shadow-2xs group-hover:border-orange-400 transition-all shrink-0 p-1">
-              {!logoImgError ? (
+              <div className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-red-50 border border-red-200/90 shadow-2xs group-hover:border-red-400 transition-all shrink-0 p-1">
                 <img
                   src="/portx-assets/img/logo/favicon.png"
                   alt="PortX Logo Icon"
                   className="w-full h-full object-contain transition-transform group-hover:scale-105"
-                  onError={() => setLogoImgError(true)}
+                  onError={(e) => {
+                    e.currentTarget.src = '/portx-assets/img/logo/logo.png';
+                  }}
                 />
-              ) : (
-                <Ship className="w-5 h-5 text-orange-600" />
-              )}
-            </div>
-            <div className="flex flex-col justify-center">
-              <div className="flex items-center gap-1.5 leading-none">
-                <span className="text-2xl sm:text-[26px] font-black tracking-tight text-[#232331] font-heading leading-none">
-                  PORT<span className="text-orange-600">X</span>
-                </span>
-                <span className="text-[9px] sm:text-[10px] uppercase font-black tracking-wider px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 border border-orange-200 leading-none">
-                  Pet Logistics
-                </span>
               </div>
-              <p className="text-[10px] sm:text-[11px] text-[#767676] font-medium leading-none mt-1">
-                {t.taglineCargo}
-              </p>
+              <div className="flex flex-col justify-center">
+                <div className="flex items-center gap-1.5 leading-none">
+                  <span className="text-2xl sm:text-[26px] font-black tracking-tight text-[#18181b] font-heading leading-none">
+                    PORT<span className="text-red-600">X</span>
+                  </span>
+                </div>
+                <p className="text-[10px] sm:text-[11px] text-stone-500 font-semibold tracking-wider uppercase leading-none mt-1">
+                  Global Logistics
+                </p>
+              </div>
             </div>
-          </div>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center space-x-1">
-            {navItems.map((item) => {
-              const isActive = !isAdminMode && activeView === item.id;
-              return (
+            {/* Right: Exactly 2 Items matching Gradlyn Global - Hamburger + Action Button */}
+            <div className="flex items-center gap-4">
+              {/* Hamburger Menu Button */}
+              <button
+                onClick={() => setMenuOpen(true)}
+                className="p-2 sm:p-2.5 text-stone-700 hover:text-[#18181b] hover:bg-stone-100 rounded-xl transition-colors cursor-pointer"
+                aria-label="Abrir menú de navegación"
+              >
+                <Menu className="w-6 h-6 sm:w-7 sm:h-7" />
+              </button>
+
+              {/* Action Button: Track Order -> */}
+              <button
+                onClick={() => {
+                  setIsAdminMode(false);
+                  setActiveView('track');
+                }}
+                className="px-5 sm:px-6 py-2.5 sm:py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md shadow-red-600/25 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
+              >
+                <span>Track Order</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </header>
+
+      {/* Slide-Over Drawer Navigation Menu */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"
+            onClick={() => setMenuOpen(false)}
+          ></div>
+
+          {/* Drawer Content */}
+          <div className="relative w-full max-w-sm sm:max-w-md bg-white h-full shadow-2xl flex flex-col z-10 overflow-y-auto">
+            {/* Drawer Header */}
+            <div className="flex items-center justify-between p-6 border-b border-stone-200">
+              <div className="flex items-center gap-2.5">
+                <img
+                  src="/portx-assets/img/logo/favicon.png"
+                  alt="PortX"
+                  className="w-9 h-9 object-contain"
+                />
+                <div>
+                  <span className="text-xl font-black text-[#18181b] font-heading leading-none">
+                    PORT<span className="text-red-600">X</span>
+                  </span>
+                  <span className="text-[10px] text-stone-500 block uppercase font-bold tracking-wider">
+                    Global Logistics
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="p-2 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Quick Track Input inside Drawer */}
+            <div className="p-6 pb-2">
+              <form onSubmit={handleTrackSubmit} className="flex items-center bg-stone-50 rounded-xl p-2.5 border border-stone-200">
+                <Search className="w-4 h-4 text-stone-400 mr-2 shrink-0" />
+                <input
+                  type="text"
+                  placeholder="Número de seguimiento..."
+                  value={navTrackInput}
+                  onChange={(e) => setNavTrackInput(e.target.value)}
+                  className="bg-transparent text-xs text-[#18181b] placeholder-stone-400 focus:outline-none flex-1 font-mono font-medium"
+                />
+                <button
+                  type="submit"
+                  className="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                >
+                  Rastrear
+                </button>
+              </form>
+            </div>
+
+            {/* Nav Links */}
+            <div className="p-6 space-y-1.5 flex-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-2 px-3">
+                Navegación Principal
+              </span>
+              {navItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => {
                     setActiveView(item.id);
                     setIsAdminMode(false);
+                    setMenuOpen(false);
                   }}
-                  className={`px-3.5 py-2 text-sm font-semibold transition-all relative ${
-                    isActive
-                      ? 'text-orange-600 font-bold'
-                      : 'text-[#232331] hover:text-orange-600'
+                  className={`w-full flex items-center justify-between p-3.5 rounded-xl text-left text-sm font-bold transition-all cursor-pointer ${
+                    activeView === item.id && !isAdminMode
+                      ? 'bg-red-50 text-red-600 border border-red-200 shadow-2xs'
+                      : 'text-[#18181b] hover:bg-stone-50'
                   }`}
                 >
-                  {item.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-orange-600 rounded-full"></span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Action Area */}
-          <div className="hidden lg:flex items-center gap-3">
-            <button
-              onClick={() => {
-                setActiveView('calculator');
-                setIsAdminMode(false);
-              }}
-              className="flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-lg bg-[#f8f5f1] text-[#232331] hover:bg-stone-200/70 border border-stone-200 transition-colors"
-            >
-              <Calculator className="w-3.5 h-3.5 text-orange-600" />
-              {t.getQuoteBtn}
-            </button>
-
-            <button
-              onClick={() => setIsAdminMode(true)}
-              className="flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-lg bg-orange-600 hover:bg-orange-700 text-white shadow-md shadow-orange-600/20 transition-all"
-            >
-              <LayoutDashboard className="w-4 h-4 text-white" />
-              {t.adminPortalBtn}
-            </button>
-          </div>
-
-          {/* Mobile Menu & Language Button */}
-          <div className="flex items-center gap-2 lg:hidden">
-            {/* Quick mobile language pill */}
-            <button
-              onClick={() => {
-                const nextLang = language === 'es' ? 'en' : language === 'en' ? 'de' : 'es';
-                setLanguage(nextLang);
-              }}
-              className="px-2 py-1 text-xs font-bold rounded border border-stone-200 bg-stone-50 text-[#232331]"
-            >
-              {language === 'es' ? '🇪🇸 ES' : language === 'en' ? '🇬🇧 EN' : '🇩🇪 DE'}
-            </button>
-
-            <button
-              onClick={() => setIsAdminMode(true)}
-              className="px-2.5 py-1.5 text-xs font-bold rounded bg-orange-600 text-white flex items-center gap-1 shadow-xs"
-            >
-              <LayoutDashboard className="w-3.5 h-3.5" />
-              Admin
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-[#232331] hover:bg-stone-100"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-stone-200 px-4 pt-3 pb-6 space-y-3">
-          {/* Mobile Language Switcher Bar */}
-          <div className="flex items-center justify-between p-2 rounded-lg bg-[#f8f5f1] border border-stone-200">
-            <span className="text-xs font-semibold text-[#232331] flex items-center gap-1.5">
-              <Globe className="w-3.5 h-3.5 text-orange-600" />
-              Idioma / Language:
-            </span>
-            <div className="flex items-center gap-1">
-              {(['es', 'en', 'de'] as Language[]).map((lang) => (
-                <button
-                  key={lang}
-                  onClick={() => setLanguage(lang)}
-                  className={`text-xs font-bold px-2 py-1 rounded ${
-                    language === lang
-                      ? 'bg-orange-600 text-white'
-                      : 'bg-white text-[#232331] border border-stone-200'
-                  }`}
-                >
-                  {lang === 'es' ? 'ES' : lang === 'en' ? 'EN' : 'DE'}
+                  <span>{item.label}</span>
+                  <ChevronRight className="w-4 h-4 opacity-40" />
                 </button>
               ))}
+
+              {/* Admin Portal Entry */}
+              <div className="pt-4 mt-4 border-t border-stone-100">
+                <button
+                  onClick={() => {
+                    setIsAdminMode(true);
+                    setMenuOpen(false);
+                  }}
+                  className="w-full flex items-center justify-between p-3.5 rounded-xl bg-slate-900 text-white hover:bg-red-600 transition-colors text-xs font-bold shadow-md cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <LayoutDashboard className="w-4 h-4 text-red-400" />
+                    <span>Panel de Control & Despacho</span>
+                  </div>
+                  {inquiries.filter((i) => i.status === 'pending').length > 0 && (
+                    <span className="bg-red-600 text-white font-bold px-2 py-0.5 rounded-full text-[10px]">
+                      {inquiries.filter((i) => i.status === 'pending').length}
+                    </span>
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
 
-          <form onSubmit={handleQuickTrackSubmit} className="flex items-center bg-[#f8f5f1] rounded-lg p-2 border border-stone-200">
-            <Search className="w-4 h-4 text-stone-400 mr-2" />
-            <input
-              type="text"
-              placeholder={t.quickTrackPlaceholder}
-              value={quickTrackInput}
-              onChange={(e) => setQuickTrackInput(e.target.value)}
-              className="bg-transparent text-sm text-[#232331] placeholder-stone-400 focus:outline-none flex-1"
-            />
-            <button type="submit" className="bg-orange-600 text-white font-bold text-xs px-3 py-1.5 rounded">
-              {t.quickTrackGo}
-            </button>
-          </form>
+            {/* Drawer Footer: Language & Contact */}
+            <div className="p-6 border-t border-stone-200 bg-stone-50 space-y-4 text-xs">
+              {/* Language Switcher */}
+              <div className="flex items-center justify-between">
+                <span className="text-stone-600 font-semibold flex items-center gap-1.5">
+                  <Globe className="w-3.5 h-3.5 text-red-600" />
+                  Idioma / Language:
+                </span>
+                <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-stone-200 shadow-2xs">
+                  {(['es', 'en', 'de'] as Language[]).map((lang) => (
+                    <button
+                      key={lang}
+                      onClick={() => setLanguage(lang)}
+                      className={`text-xs font-bold px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                        language === lang
+                          ? 'bg-red-600 text-white shadow-xs'
+                          : 'text-stone-600 hover:text-[#18181b]'
+                      }`}
+                    >
+                      {lang === 'es' ? 'ES' : lang === 'en' ? 'EN' : 'DE'}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-          <div className="grid grid-cols-2 gap-2 pt-2">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveView(item.id);
-                  setIsAdminMode(false);
-                  setMobileMenuOpen(false);
-                }}
-                className={`flex items-center justify-between p-2.5 rounded-lg text-left text-sm font-medium ${
-                  activeView === item.id && !isAdminMode
-                    ? 'bg-orange-50 text-orange-600 font-bold border border-orange-200'
-                    : 'text-[#232331] hover:bg-[#f8f5f1]'
-                }`}
-              >
-                <span>{item.label}</span>
-                <ChevronRight className="w-4 h-4 opacity-40" />
-              </button>
-            ))}
-          </div>
+              {/* Phone & Email */}
+              <div className="space-y-2 pt-2 border-t border-stone-200 text-stone-600 font-medium">
+                <a href="tel:+34602493512" className="flex items-center gap-2 hover:text-red-600 transition-colors">
+                  <Phone className="w-4 h-4 text-red-600" />
+                  <span>Despacho 24/7: <strong>+34602493512</strong></span>
+                </a>
+                <a href="mailto:cargo.ops@portx-global.com" className="flex items-center gap-2 hover:text-red-600 transition-colors">
+                  <Mail className="w-4 h-4 text-red-600" />
+                  <span>cargo.ops@portx-global.com</span>
+                </a>
+              </div>
+            </div>
 
-          <div className="pt-2 border-t border-stone-200 flex flex-col gap-2">
-            <button
-              onClick={() => {
-                setIsAdminMode(true);
-                setMobileMenuOpen(false);
-              }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-orange-600 text-white font-bold text-sm shadow-md"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              {t.adminPortalBtn} ({shipments.length} {t.activeShipmentsKpi})
-            </button>
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 };
