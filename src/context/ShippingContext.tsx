@@ -109,7 +109,7 @@ interface ShippingContextType {
   getShipmentByTrackingNumber: (trackingNumber: string) => Shipment | undefined;
   createShipment: (newShipment: Omit<Shipment, 'id' | 'createdAt' | 'progressPercent' | 'milestones'>) => Shipment;
   updateShipment: (id: string, updates: Partial<Shipment>) => void;
-  updateShipmentStatus: (id: string, newStatus: ShipmentStatus, locationName: string, notes?: string) => void;
+  updateShipmentStatus: (id: string, newStatus: ShipmentStatus, locationName: string, notes?: string, clientNotice?: string) => void;
   addMilestone: (shipmentId: string, milestone: Omit<Milestone, 'id'>) => void;
   deleteShipment: (id: string) => void;
   
@@ -216,7 +216,7 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [ports] = useState<PortHub[]>(INITIAL_PORTS);
   const [portCalls] = useState<PortCallSchedule[]>(INITIAL_PORT_CALLS);
 
-  const [currentTrackingQuery, setCurrentTrackingQuery] = useState<string>('PET-MAD-8492');
+  const [currentTrackingQuery, setCurrentTrackingQuery] = useState<string>('');
   const [activeView, setActiveView] = useState<string>('home'); // 'home' | 'track' | 'services' | 'calculator' | 'network' | 'about' | 'contact'
   const [isAdminMode, setIsAdminMode] = useState<boolean>(false);
   const [adminSubView, setAdminSubView] = useState<string>('dashboard'); // 'dashboard' | 'shipments' | 'milestones' | 'fleet' | 'inquiries' | 'ports' | 'manifests'
@@ -250,42 +250,124 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [fleet]);
 
   const getShipmentByTrackingNumber = (trackingNumber: string) => {
+    if (!trackingNumber) return undefined;
     const clean = trackingNumber.trim().toUpperCase();
-    return shipments.find(
-      (s) =>
-        s.trackingNumber.toUpperCase() === clean ||
-        s.bookingRef.toUpperCase() === clean ||
-        s.bolNumber.toUpperCase() === clean ||
-        s.containerNumber.toUpperCase().replace(/\s|-/g, '') === clean.replace(/\s|-/g, '')
-    );
+    const normalized = clean.replace(/[^A-Z0-9]/g, '');
+
+    return shipments.find((s) => {
+      if (!s) return false;
+      const sTn = s.trackingNumber.toUpperCase();
+      const sTnNorm = sTn.replace(/[^A-Z0-9]/g, '');
+      if (sTn === clean || (normalized.length >= 3 && sTnNorm === normalized)) return true;
+      if (s.bookingRef && (s.bookingRef.toUpperCase() === clean || s.bookingRef.toUpperCase().replace(/[^A-Z0-9]/g, '') === normalized)) return true;
+      if (s.bolNumber && (s.bolNumber.toUpperCase() === clean || s.bolNumber.toUpperCase().replace(/[^A-Z0-9]/g, '') === normalized)) return true;
+      if (s.containerNumber && s.containerNumber.toUpperCase().replace(/[^A-Z0-9]/g, '') === normalized) return true;
+      if (s.petInfo?.microchipNumber && s.petInfo.microchipNumber.toUpperCase().replace(/[^A-Z0-9]/g, '') === normalized) return true;
+      if (s.petInfo?.healthPassportNumber && s.petInfo.healthPassportNumber.toUpperCase().replace(/[^A-Z0-9]/g, '') === normalized) return true;
+      if (s.petInfo?.petName && s.petInfo.petName.trim().toUpperCase() === clean) return true;
+      return false;
+    });
   };
 
   const createShipment = (
     newShipmentData: Omit<Shipment, 'id' | 'createdAt' | 'progressPercent' | 'milestones'>
   ): Shipment => {
     const id = `sh-${Date.now()}`;
-    const trackingNumber = newShipmentData.trackingNumber || `PTX-${Math.floor(100000 + Math.random() * 900000)}`;
+    const trackingNumber = newShipmentData.trackingNumber || `PET-ESP-${Math.floor(1000 + Math.random() * 9000)}`;
     const nowStr = new Date().toISOString();
 
-    const initialMilestone: Milestone = {
-      id: `m-${Date.now()}`,
-      timestamp: new Date().toLocaleString(),
-      location: `${newShipmentData.origin.portName}`,
-      status: newShipmentData.status,
-      description: `Shipment booked and initial shipping manifest created for container ${newShipmentData.containerNumber}.`,
-      isCompleted: true,
-      isCurrent: true,
-      checkpointType: 'origin_port',
-      operator: 'PortX Central Dispatch'
-    };
+    const petName = newShipmentData.petInfo?.petName || 'Mascota';
+    const breed = newShipmentData.petInfo?.breed || 'Animal de Compañía';
+    const originCity = newShipmentData.origin.city || 'Madrid';
+    const destCity = newShipmentData.destination.city || 'Barcelona';
+    const doorAddr = newShipmentData.doorstepDelivery?.receiverDoorAddress || `${destCity} (Domicilio del Receptor)`;
+    const courier = newShipmentData.doorstepDelivery?.courierHandlerName || 'Carlos Méndez (Cuidador Especializado)';
+
+    const t0 = new Date(Date.now() - 8 * 3600 * 1000).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
+    const t1 = new Date(Date.now() - 4 * 3600 * 1000).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
+    const t2 = new Date(Date.now() - 1 * 3600 * 1000).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
+    const tNow = new Date().toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
+
+    const milestones: Milestone[] = [
+      {
+        id: `m-${Date.now()}-1`,
+        timestamp: t0,
+        location: `Centro Canino y Felino de ${originCity}`,
+        status: 'booked',
+        description: `Ingreso de ${petName} (${breed}) e inspección veterinaria de bienestar superada con éxito. Documentación y microchip validados.`,
+        isCompleted: true,
+        isCurrent: newShipmentData.status === 'booked',
+        checkpointType: 'origin_port',
+        operator: 'Servicio Veterinario Homologado'
+      },
+      {
+        id: `m-${Date.now()}-2`,
+        timestamp: t1,
+        location: `Salida de Base Logística ${originCity}`,
+        status: 'in_transit',
+        description: `Acomodación en furgoneta climatizada a 21.0°C con arnés de seguridad y bebedero térmico. Salida en autovía hacia ${destCity}.`,
+        isCompleted: newShipmentData.status !== 'booked',
+        isCurrent: newShipmentData.status === 'in_transit',
+        checkpointType: 'in_transit_hub',
+        operator: courier
+      }
+    ];
+
+    if (newShipmentData.status === 'in_transit' || newShipmentData.status === 'out_for_delivery' || newShipmentData.status === 'delivered') {
+      milestones.push({
+        id: `m-${Date.now()}-3`,
+        timestamp: t2,
+        location: `Área de Descanso en Ruta hacia ${destCity}`,
+        status: 'in_transit',
+        description: `Paseo higiénico de 20 minutos, hidratación con agua fresca y control de constantes vitales. ${petName} se encuentra en perfecto estado, alegre y descansado/a.`,
+        isCompleted: true,
+        isCurrent: newShipmentData.status === 'in_transit',
+        checkpointType: 'in_transit_hub',
+        operator: courier
+      });
+    }
+
+    if (newShipmentData.status === 'out_for_delivery' || newShipmentData.status === 'delivered') {
+      milestones.push({
+        id: `m-${Date.now()}-4`,
+        timestamp: tNow,
+        location: `Reparto Local a Domicilio (${destCity})`,
+        status: 'out_for_delivery',
+        description: `Furgoneta en ruta hacia la puerta del receptor en ${doorAddr}. Llamada previa de aviso realizada.`,
+        isCompleted: true,
+        isCurrent: newShipmentData.status === 'out_for_delivery',
+        checkpointType: 'destination_port',
+        operator: courier
+      });
+    }
+
+    if (newShipmentData.status === 'delivered') {
+      milestones.push({
+        id: `m-${Date.now()}-5`,
+        timestamp: tNow,
+        location: `Entregado en Mano en Puerta`,
+        status: 'delivered',
+        description: `Entrega formalizada con éxito en mano en la puerta de ${doorAddr}. Firma del destinatario registrada y certificado de bienestar archivado.`,
+        isCompleted: true,
+        isCurrent: true,
+        checkpointType: 'final_delivery',
+        operator: courier
+      });
+    }
+
+    let progressPercent = 25;
+    if (newShipmentData.status === 'in_transit') progressPercent = 65;
+    if (newShipmentData.status === 'customs_hold') progressPercent = 75;
+    if (newShipmentData.status === 'out_for_delivery') progressPercent = 90;
+    if (newShipmentData.status === 'delivered') progressPercent = 100;
 
     const created: Shipment = {
       ...newShipmentData,
       id,
       trackingNumber,
       createdAt: nowStr,
-      progressPercent: newShipmentData.status === 'delivered' ? 100 : 15,
-      milestones: [initialMilestone]
+      progressPercent,
+      milestones
     };
 
     setShipments((prev) => [created, ...prev]);
@@ -302,7 +384,8 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     id: string,
     newStatus: ShipmentStatus,
     locationName: string,
-    notes?: string
+    notes?: string,
+    clientNotice?: string
   ) => {
     setShipments((prev) =>
       prev.map((s) => {
@@ -349,6 +432,7 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           status: newStatus,
           statusLabel: statusLabels[newStatus],
           progressPercent: progressMap[newStatus],
+          clientNotice: clientNotice !== undefined ? clientNotice : s.clientNotice,
           currentLocation: {
             ...s.currentLocation,
             name: locationName,

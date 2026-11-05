@@ -127,10 +127,13 @@ export interface Shipment {
   departedAt: string;
   estimatedArrival: string;
   actualArrival?: string;
+  departureTimeFormatted?: string;
+  arrivalTimeFormatted?: string;
   temperatureCelsius?: number; // for reefer / pharma
   progressPercent: number;
   milestones: Milestone[];
   notes?: string;
+  clientNotice?: string; // Official advisory for the receiver/client in case of delays or notes
   customsCleared: boolean;
   createdAt: string;
   petInfo?: PetDetails;

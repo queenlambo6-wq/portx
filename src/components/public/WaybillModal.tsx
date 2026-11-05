@@ -16,8 +16,8 @@ export const WaybillModal: React.FC<WaybillModalProps> = ({ shipment, onClose })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm overflow-y-auto print:p-0 print:bg-white print:static">
-      <div className="bg-white border border-slate-200 print:border-none print:bg-white print:text-black rounded-2xl max-w-4xl w-full max-h-[92vh] overflow-y-auto p-6 sm:p-10 relative shadow-2xl my-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-900/70 backdrop-blur-sm overflow-y-auto print:p-0 print:bg-white print:static">
+      <div className="bg-white border border-slate-200 print:border-none print:bg-white print:text-black rounded-2xl max-w-4xl w-full max-h-[94vh] overflow-y-auto p-4 sm:p-10 relative shadow-2xl my-auto">
         
         {/* Floating Print & Close bar (hidden during print) */}
         <div className="flex items-center justify-between pb-4 mb-6 border-b border-slate-200 print:hidden">

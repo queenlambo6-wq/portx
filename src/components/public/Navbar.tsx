@@ -137,33 +137,33 @@ export const Navbar: React.FC = () => {
       {/* Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Logo with PortX authentic visual */}
+          {/* Logo with PortX authentic visual - icon and text aligned and close */}
           <div
-            className="flex items-center gap-3 cursor-pointer group"
+            className="flex items-center gap-2.5 cursor-pointer group select-none"
             onClick={() => { setActiveView('home'); setIsAdminMode(false); }}
           >
-            {!logoImgError ? (
-              <img
-                src="/portx-assets/img/logo/logo.png"
-                alt="PortX Cargo & Logistics"
-                className="h-10 w-auto object-contain transition-transform group-hover:scale-102"
-                onError={() => setLogoImgError(true)}
-              />
-            ) : (
-              <div className="flex items-center justify-center w-11 h-11 rounded-lg bg-orange-600 text-white shadow-md p-2">
-                <Ship className="w-6 h-6 text-white" />
-              </div>
-            )}
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-2xl font-black tracking-tight text-[#232331] font-heading">
+            <div className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-orange-50 border border-orange-200/90 shadow-2xs group-hover:border-orange-400 transition-all shrink-0 p-1">
+              {!logoImgError ? (
+                <img
+                  src="/portx-assets/img/logo/favicon.png"
+                  alt="PortX Logo Icon"
+                  className="w-full h-full object-contain transition-transform group-hover:scale-105"
+                  onError={() => setLogoImgError(true)}
+                />
+              ) : (
+                <Ship className="w-5 h-5 text-orange-600" />
+              )}
+            </div>
+            <div className="flex flex-col justify-center">
+              <div className="flex items-center gap-1.5 leading-none">
+                <span className="text-2xl sm:text-[26px] font-black tracking-tight text-[#232331] font-heading leading-none">
                   PORT<span className="text-orange-600">X</span>
                 </span>
-                <span className="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-orange-100 text-orange-700 border border-orange-200">
-                  Pet & Doorstep
+                <span className="text-[9px] sm:text-[10px] uppercase font-black tracking-wider px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 border border-orange-200 leading-none">
+                  Pet Logistics
                 </span>
               </div>
-              <p className="text-[11px] text-[#767676] font-medium">
+              <p className="text-[10px] sm:text-[11px] text-[#767676] font-medium leading-none mt-1">
                 {t.taglineCargo}
               </p>
             </div>

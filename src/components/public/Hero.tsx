@@ -27,27 +27,16 @@ export const Hero: React.FC = () => {
 
   const handleTrackSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (trackingCode.trim()) {
-      setCurrentTrackingQuery(trackingCode.trim());
-      setIsAdminMode(false);
-      setActiveView('track');
-    }
-  };
-
-  const handleSampleClick = (code: string) => {
-    setTrackingCode(code);
-    setCurrentTrackingQuery(code);
+    const query = trackingCode.trim();
+    setCurrentTrackingQuery(query);
     setIsAdminMode(false);
     setActiveView('track');
   };
 
   return (
     <div className="relative bg-[#f8f5f1] border-b border-stone-200/80 pt-10 pb-16 lg:pt-16 lg:pb-24 overflow-hidden">
-      {/* Background Motif */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e0d8_1px,transparent_1px),linear-gradient(to_bottom,#e5e0d8_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] pointer-events-none opacity-40"></div>
-      
-      {/* Warm orange glow */}
-      <div className="absolute -top-24 right-0 w-[550px] h-[550px] bg-orange-200/40 rounded-full blur-3xl pointer-events-none"></div>
+      {/* Background Subtle Motif */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e0d8_1px,transparent_1px),linear-gradient(to_bottom,#e5e0d8_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] pointer-events-none opacity-30"></div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -112,20 +101,16 @@ export const Hero: React.FC = () => {
                 </button>
               </form>
 
-              {/* Sample Track Codes with Pet Names */}
-              <div className="mt-3.5 flex flex-wrap items-center gap-1.5 text-xs">
-                <span className="text-stone-500 text-[11px] font-medium">{t.quickTestLabel}</span>
-                {shipments.slice(0, 4).map((s) => (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() => handleSampleClick(s.trackingNumber)}
-                    className="px-2.5 py-1 rounded bg-[#f8f5f1] hover:bg-orange-50 text-orange-700 border border-stone-200 hover:border-orange-300 text-xs font-mono font-semibold transition-colors cursor-pointer flex items-center gap-1"
-                  >
-                    <span>{s.trackingNumber}</span>
-                    {s.petInfo && <span className="text-stone-500 font-sans text-[11px]">({s.petInfo.petName})</span>}
-                  </button>
-                ))}
+              {/* Confidentiality & Security Assurance */}
+              <div className="mt-3.5 flex flex-wrap items-center gap-2 text-xs text-stone-500">
+                <span className="flex items-center gap-1.5 font-medium">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  Rastreo Privado y Confidencial
+                </span>
+                <span className="text-stone-300">·</span>
+                <span className="text-[11px] text-[#767676]">
+                  Introduce el código único de seguimiento emitido por el criador o transportista.
+                </span>
               </div>
             </div>
 

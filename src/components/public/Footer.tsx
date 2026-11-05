@@ -13,25 +13,27 @@ export const Footer: React.FC = () => {
           
           {/* Brand Info */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              {!footerLogoError ? (
-                <img
-                  src="/portx-assets/img/logo/logo.png"
-                  alt="PortX"
-                  className="h-9 w-auto object-contain"
-                  onError={() => setFooterLogoError(true)}
-                />
-              ) : (
-                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-orange-600 text-white p-2 shadow-xs">
-                  <Heart className="w-6 h-6 fill-white" />
-                </div>
-              )}
-              <span className="text-xl font-black tracking-tight text-[#232331] font-heading">
-                PORT<span className="text-orange-600">X</span>
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-orange-100 text-orange-800">
-                Pet & Doorstep
-              </span>
+            <div className="flex items-center gap-2.5">
+              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-orange-50 border border-orange-200/90 shadow-2xs shrink-0 p-1">
+                {!footerLogoError ? (
+                  <img
+                    src="/portx-assets/img/logo/favicon.png"
+                    alt="PortX Logo Icon"
+                    className="w-full h-full object-contain"
+                    onError={() => setFooterLogoError(true)}
+                  />
+                ) : (
+                  <Heart className="w-5 h-5 text-orange-600" />
+                )}
+              </div>
+              <div className="flex items-center gap-1.5 leading-none">
+                <span className="text-xl font-black tracking-tight text-[#232331] font-heading leading-none">
+                  PORT<span className="text-orange-600">X</span>
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 leading-none">
+                  Pet Logistics
+                </span>
+              </div>
             </div>
             <p className="text-[#767676] leading-relaxed max-w-sm">
               Servicio especializado de transporte de mascotas y animales de compañía. Vehículos climatizados a 21°C, cuidadores veterinarios certificados y entrega en mano en la misma puerta del receptor en toda España y destinos internacionales.

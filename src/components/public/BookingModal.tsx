@@ -77,8 +77,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#232331]/70 backdrop-blur-xs">
-      <div className="bg-white border border-stone-200 rounded-2xl max-w-2xl w-full max-h-[92vh] overflow-y-auto p-6 sm:p-8 relative shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#232331]/70 backdrop-blur-xs overflow-y-auto">
+      <div className="bg-white border border-stone-200 rounded-2xl max-w-2xl w-full max-h-[94vh] overflow-y-auto p-4 sm:p-8 relative shadow-2xl my-auto">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 text-stone-400 hover:text-[#232331] p-2 rounded-lg bg-[#f8f5f1] cursor-pointer"

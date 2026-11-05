@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useShipping } from '../../context/ShippingContext';
-import { X, Send } from 'lucide-react';
+import { X, Send, AlertTriangle } from 'lucide-react';
 import { ShipmentStatus } from '../../types';
 
 interface AdminMilestoneModalProps {
@@ -20,16 +20,21 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
   const [status, setStatus] = useState<ShipmentStatus>('in_transit');
   const [locationName, setLocationName] = useState('');
   const [description, setDescription] = useState('');
+  const [clientNotice, setClientNotice] = useState('');
   const [operator, setOperator] = useState('Senior Dispatcher (J. Visser)');
 
   useEffect(() => {
     if (preselectedShipmentId) {
       setShipmentId(preselectedShipmentId);
       const target = shipments.find((s) => s.id === preselectedShipmentId);
-      if (target) setStatus(target.status);
+      if (target) {
+        setStatus(target.status);
+        setClientNotice(target.clientNotice || '');
+      }
     } else if (shipments.length > 0) {
       setShipmentId(shipments[0].id);
       setStatus(shipments[0].status);
+      setClientNotice(shipments[0].clientNotice || '');
     }
   }, [preselectedShipmentId, isOpen, shipments]);
 
@@ -41,13 +46,13 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
     e.preventDefault();
     if (!currentShipment || !locationName.trim() || !description.trim()) return;
 
-    updateShipmentStatus(currentShipment.id, status, locationName.trim(), description.trim());
+    updateShipmentStatus(currentShipment.id, status, locationName.trim(), description.trim(), clientNotice.trim() || undefined);
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-      <div className="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-6 sm:p-7 relative shadow-2xl text-slate-800">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-4 sm:p-7 relative shadow-2xl text-slate-800 my-auto max-h-[94vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 text-slate-400 hover:text-slate-700 p-2 rounded-lg bg-slate-100 cursor-pointer"
@@ -123,6 +128,21 @@ export const AdminMilestoneModal: React.FC<AdminMilestoneModalProps> = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full bg-slate-50 text-slate-900 p-2.5 rounded-xl border border-slate-300 focus:border-orange-500 focus:bg-white focus:outline-none"
+            ></textarea>
+          </div>
+
+          {/* Urgent Note or Client Advisory */}
+          <div className="p-3 bg-amber-50 border border-amber-300 rounded-xl space-y-1">
+            <div className="flex items-center gap-1.5 text-amber-900 font-bold text-[11px] uppercase tracking-wider">
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+              <span>Aviso Urgente para el Cliente (Visible en Rastreo Público)</span>
+            </div>
+            <textarea
+              rows={2}
+              value={clientNotice}
+              onChange={(e) => setClientNotice(e.target.value)}
+              placeholder="Opcional: Indicar incidencia de tráfico, parada adicional, o aviso previo a la entrega en portal..."
+              className="w-full bg-white text-stone-900 p-2 rounded-lg border border-amber-300 focus:border-amber-600 focus:outline-none text-xs"
             ></textarea>
           </div>
 

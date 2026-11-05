@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useShipping } from '../../context/ShippingContext';
 import {
   Search,
@@ -9,34 +9,43 @@ import {
   Calendar,
   CheckCircle2,
   AlertTriangle,
-  FileText,
   Printer,
-  Thermometer,
   ShieldCheck,
-  Heart,
-  Home,
-  Phone,
-  Sparkles,
-  UserCheck,
-  Award
+  User,
+  Scale,
+  Box,
+  Package,
+  Hash,
+  Plus,
+  Minus,
+  Copy,
+  Check,
+  MessageCircle
 } from 'lucide-react';
-import { TransportMode, ShipmentStatus } from '../../types';
+import { ShipmentStatus } from '../../types';
 
 export const TrackingSection: React.FC = () => {
   const {
     t,
-    language,
-    shipments,
     currentTrackingQuery,
     setCurrentTrackingQuery,
     getShipmentByTrackingNumber,
-    setSelectedShipmentForPrint,
-    setIsAdminMode,
-    setAdminSubView
+    setSelectedShipmentForPrint
   } = useShipping();
 
   const [searchInput, setSearchInput] = useState(currentTrackingQuery);
-  const currentShipment = getShipmentByTrackingNumber(currentTrackingQuery) || shipments[0];
+  const [copied, setCopied] = useState(false);
+  const [mapZoom, setMapZoom] = useState(1);
+
+  // Sync search input when query changes
+  useEffect(() => {
+    setSearchInput(currentTrackingQuery);
+  }, [currentTrackingQuery]);
+
+  const searchedShipment = getShipmentByTrackingNumber(currentTrackingQuery);
+  const hasQuery = currentTrackingQuery.trim().length > 0;
+  // User only sees the shipment they have the tracking number for
+  const currentShipment = searchedShipment;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,551 +54,568 @@ export const TrackingSection: React.FC = () => {
     }
   };
 
-  const getModeIcon = (mode: TransportMode) => {
-    switch (mode) {
-      case 'air_freight':
-        return <Plane className="w-4 h-4 text-blue-600" />;
-      case 'road_transport':
-      default:
-        return <Truck className="w-4 h-4 text-orange-600" />;
+  const handleCopyCode = (code: string) => {
+    try {
+      navigator.clipboard?.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback
     }
   };
 
-  const getStatusBadge = (status: ShipmentStatus) => {
-    const statusLabels: Record<string, Record<ShipmentStatus, string>> = {
-      es: {
-        booked: 'Reserva Confirmada',
-        in_transit: 'En Tránsito Climatizado',
-        customs_hold: 'Revisión Veterinaria',
-        out_for_delivery: 'En Furgoneta hacia tu Puerta',
-        delivered: 'Entregado en Mano en Puerta',
-        exception: 'Atención Especial'
-      },
-      en: {
-        booked: 'Booking Confirmed',
-        in_transit: 'In Climate Transit (21°C)',
-        customs_hold: 'Veterinary Check',
-        out_for_delivery: 'In Van to Receiver Doorstep',
-        delivered: 'Safely Handed at Doorstep',
-        exception: 'Special Care Required'
-      },
-      de: {
-        booked: 'Buchung Bestätigt',
-        in_transit: 'Im klimatisierten Transit',
-        customs_hold: 'Tierarztprüfung',
-        out_for_delivery: 'In Zustellung an die Haustür',
-        delivered: 'An der Haustür Übergeben',
-        exception: 'Besondere Betreuung'
-      }
-    };
+  // 5 Progress Steps matching Gradlyn Global: Pickup -> Shipped -> In Transit -> Out for Delivery -> Delivered
+  const getStepStatus = (status: ShipmentStatus, stepIndex: number) => {
+    // 0: Pickup, 1: Shipped, 2: In Transit, 3: Out for Delivery, 4: Delivered
+    let activeLevel = 0;
+    if (status === 'booked') activeLevel = 0;
+    else if (status === 'in_transit') activeLevel = 2;
+    else if (status === 'customs_hold') activeLevel = 2;
+    else if (status === 'out_for_delivery') activeLevel = 3;
+    else if (status === 'delivered') activeLevel = 4;
 
-    const currentMap = statusLabels[language] || statusLabels.es;
-    const label = currentMap[status] || status;
-
-    switch (status) {
-      case 'delivered':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            {label}
-          </span>
-        );
-      case 'in_transit':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">
-            <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
-            {label}
-          </span>
-        );
-      case 'customs_hold':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
-            <AlertTriangle className="w-3.5 h-3.5" />
-            {label}
-          </span>
-        );
-      case 'out_for_delivery':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-orange-100 text-orange-900 border border-orange-300 shadow-2xs">
-            <Home className="w-3.5 h-3.5 text-orange-600 animate-bounce" />
-            {label}
-          </span>
-        );
-      case 'exception':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
-            <AlertTriangle className="w-3.5 h-3.5" />
-            {label}
-          </span>
-        );
-      case 'booked':
-      default:
-        return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-stone-100 text-stone-700 border border-stone-300">
-            <Clock className="w-3.5 h-3.5" />
-            {label}
-          </span>
-        );
-    }
+    const isCompleted = stepIndex < activeLevel;
+    const isCurrent = stepIndex === activeLevel;
+    return { isCompleted, isCurrent, isReached: stepIndex <= activeLevel };
   };
+
+  const departureFormatted = currentShipment?.departureTimeFormatted || (currentShipment?.departedAt ? new Date(currentShipment.departedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Sep 15');
+  const arrivalFormatted = currentShipment?.arrivalTimeFormatted || (currentShipment?.estimatedArrival ? new Date(currentShipment.estimatedArrival).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Sep 15');
+  const currentDateFormatted = new Date().toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
 
   return (
-    <div className="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {/* Title & Search Bar */}
-      <div className="mb-10 text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-md bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold uppercase tracking-wider mb-3">
-          <Heart className="w-3.5 h-3.5 fill-orange-600 text-orange-600" />
-          <span>{t.trackingHeaderBadge}</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl font-black text-[#232331] font-heading tracking-tight">
-          {t.trackingHeading}
-        </h1>
-        <p className="mt-2 text-sm text-[#767676]">
-          {t.trackingSubheading}
-        </p>
-
-        {/* Search Input Box */}
-        <form onSubmit={handleSearch} className="mt-6 flex flex-col sm:flex-row items-center gap-2 bg-white p-2 rounded-2xl border-2 border-orange-300 shadow-lg">
-          <div className="flex items-center flex-1 w-full px-3">
-            <Search className="w-5 h-5 text-orange-600 mr-3 shrink-0" />
-            <input
-              type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder={t.trackInputPlaceholder}
-              className="w-full bg-transparent text-sm sm:text-base text-[#232331] placeholder-stone-400 focus:outline-none font-medium"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full sm:w-auto px-7 py-3.5 bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm rounded-xl transition-all shadow-md shadow-orange-600/20 whitespace-nowrap cursor-pointer"
-          >
-            {t.trackButton}
-          </button>
-        </form>
-
-        {/* Quick Sample Tracking Numbers */}
-        <div className="mt-3.5 flex flex-wrap items-center justify-center gap-2 text-xs text-[#767676]">
-          <span className="font-semibold text-stone-500">{t.quickTestLabel}</span>
-          {shipments.slice(0, 5).map((s) => (
+    <div className="bg-[#f8f5f1] min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        
+        {/* Top Search Bar */}
+        <div className="bg-white p-3 rounded-2xl border border-stone-200 shadow-sm max-w-3xl mx-auto">
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row items-center gap-2">
+            <div className="flex items-center flex-1 w-full px-3">
+              <Search className="w-5 h-5 text-orange-600 mr-3 shrink-0" />
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Introduce tu código de seguimiento (ej. VY22261591 o PET-MAD-8492)..."
+                className="w-full bg-transparent text-sm sm:text-base text-[#232331] placeholder-stone-400 focus:outline-none font-medium font-mono"
+              />
+            </div>
             <button
-              key={s.id}
-              onClick={() => {
-                setSearchInput(s.trackingNumber);
-                setCurrentTrackingQuery(s.trackingNumber);
-              }}
-              className={`px-2.5 py-1 rounded text-xs transition-colors font-mono font-bold cursor-pointer flex items-center gap-1 ${
-                currentShipment?.trackingNumber === s.trackingNumber
-                  ? 'bg-orange-600 text-white shadow-xs'
-                  : 'bg-white hover:bg-orange-50 text-stone-700 border border-stone-200'
-              }`}
+              type="submit"
+              className="w-full sm:w-auto px-7 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm rounded-xl transition-all shadow-md shadow-orange-600/20 whitespace-nowrap cursor-pointer"
             >
-              <span>{s.trackingNumber}</span>
-              {s.petInfo && <span className="opacity-80 font-sans">({s.petInfo.petName})</span>}
+              Rastrear Envío
             </button>
-          ))}
+          </form>
         </div>
-      </div>
 
-      {currentShipment ? (
-        <div className="space-y-8">
-          {/* Main Status & Pet Banner Card */}
-          <div className="bg-white rounded-2xl border border-stone-200 p-6 sm:p-8 shadow-xl relative overflow-hidden">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-stone-200">
+        {currentShipment ? (
+          /* EXACT GRADLYN GLOBAL 2-COLUMN ARRANGEMENT */
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            {/* LEFT COLUMN: Main Tracking Card + Combined History & Map Card (8 COLS) */}
+            <div className="lg:col-span-8 space-y-6">
               
-              {/* Pet Identity & Avatar */}
-              <div className="flex items-start sm:items-center gap-4">
-                {currentShipment.petInfo?.avatarUrl ? (
-                  <img
-                    src={currentShipment.petInfo.avatarUrl}
-                    alt={currentShipment.petInfo.petName}
-                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-orange-400 shadow-md shrink-0"
-                  />
-                ) : (
-                  <div className="w-16 h-16 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center border-2 border-orange-200 shrink-0">
-                    <Heart className="w-8 h-8 fill-orange-600" />
-                  </div>
-                )}
-
-                <div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="text-2xl sm:text-3xl font-black text-[#232331] font-heading tracking-tight">
-                      {currentShipment.petInfo ? currentShipment.petInfo.petName : currentShipment.trackingNumber}
-                    </h2>
-                    {currentShipment.petInfo && (
-                      <span className="px-3 py-1 rounded-md text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200">
-                        {currentShipment.petInfo.breed} · {currentShipment.petInfo.age}
-                      </span>
-                    )}
-                    {getStatusBadge(currentShipment.status)}
-                  </div>
-                  
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-[#767676] mt-2">
-                    <span className="font-mono bg-[#f8f5f1] px-2 py-0.5 rounded border border-stone-200 text-[#232331] font-bold">
+              {/* CARD 1: Main Status & Stepper Card */}
+              <div className="bg-white rounded-2xl border border-stone-200 p-5 sm:p-7 shadow-sm space-y-6">
+                
+                {/* Header Row: Tracking Number Pill (Left) and Shipped / Delivery By Badge (Right) */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="px-4 py-1.5 rounded-lg bg-sky-50 text-sky-700 font-black font-mono text-base tracking-wider border border-sky-100 shadow-2xs">
                       {currentShipment.trackingNumber}
                     </span>
-                    <span>·</span>
-                    <span>Microchip: <strong className="text-[#232331] font-mono">{currentShipment.petInfo?.microchipNumber || currentShipment.containerNumber}</strong></span>
-                    <span>·</span>
-                    <span>Pasaporte UE: <strong className="text-[#232331] font-mono">{currentShipment.petInfo?.healthPassportNumber || currentShipment.bolNumber}</strong></span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3">
-                <button
-                  onClick={() => setSelectedShipmentForPrint(currentShipment)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-[#f8f5f1] hover:bg-stone-200/80 text-[#232331] text-xs font-bold rounded-xl border border-stone-300 transition-colors shadow-2xs cursor-pointer"
-                >
-                  <Printer className="w-4 h-4 text-orange-600" />
-                  <span>{t.printWaybillBtn}</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setIsAdminMode(true);
-                    setAdminSubView('milestones');
-                  }}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-orange-50 hover:bg-orange-100 text-orange-700 text-xs font-bold rounded-xl border border-orange-200 transition-colors cursor-pointer"
-                  title="Actualizar estado en panel de control"
-                >
-                  <Sparkles className="w-4 h-4 text-orange-600" />
-                  <span>{t.dispatchUpdateBtn}</span>
-                </button>
-              </div>
-            </div>
-
-            {/* HIGH-VISIBILITY LOCAL DOORSTEP DELIVERY BANNER */}
-            <div className="mt-6 p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg relative overflow-hidden">
-              <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-44 h-44 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
-              
-              <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
-                <div className="space-y-1.5 max-w-xl">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-black uppercase tracking-wider backdrop-blur-xs">
-                    <Home className="w-3.5 h-3.5" />
-                    <span>{t.doorstepDeliveryBadge}</span>
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-black font-heading leading-tight">
-                    {t.doorstepDeliveryHeadline}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-orange-50 leading-relaxed">
-                    {currentShipment.doorstepDelivery?.receiverDoorAddress
-                      ? `Destino: ${currentShipment.doorstepDelivery.receiverDoorAddress}, ${currentShipment.destination.city}`
-                      : currentShipment.destination.portName}
-                  </p>
-                </div>
-
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full md:w-auto">
-                  <a
-                    href="tel:+34602493512"
-                    className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-orange-600 hover:bg-orange-50 font-black text-xs transition-colors shadow-md cursor-pointer whitespace-nowrap"
-                  >
-                    <Phone className="w-4 h-4 fill-orange-600 text-orange-600" />
-                    <span>{t.callCourierBtn}</span>
-                  </a>
-                </div>
-              </div>
-
-              {/* Doorstep Progress Tracker */}
-              <div className="mt-6 pt-5 border-t border-white/20 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                <div className="bg-white/10 rounded-xl p-3 backdrop-blur-xs">
-                  <span className="text-[10px] text-orange-200 uppercase font-bold block mb-1">Cuidador / Conductor:</span>
-                  <span className="font-bold flex items-center gap-1.5">
-                    <UserCheck className="w-3.5 h-3.5 text-orange-200" />
-                    {currentShipment.doorstepDelivery?.courierHandlerName || 'Cuidador PortX Asignado'}
-                  </span>
-                </div>
-
-                <div className="bg-white/10 rounded-xl p-3 backdrop-blur-xs">
-                  <span className="text-[10px] text-orange-200 uppercase font-bold block mb-1">Hora Estimada en Puerta:</span>
-                  <span className="font-bold flex items-center gap-1.5 font-mono">
-                    <Clock className="w-3.5 h-3.5 text-orange-200" />
-                    {currentShipment.doorstepDelivery?.estimatedDoorArrivalTime || 'Hoy en ventana coordinada'}
-                  </span>
-                </div>
-
-                <div className="bg-white/10 rounded-xl p-3 backdrop-blur-xs">
-                  <span className="text-[10px] text-orange-200 uppercase font-bold block mb-1">Cabina Climatizada:</span>
-                  <span className="font-bold flex items-center gap-1.5 font-mono">
-                    <Thermometer className="w-3.5 h-3.5 text-orange-200" />
-                    {currentShipment.temperatureCelsius || 21.5}°C Constante
-                  </span>
-                </div>
-
-                <div className="bg-white/10 rounded-xl p-3 backdrop-blur-xs">
-                  <span className="text-[10px] text-orange-200 uppercase font-bold block mb-1">Firma en Puerta:</span>
-                  <span className="font-bold flex items-center gap-1.5">
-                    <Award className="w-3.5 h-3.5 text-orange-200" />
-                    {currentShipment.doorstepDelivery?.handoverProof?.signatureVerified
-                      ? 'Verificada y Firmada'
-                      : 'Recepción en Mano'}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Visual Route Journey Bar */}
-            <div className="mt-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                {/* Origin */}
-                <div className="bg-[#f8f5f1] p-4 rounded-xl border border-stone-200">
-                  <span className="text-[10px] uppercase font-bold text-stone-500 tracking-wider">
-                    {t.portOfLoading}
-                  </span>
-                  <div className="text-lg font-bold text-[#232331] mt-1">
-                    {currentShipment.origin.city}, {currentShipment.origin.country}
-                  </div>
-                  <p className="text-xs text-[#767676] mt-0.5">{currentShipment.origin.portName}</p>
-                  <div className="flex items-center gap-1.5 text-xs text-stone-600 mt-3 font-medium">
-                    <Calendar className="w-3.5 h-3.5 text-orange-600" />
-                    <span>{t.departedDate}: {new Date(currentShipment.departedAt).toLocaleDateString()}</span>
-                  </div>
-                </div>
-
-                {/* Current Location & Progress */}
-                <div className="text-center px-4 flex flex-col items-center">
-                  <div className="text-xs font-bold text-orange-600 flex items-center gap-1.5">
-                    <MapPin className="w-4 h-4 animate-bounce" />
-                    <span>{t.currentCheckpoint}</span>
-                  </div>
-                  <div className="text-sm font-bold text-[#232331] mt-1 max-w-xs">
-                    {currentShipment.currentLocation.name}
-                  </div>
-                  {currentShipment.currentLocation.weather && (
-                    <span className="text-[11px] text-[#767676] mt-1">
-                      {currentShipment.currentLocation.weather}
-                    </span>
-                  )}
-
-                  {/* Progress Line */}
-                  <div className="w-full mt-4">
-                    <div className="flex justify-between text-[11px] text-[#767676] font-mono mb-1 font-semibold">
-                      <span>{t.transitProgress}</span>
-                      <span className="text-orange-600 font-bold">{currentShipment.progressPercent}%</span>
-                    </div>
-                    <div className="w-full h-2.5 bg-stone-200 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-orange-600 rounded-full transition-all duration-1000"
-                        style={{ width: `${currentShipment.progressPercent}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Destination / Receiver Doorstep */}
-                <div className="bg-[#f8f5f1] p-4 rounded-xl border border-stone-200">
-                  <span className="text-[10px] uppercase font-bold text-orange-600 tracking-wider flex items-center gap-1">
-                    <Home className="w-3 h-3" />
-                    {t.portOfDischarge}
-                  </span>
-                  <div className="text-lg font-bold text-[#232331] mt-1">
-                    {currentShipment.destination.city}, {currentShipment.destination.country}
-                  </div>
-                  <p className="text-xs text-stone-600 mt-0.5 font-medium">
-                    {currentShipment.doorstepDelivery?.receiverDoorAddress || currentShipment.destination.portName}
-                  </p>
-                  <div className="flex items-center gap-1.5 text-xs text-emerald-700 mt-3 font-bold">
-                    <Clock className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>{t.estimatedArrival}: {currentShipment.doorstepDelivery?.estimatedDoorArrivalTime || new Date(currentShipment.estimatedArrival).toLocaleDateString()}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Details Grid: Left Milestones / Right Pet Welfare Details */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left 2 Cols: Milestone Timeline */}
-            <div className="lg:col-span-2 bg-white rounded-2xl border border-stone-200 p-6 sm:p-8 shadow-sm">
-              <div className="flex items-center justify-between mb-6 pb-4 border-b border-stone-100">
-                <div>
-                  <h3 className="text-lg font-bold text-[#232331] font-heading">
-                    {t.milestonesTitle}
-                  </h3>
-                  <p className="text-xs text-[#767676]">
-                    {t.milestonesSubtitle}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-stone-600 font-medium">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>IATA LAR Animal Welfare Standard</span>
-                </div>
-              </div>
-
-              {/* Timeline Steps */}
-              <div className="relative pl-6 space-y-7 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-stone-200">
-                {currentShipment.milestones.map((m) => (
-                  <div key={m.id} className="relative group">
-                    {/* Circle Node */}
-                    <div
-                      className={`absolute -left-6 top-1 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                        m.isCurrent
-                          ? 'bg-orange-600 border-white ring-4 ring-orange-100'
-                          : m.isCompleted
-                          ? 'bg-emerald-600 border-white'
-                          : 'bg-stone-100 border-stone-300'
-                      }`}
+                    <button
+                      onClick={() => handleCopyCode(currentShipment.trackingNumber)}
+                      className="p-1.5 text-stone-400 hover:text-stone-700 rounded-md hover:bg-stone-100 transition-colors"
+                      title="Copiar código"
                     >
-                      {m.isCompleted && !m.isCurrent && (
-                        <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
-                      )}
-                      {m.isCurrent && (
-                        <div className="w-2 h-2 rounded-full bg-white animate-ping"></div>
-                      )}
+                      {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-3 text-xs">
+                    <span className="text-stone-600 font-medium">
+                      Shipped: <strong className="text-stone-900 font-bold">{departureFormatted}</strong>
+                    </span>
+                    <span className="px-3.5 py-1.5 rounded-md bg-orange-600 text-white font-bold text-xs uppercase tracking-wider shadow-xs">
+                      DELIVERY BY: {arrivalFormatted}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 2x2 Origin / Destination / Location / Date Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8 pt-2">
+                  {/* Origin */}
+                  <div className="flex items-start gap-2.5">
+                    <MapPin className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[11px] font-semibold text-sky-700/80 uppercase tracking-wider block">
+                        Origin
+                      </span>
+                      <span className="text-sm font-bold text-[#232331]">
+                        {currentShipment.origin.city}, {currentShipment.origin.country}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Destination */}
+                  <div className="flex items-start gap-2.5">
+                    <MapPin className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[11px] font-semibold text-sky-700/80 uppercase tracking-wider block">
+                        Destination
+                      </span>
+                      <span className="text-sm font-bold text-[#232331]">
+                        {currentShipment.destination.city}, {currentShipment.destination.country}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Current Location */}
+                  <div className="flex items-start gap-2.5">
+                    <Truck className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[11px] font-semibold text-sky-700/80 uppercase tracking-wider block">
+                        Current Location
+                      </span>
+                      <span className="text-sm font-bold text-[#232331]">
+                        {currentShipment.currentLocation.name}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Current Date */}
+                  <div className="flex items-start gap-2.5">
+                    <Clock className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[11px] font-semibold text-sky-700/80 uppercase tracking-wider block">
+                        Current Date
+                      </span>
+                      <span className="text-sm font-bold text-[#232331]">
+                        {currentDateFormatted}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Full-Width Highlight Banner */}
+                <div className="w-full bg-orange-600 text-white py-2.5 px-4 rounded-lg font-bold text-xs sm:text-sm text-center shadow-xs tracking-wide">
+                  {currentShipment.clientNotice || 'Jaula de Transporte Electrónica Para Mascotas IPATA Pendiente'}
+                </div>
+
+                {/* 5-Step Stepper Progress Bar (Pickup -> Shipped -> In Transit -> Out for Delivery -> Delivered) */}
+                <div className="pt-4 pb-2">
+                  <div className="relative">
+                    {/* Background Track Line */}
+                    <div className="absolute top-4 left-6 right-6 h-0.5 bg-stone-200 -translate-y-1/2"></div>
+                    
+                    {/* Active Track Line */}
+                    <div
+                      className="absolute top-4 left-6 h-0.5 bg-orange-600 -translate-y-1/2 transition-all duration-700"
+                      style={{
+                        width: `${
+                          currentShipment.status === 'delivered' ? 100 :
+                          currentShipment.status === 'out_for_delivery' ? 75 :
+                          currentShipment.status === 'in_transit' || currentShipment.status === 'customs_hold' ? 50 :
+                          25
+                        }%`
+                      }}
+                    ></div>
+
+                    {/* Nodes */}
+                    <div className="relative flex justify-between items-center text-center">
+                      {[
+                        { label: 'Pickup', index: 0 },
+                        { label: 'Shipped', index: 1 },
+                        { label: 'In Transit', index: 2 },
+                        { label: 'Out for Delivery', index: 3 },
+                        { label: 'Delivered', index: 4 }
+                      ].map((step) => {
+                        const { isCompleted, isCurrent, isReached } = getStepStatus(currentShipment.status, step.index);
+                        return (
+                          <div key={step.label} className="flex flex-col items-center group">
+                            <div
+                              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                                isCurrent
+                                  ? 'bg-orange-600 text-white ring-4 ring-orange-100 shadow-sm'
+                                  : isReached
+                                  ? 'bg-orange-600 text-white'
+                                  : 'bg-stone-100 border-2 border-stone-200 text-stone-400'
+                              }`}
+                            >
+                              {isCurrent ? (
+                                <div className="w-3 h-3 rounded-full bg-white animate-pulse"></div>
+                              ) : isReached ? (
+                                <div className="w-2.5 h-2.5 rounded-full bg-white"></div>
+                              ) : (
+                                <div className="w-2 h-2 rounded-full bg-stone-300"></div>
+                              )}
+                            </div>
+                            <span
+                              className={`text-[11px] sm:text-xs font-semibold mt-2.5 block ${
+                                isCurrent
+                                  ? 'text-orange-600 font-bold'
+                                  : isReached
+                                  ? 'text-[#232331]'
+                                  : 'text-stone-400'
+                              }`}
+                            >
+                              {step.label}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* CARD 2: Split Card - Tracking History (Left) + Live GIS Map (Right) */}
+              <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden grid grid-cols-1 md:grid-cols-12 min-h-[420px]">
+                
+                {/* Left Side: Tracking History & Yellow Sticky Note */}
+                <div className="md:col-span-5 p-6 border-b md:border-b-0 md:border-r border-stone-200 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-2xl font-black text-[#232331] font-heading leading-tight">
+                      Tracking History
+                    </h3>
+                    <div className="text-xs font-mono text-stone-500 font-bold mt-0.5">
+                      {currentShipment.trackingNumber}
                     </div>
 
-                    <div className={`p-4 rounded-xl border transition-all ${
-                      m.isCurrent
-                        ? 'bg-orange-50/70 border-orange-200 shadow-2xs'
-                        : 'bg-[#f8f5f1] border-stone-200 hover:bg-stone-100/60'
-                    }`}>
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
-                        <span className="font-bold text-sm text-[#232331] flex items-center gap-2">
-                          {m.location}
-                          {m.isCurrent && (
-                            <span className="px-2 py-0.5 text-[10px] font-bold rounded bg-orange-600 text-white uppercase tracking-wider">
-                              {t.currentCheckpoint}
-                            </span>
-                          )}
-                        </span>
-                        <span className="text-xs font-mono text-[#767676] font-medium">{m.timestamp}</span>
-                      </div>
-                      <p className="text-xs text-[#767676] leading-relaxed">{m.description}</p>
-                      {m.operator && (
-                        <div className="mt-2 text-[11px] text-stone-500 flex items-center gap-1.5">
-                          <span className="font-medium text-stone-400">Cuidador / Oficial:</span>
-                          <span className="font-semibold text-stone-700">{m.operator}</span>
+                    {/* Yellow Sticky Note / Important Client Notice */}
+                    <div className="mt-4 bg-[#fff3cd] text-[#856404] border border-[#ffeeba] p-3 rounded-xl text-xs font-bold leading-relaxed shadow-2xs">
+                      {currentShipment.clientNotice || 'Jaula de Transporte Electrónica Para Mascotas IPATA Pendiente'}
+                    </div>
+
+                    {/* Timeline List */}
+                    <div className="mt-6 space-y-4">
+                      {currentShipment.milestones && currentShipment.milestones.length > 0 ? (
+                        currentShipment.milestones.map((m) => (
+                          <div key={m.id} className="flex items-start gap-2.5 text-xs">
+                            <div className="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0 mt-1"></div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-1">
+                                <span className="font-bold text-[#232331] truncate">
+                                  {m.location}
+                                </span>
+                                <span className="text-[10px] text-stone-400 font-mono shrink-0">
+                                  {m.timestamp}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-stone-500 mt-0.5 leading-snug">
+                                {m.description}
+                              </p>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="flex items-start gap-2.5 text-xs">
+                          <div className="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0 mt-1"></div>
+                          <div>
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="font-bold text-[#232331]">Pedido de Envío Recibido</span>
+                              <span className="text-[10px] text-stone-400 font-mono">{departureFormatted}</span>
+                            </div>
+                            <p className="text-[11px] text-stone-500 mt-0.5">
+                              {currentShipment.origin.city}, {currentShipment.origin.country}
+                            </p>
+                          </div>
                         </div>
                       )}
                     </div>
                   </div>
-                ))}
+
+                  <div className="pt-4 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500 mt-6">
+                    <span className="flex items-center gap-1.5 font-medium">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                      IPATA / LAR Certificado
+                    </span>
+                    <button
+                      onClick={() => setSelectedShipmentForPrint(currentShipment)}
+                      className="text-orange-600 hover:text-orange-700 font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <Printer className="w-3.5 h-3.5" />
+                      <span>Imprimir Albarán</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right Side: Map Canvas matching Carto Basemap with Zoom & Live Marker */}
+                <div className="md:col-span-7 bg-[#f1f5f9] relative overflow-hidden flex items-center justify-center min-h-[300px]">
+                  
+                  {/* Subtle Carto Watermark & API Key graphic as in screenshot */}
+                  <div className="absolute top-4 right-4 text-[11px] font-mono font-bold text-stone-400/50 uppercase select-none pointer-events-none rotate-[-35deg]">
+                    API KEY · carto.com/basemaps
+                  </div>
+                  <div className="absolute bottom-4 left-4 text-[10px] font-mono text-stone-400/60 select-none pointer-events-none">
+                    Leaflet | © OpenStreetMap contributors © CARTO
+                  </div>
+
+                  {/* Zoom Controls (+ / -) in Upper Left */}
+                  <div className="absolute top-4 left-4 flex flex-col bg-white rounded-lg border border-stone-300 shadow-sm z-10 overflow-hidden">
+                    <button
+                      onClick={() => setMapZoom((prev) => Math.min(prev + 0.2, 1.8))}
+                      className="p-1.5 text-stone-700 hover:bg-stone-100 border-b border-stone-200 cursor-pointer"
+                      title="Zoom in"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setMapZoom((prev) => Math.max(prev - 0.2, 0.8))}
+                      className="p-1.5 text-stone-700 hover:bg-stone-100 cursor-pointer"
+                      title="Zoom out"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* SVG Geographic Map & Route Line Canvas */}
+                  <div
+                    className="w-full h-full p-4 flex items-center justify-center transition-transform duration-300"
+                    style={{ transform: `scale(${mapZoom})` }}
+                  >
+                    <svg className="w-full h-full max-h-[360px]" viewBox="0 0 500 320" fill="none">
+                      {/* Stylized background terrain contours */}
+                      <path d="M40 80 Q 120 40 200 90 T 360 80 T 480 120" stroke="#e2e8f0" strokeWidth="3" fill="none" />
+                      <path d="M20 180 Q 140 160 220 220 T 420 200" stroke="#e2e8f0" strokeWidth="2.5" fill="none" />
+                      <path d="M80 260 Q 220 280 320 240 T 460 270" stroke="#e2e8f0" strokeWidth="2" fill="none" />
+
+                      {/* Route Arc from Origin (Bottom Left) to Destination (Top Right) */}
+                      <path
+                        d="M 90 240 Q 220 180 340 90"
+                        stroke="#60a5fa"
+                        strokeWidth="3.5"
+                        strokeLinecap="round"
+                        fill="none"
+                      />
+
+                      {/* Origin Node */}
+                      <circle cx="90" cy="240" r="6" fill="#3b82f6" />
+                      <circle cx="90" cy="240" r="12" fill="#3b82f6" fillOpacity="0.2" />
+                      <text x="90" y="265" fill="#475569" fontSize="10" fontWeight="bold" textAnchor="middle">
+                        {currentShipment.origin.city}
+                      </text>
+
+                      {/* Destination Node */}
+                      <circle cx="340" cy="90" r="6" fill="#10b981" />
+                      <circle cx="340" cy="90" r="12" fill="#10b981" fillOpacity="0.2" />
+                      <text x="340" y="70" fill="#475569" fontSize="10" fontWeight="bold" textAnchor="middle">
+                        {currentShipment.destination.city}
+                      </text>
+
+                      {/* Moving Marker on the Arc (Calculated near middle-right matching screenshot) */}
+                      <g transform="translate(265, 128)">
+                        {/* Radar Pulse Rings */}
+                        <circle cx="0" cy="0" r="18" fill="#38bdf8" fillOpacity="0.3" className="animate-ping" />
+                        <circle cx="0" cy="0" r="12" fill="#0284c7" />
+                        {/* Transport Plane / Vehicle Icon */}
+                        <path
+                          d="M -5 -2 L 0 -7 L 5 -2 L 7 2 L 2 2 L 0 6 L -2 2 L -7 2 Z"
+                          fill="white"
+                          transform="rotate(45)"
+                        />
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+
               </div>
+
             </div>
 
-            {/* Right Col: Pet Specifications & Welfare Dossier */}
-            <div className="space-y-6">
-              {/* Pet Info Card */}
-              <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
-                <h3 className="text-base font-bold text-[#232331] font-heading mb-4 flex items-center gap-2 pb-3 border-b border-stone-100">
-                  <Heart className="w-4 h-4 text-orange-600 fill-orange-600" />
-                  {t.cargoSpecsTitle}
-                </h3>
+            {/* RIGHT COLUMN: 3 Exact Gradlyn Sidebar Cards (4 COLS) */}
+            <div className="lg:col-span-4 space-y-5">
+              
+              {/* CARD 1: Destination Address */}
+              <div className="bg-white rounded-2xl border border-stone-200 p-5 shadow-sm space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-stone-100">
+                  <span className="px-2.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-100">
+                    Destination Address
+                  </span>
+                  <span className="text-xs text-stone-400 font-medium">
+                    {currentShipment.destination.country || 'España'}
+                  </span>
+                </div>
 
-                <div className="space-y-3.5 text-xs">
-                  <div className="flex justify-between py-1.5 border-b border-stone-100">
-                    <span className="text-[#767676] font-medium">Nombre de la Mascota</span>
-                    <span className="font-bold text-orange-600 text-sm">
-                      {currentShipment.petInfo?.petName || 'Mascota en Custodia'}
-                    </span>
+                <div className="flex items-start gap-3 pt-1">
+                  <User className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-bold text-[#232331] text-base leading-snug">
+                      {currentShipment.consignee.name}
+                    </h4>
+                    <p className="text-xs text-stone-600 mt-1 leading-relaxed">
+                      {currentShipment.doorstepDelivery?.receiverDoorAddress || currentShipment.consignee.address || 'Pl. de la Romera, 5, 6b'}
+                    </p>
+                    <div className="flex items-center gap-1.5 text-xs text-emerald-800 font-semibold mt-2.5">
+                      <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span>| {currentShipment.destination.city} | {currentShipment.doorstepDelivery?.receiverPostalCode || '21006'}</span>
+                    </div>
                   </div>
+                </div>
+              </div>
 
-                  <div className="flex justify-between py-1.5 border-b border-stone-100">
-                    <span className="text-[#767676] font-medium">Raza y Especie</span>
-                    <span className="font-bold text-[#232331] text-right">
-                      {currentShipment.petInfo ? `${currentShipment.petInfo.breed} (${currentShipment.petInfo.speciesLabel})` : currentShipment.cargo.description}
-                    </span>
+              {/* CARD 2: Origin Address */}
+              <div className="bg-white rounded-2xl border border-stone-200 p-5 shadow-sm space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-stone-100">
+                  <span className="px-2.5 py-0.5 rounded bg-orange-50 text-orange-700 text-xs font-bold border border-orange-100">
+                    Origin Address
+                  </span>
+                  <span className="text-xs text-stone-400 font-medium">
+                    {currentShipment.origin.country || 'España'}
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-3 pt-1">
+                  <User className="w-5 h-5 text-orange-600 shrink-0 mt-0.5" />
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-bold text-[#232331] text-base leading-snug">
+                      {currentShipment.sender.name}
+                    </h4>
+                    <div className="flex items-center gap-1.5 text-xs text-orange-800 font-semibold mt-2">
+                      <MapPin className="w-3.5 h-3.5 text-orange-600 shrink-0" />
+                      <span>{currentShipment.origin.city} | {currentShipment.origin.country} | 39150</span>
+                    </div>
                   </div>
+                </div>
+              </div>
 
-                  <div className="flex justify-between py-1.5 border-b border-stone-100">
-                    <span className="text-[#767676] font-medium">Nº Microchip Oficial</span>
-                    <span className="font-bold text-[#232331] font-mono">
-                      {currentShipment.petInfo?.microchipNumber || currentShipment.containerNumber}
-                    </span>
-                  </div>
+              {/* CARD 3: Package Details */}
+              <div className="bg-white rounded-2xl border border-stone-200 p-5 shadow-sm space-y-4">
+                <div className="pb-2 border-b border-stone-100">
+                  <span className="px-2.5 py-0.5 rounded bg-sky-50 text-sky-700 text-xs font-bold border border-sky-100">
+                    Package Details
+                  </span>
+                </div>
 
-                  <div className="flex justify-between py-1.5 border-b border-stone-100">
-                    <span className="text-[#767676] font-medium">Pasaporte Sanitario</span>
-                    <span className="font-bold text-[#232331] font-mono">
-                      {currentShipment.petInfo?.healthPassportNumber || currentShipment.sealNumber}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between py-1.5 border-b border-stone-100">
-                    <span className="text-[#767676] font-medium">{t.grossWeightLabel}</span>
-                    <span className="font-bold text-[#232331] font-mono">
-                      {currentShipment.cargo.weightKg} kg
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between py-1.5 border-b border-stone-100">
-                    <span className="text-[#767676] font-medium">Modelo de Transportín</span>
-                    <span className="font-bold text-[#232331] text-right max-w-[170px]">
-                      {currentShipment.petInfo?.crateModel || currentShipment.cargo.dimensions || 'IATA Homologado'}
-                    </span>
-                  </div>
-
-                  {/* Temperature badge */}
-                  <div className="flex justify-between items-center py-2 px-3 bg-orange-50 rounded-lg border border-orange-200 text-orange-900">
-                    <span className="flex items-center gap-1.5 font-medium">
-                      <Thermometer className="w-4 h-4 text-orange-600" />
-                      <span>{t.comfortTempLabel}</span>
-                    </span>
-                    <span className="font-bold font-mono text-sm">{currentShipment.temperatureCelsius || 21.5}°C</span>
-                  </div>
-
-                  {/* Hydration log */}
-                  {currentShipment.petInfo?.lastHydrationTime && (
-                    <div className="p-2.5 bg-blue-50 rounded-lg border border-blue-200 text-blue-900">
-                      <span className="text-[10px] font-bold uppercase tracking-wider block text-blue-700">
-                        {t.hydrationLogLabel}
+                {/* 2x2 Grid of Specs with Icons */}
+                <div className="grid grid-cols-2 gap-4 text-xs">
+                  {/* Weight */}
+                  <div className="flex items-start gap-2">
+                    <Scale className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[11px] text-stone-500 font-medium block">Weight</span>
+                      <span className="text-sm font-bold text-[#232331] font-mono">
+                        {currentShipment.cargo.weightKg} kg
                       </span>
-                      <span className="text-xs font-semibold">{currentShipment.petInfo.lastHydrationTime}</span>
                     </div>
-                  )}
-
-                  <div className="flex justify-between py-1.5">
-                    <span className="text-[#767676] font-medium">{t.customsClearanceLabel}</span>
-                    <span className={`font-bold ${currentShipment.customsCleared ? 'text-emerald-700' : 'text-amber-700'}`}>
-                      {currentShipment.customsCleared ? 'Certificado Veterinario Aprobado' : 'Revisión Veterinaria'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sender & Receiver (Doorstep Consignee) Box */}
-              <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
-                <h3 className="text-base font-bold text-[#232331] font-heading mb-4 flex items-center gap-2 pb-3 border-b border-stone-100">
-                  <Home className="w-4 h-4 text-orange-600" />
-                  <span>Entrega en Domicilio</span>
-                </h3>
-
-                <div className="space-y-3.5 text-xs">
-                  <div className="p-3 bg-[#f8f5f1] rounded-xl border border-stone-200">
-                    <span className="text-[10px] font-bold text-stone-500 uppercase tracking-wider block mb-0.5">
-                      {t.shipperLabel}
-                    </span>
-                    <div className="font-bold text-[#232331] text-sm">{currentShipment.sender.name}</div>
-                    <div className="text-[#767676] mt-0.5">{currentShipment.sender.company} · {currentShipment.sender.city}</div>
                   </div>
 
-                  <div className="p-3 bg-orange-50/70 rounded-xl border border-orange-200">
-                    <span className="text-[10px] font-bold text-orange-700 uppercase tracking-wider block mb-0.5 flex items-center gap-1">
-                      <Home className="w-3 h-3 text-orange-600" />
-                      <span>{t.consigneeLabel}</span>
-                    </span>
-                    <div className="font-bold text-[#232331] text-sm">{currentShipment.consignee.name}</div>
-                    <div className="text-orange-900 font-medium mt-0.5">
-                      {currentShipment.doorstepDelivery?.receiverDoorAddress || 'Entrega directa a domicilio'}
+                  {/* Dimensions */}
+                  <div className="flex items-start gap-2">
+                    <Box className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[11px] text-stone-500 font-medium block">Dimensions</span>
+                      <span className="text-xs font-bold text-[#232331] font-mono">
+                        {currentShipment.cargo.dimensions || 'L: 0 × W: 0 × H: 0 cm'}
+                      </span>
                     </div>
-                    <div className="text-stone-500 mt-0.5">
-                      {currentShipment.destination.city}, {currentShipment.destination.country}
+                  </div>
+
+                  {/* Package Type */}
+                  <div className="flex items-start gap-2">
+                    <Package className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[11px] text-stone-500 font-medium block">Package Type</span>
+                      <span className="text-xs font-bold text-[#232331] line-clamp-2">
+                        {currentShipment.petInfo ? `${currentShipment.petInfo.breed} (${currentShipment.petInfo.speciesLabel || 'Mascota'})` : 'Transporte de Mascotas'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Reference Number */}
+                  <div className="flex items-start gap-2">
+                    <Hash className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[11px] text-stone-500 font-medium block">Reference Number</span>
+                      <span className="text-xs font-bold text-[#232331] font-mono">
+                        {currentShipment.bookingRef || currentShipment.bolNumber || currentShipment.trackingNumber}
+                      </span>
                     </div>
                   </div>
                 </div>
+
+                {/* Direct Contact Help */}
+                <div className="pt-3 border-t border-stone-100 flex items-center justify-between">
+                  <a
+                    href={`https://wa.me/34602493512?text=${encodeURIComponent(`Hola, solicito asistencia sobre el envío: ${currentShipment.trackingNumber}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition-all cursor-pointer"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    <span>WhatsApp Despacho (+34602493512)</span>
+                  </a>
+                </div>
               </div>
+
+            </div>
+
+          </div>
+        ) : hasQuery ? (
+          /* Searched code but not found - NO OTHER TRACKING NUMBERS */
+          <div className="text-center py-12 bg-white rounded-2xl border border-stone-200 p-6 sm:p-10 shadow-sm max-w-2xl mx-auto">
+            <div className="w-14 h-14 bg-amber-50 rounded-2xl border border-amber-200 flex items-center justify-center mx-auto mb-4 text-amber-600">
+              <AlertTriangle className="w-7 h-7" />
+            </div>
+            <h3 className="text-xl sm:text-2xl font-bold text-[#232331] font-heading">
+              {t.noShipmentFoundTitle}
+            </h3>
+            <p className="text-[#767676] text-xs sm:text-sm mt-2 max-w-md mx-auto leading-relaxed">
+              No se ha encontrado ningún envío con el código <strong className="text-[#232331] font-mono">"{currentTrackingQuery}"</strong>. Comprueba si hay errores en el código o ponte en contacto con nuestro equipo de despacho para verificar tu número.
+            </p>
+
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button
+                onClick={() => {
+                  setCurrentTrackingQuery('');
+                  setSearchInput('');
+                }}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs shadow-md shadow-orange-600/20 cursor-pointer"
+              >
+                Probar con Otro Código
+              </button>
+              <a
+                href={`https://wa.me/34602493512?text=${encodeURIComponent(`Hola, tengo una consulta sobre mi código de seguimiento: ${currentTrackingQuery}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 cursor-pointer"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span>Contactar Despacho (+34602493512)</span>
+              </a>
             </div>
           </div>
-        </div>
-      ) : (
-        <div className="text-center py-16 bg-white rounded-2xl border border-stone-200 p-8 shadow-sm">
-          <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-3" />
-          <h3 className="text-xl font-bold text-[#232331]">{t.noShipmentFoundTitle}</h3>
-          <p className="text-[#767676] text-sm mt-1 max-w-md mx-auto">
-            {t.noShipmentFoundText} "{currentTrackingQuery}".
-          </p>
-        </div>
-      )}
+        ) : (
+          /* Empty State: Private Tracking Gateway */
+          <div className="text-center py-14 bg-white rounded-2xl border border-stone-200 p-6 sm:p-12 shadow-sm max-w-2xl mx-auto">
+            <div className="w-14 h-14 bg-orange-50 rounded-2xl border border-orange-200 flex items-center justify-center mx-auto mb-4 text-orange-600">
+              <Search className="w-7 h-7" />
+            </div>
+            <h3 className="text-xl sm:text-2xl font-black text-[#232331] font-heading">
+              Portal Privado de Seguimiento
+            </h3>
+            <p className="text-[#767676] text-xs sm:text-sm mt-2.5 max-w-md mx-auto leading-relaxed">
+              Por estrictas razones de privacidad y protección de datos, cada traslado es confidencial. Introduce en la casilla superior el número de seguimiento único emitido para tu mascota para acceder a su telemetría, horarios y estado.
+            </p>
+
+            <div className="mt-8 pt-6 border-t border-stone-100 flex flex-wrap items-center justify-center gap-4 text-xs text-stone-500">
+              <span className="flex items-center gap-1.5 font-medium">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                Acceso Exclusivo y Confidencial
+              </span>
+              <span>·</span>
+              <span className="flex items-center gap-1.5 font-medium">
+                <Clock className="w-4 h-4 text-orange-600" />
+                Despacho 24/7 (+34602493512)
+              </span>
+            </div>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 };

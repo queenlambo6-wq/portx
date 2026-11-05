@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useShipping } from '../../context/ShippingContext';
-import { X, Save, Heart, Home, ShieldCheck, MapPin } from 'lucide-react';
+import { X, Save, Heart, Home, ShieldCheck, MapPin, CheckCircle2, ExternalLink, AlertTriangle } from 'lucide-react';
 import { Shipment, TransportMode, ShipmentStatus } from '../../types';
 
 interface AdminShipmentModalProps {
@@ -14,9 +14,17 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
   onClose,
   shipmentToEdit
 }) => {
-  const { createShipment, updateShipment, ports } = useShipping();
+  const {
+    createShipment,
+    updateShipment,
+    ports,
+    setCurrentTrackingQuery,
+    setActiveView,
+    setIsAdminMode
+  } = useShipping();
 
   const isEditing = !!shipmentToEdit;
+  const [createdSuccessNumber, setCreatedSuccessNumber] = useState<string | null>(null);
 
   const [trackingNumber, setTrackingNumber] = useState('');
   const [bookingRef, setBookingRef] = useState('');
@@ -69,8 +77,12 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
   const [cargoDesc, setCargoDesc] = useState('');
   const [weightKg, setWeightKg] = useState(24);
   const [temperatureCelsius, setTemperatureCelsius] = useState<number | undefined>(21.5);
+  const [departedAt, setDepartedAt] = useState('');
   const [estimatedArrival, setEstimatedArrival] = useState('');
+  const [departureTimeFormatted, setDepartureTimeFormatted] = useState('Hoy a las 08:30 CET (Salida)');
+  const [arrivalTimeFormatted, setArrivalTimeFormatted] = useState('Hoy a las 14:30 CET (Llegada en puerta)');
   const [notes, setNotes] = useState('');
+  const [clientNotice, setClientNotice] = useState('');
 
   useEffect(() => {
     if (shipmentToEdit) {
@@ -122,8 +134,12 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
       setCargoDesc(shipmentToEdit.cargo.description);
       setWeightKg(shipmentToEdit.cargo.weightKg);
       setTemperatureCelsius(shipmentToEdit.temperatureCelsius);
-      setEstimatedArrival(shipmentToEdit.estimatedArrival.split('T')[0]);
+      setDepartedAt(shipmentToEdit.departedAt ? shipmentToEdit.departedAt.split('T')[0] : '');
+      setEstimatedArrival(shipmentToEdit.estimatedArrival ? shipmentToEdit.estimatedArrival.split('T')[0] : '');
+      setDepartureTimeFormatted(shipmentToEdit.departureTimeFormatted || 'Salida confirmada');
+      setArrivalTimeFormatted(shipmentToEdit.arrivalTimeFormatted || 'Hoy a las 14:30 CET (Llegada en puerta)');
       setNotes(shipmentToEdit.notes || '');
+      setClientNotice(shipmentToEdit.clientNotice || '');
     } else {
       const randomCode = Math.floor(1000 + Math.random() * 9000);
       setTrackingNumber(`PET-MAD-${randomCode}`);
@@ -144,7 +160,7 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
 
       setReceiverDoorAddress('Calle Serrano 42, 2º B, Madrid');
       setCourierHandlerName('Carlos Méndez (Cuidador Asignado)');
-      setEstimatedDoorArrivalTime('Hoy entre 12:00 y 13:00 h');
+      setEstimatedDoorArrivalTime('Hoy entre 14:00 y 14:30 CET');
       setDoorstepStatus('in_local_van');
 
       setShipperCompany('Criador Homologado / Familia de Origen');
@@ -169,9 +185,14 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
       setCargoDesc('Pastor Alemán joven con cartilla sanitaria y chip');
       setWeightKg(22);
       setTemperatureCelsius(21.5);
-      setEstimatedArrival(new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+      setDepartedAt(new Date().toISOString().split('T')[0]);
+      setEstimatedArrival(new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+      setDepartureTimeFormatted('Hoy a las 08:30 CET (Salida confirmada)');
+      setArrivalTimeFormatted('Hoy a las 14:30 CET (Llegada en puerta)');
       setNotes('Mascota muy noble y tranquila. El conductor subirá directamente a la puerta para entrega en mano.');
+      setClientNotice('');
     }
+    setCreatedSuccessNumber(null);
   }, [shipmentToEdit, isOpen]);
 
   if (!isOpen) return null;
@@ -279,8 +300,12 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
           volumeCbm: 0.3
         },
         temperatureCelsius,
-        estimatedArrival: new Date(estimatedArrival).toISOString(),
+        departedAt: departedAt ? new Date(departedAt).toISOString() : new Date().toISOString(),
+        estimatedArrival: estimatedArrival ? new Date(estimatedArrival).toISOString() : new Date(Date.now() + 24 * 3600 * 1000).toISOString(),
+        departureTimeFormatted: departureTimeFormatted || 'Salida confirmada',
+        arrivalTimeFormatted: arrivalTimeFormatted || 'Llegada programada en puerta',
         notes,
+        clientNotice,
         petInfo: petInfoData,
         doorstepDelivery: doorstepData
       });
@@ -346,22 +371,76 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
           weightKg,
           volumeCbm: 0.3
         },
-        departedAt: new Date().toISOString(),
-        estimatedArrival: new Date(estimatedArrival || Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+        departedAt: departedAt ? new Date(departedAt).toISOString() : new Date().toISOString(),
+        estimatedArrival: estimatedArrival ? new Date(estimatedArrival).toISOString() : new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        departureTimeFormatted: departureTimeFormatted || 'Salida confirmada',
+        arrivalTimeFormatted: arrivalTimeFormatted || 'Llegada programada en puerta',
         temperatureCelsius,
         customsCleared: true,
         notes,
+        clientNotice,
         petInfo: petInfoData,
         doorstepDelivery: doorstepData
       });
+      setCurrentTrackingQuery(trackingNumber);
+      setCreatedSuccessNumber(trackingNumber);
+      return;
     }
 
     onClose();
   };
 
+  if (createdSuccessNumber) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="bg-white border border-stone-200 rounded-2xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
+          <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto text-emerald-600">
+            <CheckCircle2 className="w-8 h-8" />
+          </div>
+          <h3 className="text-xl font-bold text-[#232331]">¡Mascota Registrada y Conectada!</h3>
+          <p className="text-xs text-stone-600">
+            Se ha creado correctamente el registro de <strong>{petName}</strong> ({breed}) con código de seguimiento oficial:
+          </p>
+          <div className="p-3 bg-orange-50 rounded-xl border border-orange-200 font-mono font-bold text-base text-orange-700">
+            {createdSuccessNumber}
+          </div>
+          <p className="text-[11px] text-stone-500">
+            El traslado ya se encuentra enlazado al sistema público con telemetría de furgoneta climatizada y entrega en puerta en {receiverDoorAddress}.
+          </p>
+          <div className="flex flex-col gap-2 pt-2">
+            <button
+              onClick={() => {
+                if (createdSuccessNumber) {
+                  setCurrentTrackingQuery(createdSuccessNumber);
+                }
+                setIsAdminMode(false);
+                setActiveView('track');
+                setCreatedSuccessNumber(null);
+                onClose();
+              }}
+              className="w-full py-2.5 px-4 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <ExternalLink className="w-4 h-4" />
+              <span>Ver Rastreo del Cliente Ahora</span>
+            </button>
+            <button
+              onClick={() => {
+                setCreatedSuccessNumber(null);
+                onClose();
+              }}
+              className="w-full py-2 px-4 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl cursor-pointer"
+            >
+              Volver a la Mesa de Control
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-white border border-stone-200 rounded-2xl max-w-3xl w-full p-6 sm:p-8 relative shadow-2xl my-8 max-h-[92vh] overflow-y-auto text-[#232331]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-white border border-stone-200 rounded-2xl max-w-3xl w-full p-4 sm:p-8 relative shadow-2xl my-4 sm:my-8 max-h-[94vh] overflow-y-auto text-[#232331]">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 text-stone-400 hover:text-[#232331] p-2 rounded-lg bg-stone-100 cursor-pointer"
@@ -671,14 +750,43 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
                 />
               </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-stone-700 font-bold mb-1">
+                    Hora y Fecha de Salida (Departure Time)
+                  </label>
+                  <input
+                    type="text"
+                    value={departureTimeFormatted}
+                    onChange={(e) => setDepartureTimeFormatted(e.target.value)}
+                    placeholder="Ej. Hoy 08:30 CET o 05 Nov 2026, 09:00"
+                    className="w-full bg-white text-[#232331] p-2 rounded-lg border border-stone-300 focus:border-orange-500 focus:outline-none text-sm"
+                  />
+                  <p className="text-[11px] text-stone-600 mt-0.5">Se mostrará claramente al receptor en el rastreo</p>
+                </div>
+                <div>
+                  <label className="block text-stone-700 font-bold mb-1">
+                    Hora y Fecha Estimada de Llegada (Arrival Time) *
+                  </label>
+                  <input
+                    type="text"
+                    value={arrivalTimeFormatted}
+                    onChange={(e) => setArrivalTimeFormatted(e.target.value)}
+                    placeholder="Ej. Hoy 15:45 CET o 05 Nov 2026, 17:30"
+                    className="w-full bg-white text-[#232331] p-2 rounded-lg border border-orange-300 focus:border-orange-500 focus:outline-none text-sm font-medium"
+                  />
+                  <p className="text-[11px] text-stone-600 mt-0.5">Ventana de entrega en puerta del receptor</p>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-stone-700 font-bold mb-1">Llegada Estimada</label>
+                  <label className="block text-stone-700 font-bold mb-1">Fecha Calendario de Llegada</label>
                   <input
                     type="date"
                     value={estimatedArrival}
                     onChange={(e) => setEstimatedArrival(e.target.value)}
-                    className="w-full bg-white text-[#232331] p-2 rounded-lg border border-stone-300 focus:outline-none"
+                    className="w-full bg-white text-[#232331] p-2 rounded-lg border border-stone-300 focus:outline-none text-sm"
                   />
                 </div>
                 <div>
@@ -688,7 +796,7 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
                     step="0.5"
                     value={temperatureCelsius || 21.0}
                     onChange={(e) => setTemperatureCelsius(parseFloat(e.target.value))}
-                    className="w-full bg-white text-[#232331] p-2 rounded-lg border border-stone-300 focus:outline-none"
+                    className="w-full bg-white text-[#232331] p-2 rounded-lg border border-stone-300 focus:outline-none text-sm"
                   />
                 </div>
               </div>
@@ -758,15 +866,33 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
             </div>
           </div>
 
-          {/* Notes */}
+          {/* Important Client Notice / Issue Alert */}
+          <div className="p-3.5 bg-amber-50 border-2 border-amber-300 rounded-xl space-y-1.5">
+            <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wider">
+              <AlertTriangle className="w-4 h-4 text-amber-600" />
+              <span>Aviso Importante / Nota para el Cliente (Visible en Rastreo Público)</span>
+            </div>
+            <p className="text-xs text-amber-800 leading-relaxed">
+              Utilice este campo para comunicar cualquier incidencia, retraso por tráfico, parada veterinaria de hidratación, o instrucciones clave al receptor (ej. <em>"Vehículo en aproximación. Por favor tener DNI a mano al abrir el portal"</em> o <em>"Parada preventiva por calor; nueva hora de entrega 16:30"</em>).
+            </p>
+            <textarea
+              rows={2}
+              value={clientNotice}
+              onChange={(e) => setClientNotice(e.target.value)}
+              placeholder="Escriba aquí la nota o aviso para el cliente que aparecerá destacado en su pantalla de seguimiento..."
+              className="w-full bg-white text-stone-900 p-2.5 rounded-lg border border-amber-300 focus:border-amber-600 focus:outline-none text-sm font-medium"
+            ></textarea>
+          </div>
+
+          {/* Internal Notes */}
           <div>
-            <label className="block text-stone-600 font-bold mb-1">Notas de Cuidado y Bienestar</label>
+            <label className="block text-stone-600 font-bold mb-1">Notas Internas de Cuidado y Bienestar</label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Instrucciones de alimentación, paseos, contacto al llegar al portal..."
-              className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-orange-500 focus:bg-white focus:outline-none"
+              className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-orange-500 focus:bg-white focus:outline-none text-sm"
             ></textarea>
           </div>
 

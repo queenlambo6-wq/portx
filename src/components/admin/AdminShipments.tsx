@@ -14,7 +14,9 @@ import {
   CheckCircle2,
   AlertTriangle,
   Heart,
-  Home
+  Home,
+  Copy,
+  Check
 } from 'lucide-react';
 import { Shipment, ShipmentStatus, TransportMode } from '../../types';
 
@@ -44,6 +46,17 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [modeFilter, setModeFilter] = useState<string>('all');
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleCopyCode = (code: string, id: string) => {
+    try {
+      navigator.clipboard?.writeText(code);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      // Fallback
+    }
+  };
 
   const filteredShipments = shipments.filter((s) => {
     const term = searchTerm.toLowerCase();
@@ -183,8 +196,119 @@ export const AdminShipments: React.FC<AdminShipmentsProps> = ({
         </div>
       </div>
 
-      {/* Manifests Table */}
-      <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-2xs">
+      {/* Mobile Card List (Visible on Phone Screens < 640px) */}
+      <div className="block sm:hidden space-y-3">
+        {filteredShipments.map((s) => (
+          <div key={s.id} className="bg-white rounded-2xl border border-stone-200 p-4 shadow-sm space-y-3">
+            {/* Header: Pet Name & Status */}
+            <div className="flex items-start justify-between gap-2 pb-2.5 border-b border-stone-100">
+              <div>
+                <div className="flex items-center gap-1.5 font-bold text-sm text-[#232331]">
+                  <Heart className="w-3.5 h-3.5 fill-orange-600 text-orange-600 shrink-0" />
+                  <span>{s.petInfo?.petName || 'Mascota'}</span>
+                  {s.petInfo && (
+                    <span className="text-[11px] font-normal text-stone-500">
+                      ({s.petInfo.breed})
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-xs font-mono font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded border border-orange-200">
+                    {s.trackingNumber}
+                  </span>
+                  <button
+                    onClick={() => handleCopyCode(s.trackingNumber, s.id)}
+                    className="p-1 rounded text-stone-400 hover:text-stone-700 hover:bg-stone-100"
+                    title="Copiar código"
+                  >
+                    {copiedId === s.id ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+              <div>{getStatusBadge(s.status)}</div>
+            </div>
+
+            {/* Delivery Details */}
+            <div className="space-y-1.5 text-xs">
+              <div className="flex items-center justify-between text-stone-600">
+                <span>Ruta:</span>
+                <strong className="text-[#232331]">{s.origin.city} → {s.destination.city}</strong>
+              </div>
+              <div className="flex items-start justify-between text-stone-600">
+                <span className="shrink-0 flex items-center gap-1">
+                  <Home className="w-3 h-3 text-orange-600" />
+                  <span>Puerta:</span>
+                </span>
+                <span className="text-right text-orange-950 font-medium truncate max-w-[200px]">
+                  {s.doorstepDelivery?.receiverDoorAddress || s.destination.portName}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-stone-600">
+                <span>Destinatario:</span>
+                <strong className="text-[#232331]">{s.consignee.name} ({s.consignee.phone || '+34602493512'})</strong>
+              </div>
+              <div className="flex items-center justify-between text-stone-600">
+                <span>Cabina / Temp:</span>
+                <span className="font-mono text-orange-700 font-bold">{s.temperatureCelsius || 21.5}°C</span>
+              </div>
+            </div>
+
+            {/* Mobile Action Buttons */}
+            <div className="pt-2.5 border-t border-stone-100 grid grid-cols-2 gap-2">
+              <button
+                onClick={() => onOpenMilestoneModal(s.id)}
+                className="py-2 px-3 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold text-center shadow-xs"
+              >
+                Actualizar Hito
+              </button>
+              <button
+                onClick={() => {
+                  setCurrentTrackingQuery(s.trackingNumber);
+                  setIsAdminMode(false);
+                  setActiveView('track');
+                }}
+                className="py-2 px-3 bg-[#f8f5f1] hover:bg-stone-200 text-[#232331] rounded-xl text-xs font-bold border border-stone-200 flex items-center justify-center gap-1.5"
+              >
+                <ExternalLink className="w-3.5 h-3.5 text-orange-600" />
+                <span>Ver Rastreo</span>
+              </button>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-1 text-[11px]">
+              <button
+                onClick={() => onOpenEditModal(s)}
+                className="text-stone-600 hover:text-stone-900 font-semibold flex items-center gap-1"
+              >
+                <Edit3 className="w-3 h-3" />
+                <span>Editar</span>
+              </button>
+              <button
+                onClick={() => setSelectedShipmentForPrint(s)}
+                className="text-stone-600 hover:text-stone-900 font-semibold flex items-center gap-1"
+              >
+                <Printer className="w-3 h-3" />
+                <span>Certificado</span>
+              </button>
+              <button
+                onClick={() => setPendingDeleteId(s.id)}
+                className="text-rose-600 hover:text-rose-800 font-semibold flex items-center gap-1"
+              >
+                <Trash2 className="w-3 h-3" />
+                <span>Eliminar</span>
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {filteredShipments.length === 0 && (
+          <div className="text-center py-8 bg-white rounded-2xl border border-stone-200 p-4 text-stone-500 text-xs">
+            {language === 'es' ? 'No hay mascotas que coincidan con la búsqueda.' : 'No pet shipments found.'}
+          </div>
+        )}
+      </div>
+
+      {/* Manifests Desktop Table (Visible on Tablets and Desktops sm+) */}
+      <div className="hidden sm:block bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-2xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-[#f8f5f1] text-[#232331] uppercase font-bold text-[10px] tracking-wider border-b border-stone-200">
