@@ -31,6 +31,7 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
   shipmentToEdit
 }) => {
   const {
+    shipments,
     createShipment,
     updateShipment,
     ports,
@@ -50,63 +51,69 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
   const [status, setStatus] = useState<ShipmentStatus>('in_transit');
   const [mode, setMode] = useState<TransportMode>('road_transport');
 
-  // Dates & Formatted Schedule (as displayed on Gradlyn Tracking Page)
-  const [departureTimeFormatted, setDepartureTimeFormatted] = useState('Sep 15');
-  const [arrivalTimeFormatted, setArrivalTimeFormatted] = useState('Sep 15');
+  // Dates & Formatted Schedule
+  const [departureTimeFormatted, setDepartureTimeFormatted] = useState('');
+  const [arrivalTimeFormatted, setArrivalTimeFormatted] = useState('');
   const [departedAt, setDepartedAt] = useState('');
   const [estimatedArrival, setEstimatedArrival] = useState('');
 
   // Prominent Client Notice Banner & Yellow Sticky Note
-  const [clientNotice, setClientNotice] = useState('Jaula de Transporte Electrónica Para Mascotas IPATA Pendiente');
+  const [clientNotice, setClientNotice] = useState('');
 
   // Origin & Destination Info
-  const [originCity, setOriginCity] = useState('Cantabria');
+  const [originCity, setOriginCity] = useState('');
   const [originCountry, setOriginCountry] = useState('España');
-  const [originPortCode, setOriginPortCode] = useState('ESBIO');
-  const [destCity, setDestCity] = useState('Huelva');
+  const [originPortCode, setOriginPortCode] = useState('ESMAD');
+  const [destCity, setDestCity] = useState('');
   const [destCountry, setDestCountry] = useState('España');
-  const [destPortCode, setDestPortCode] = useState('ESSEV');
-  const [currentLocationName, setCurrentLocationName] = useState('Ribamontan Al Mar, Cantabria');
+  const [destPortCode, setDestPortCode] = useState('ESBCN');
+  const [currentLocationName, setCurrentLocationName] = useState('');
 
   // Consignee (Destination Address Card)
-  const [consigneeName, setConsigneeName] = useState('Encarnación Maria Camino López');
-  const [receiverDoorAddress, setReceiverDoorAddress] = useState('Pl. de la Romera, 5, 6b');
-  const [receiverPostalCode, setReceiverPostalCode] = useState('21006');
-  const [consigneePhone, setConsigneePhone] = useState('+34602493512');
-  const [consigneeEmail, setConsigneeEmail] = useState('cliente@gmail.com');
+  const [consigneeName, setConsigneeName] = useState('');
+  const [receiverDoorAddress, setReceiverDoorAddress] = useState('');
+  const [receiverPostalCode, setReceiverPostalCode] = useState('');
+  const [consigneePhone, setConsigneePhone] = useState('');
+  const [consigneeEmail, setConsigneeEmail] = useState('');
 
   // Sender (Origin Address Card)
-  const [shipperName, setShipperName] = useState('Herbas Tejrina Shirley Laura');
-  const [shipperAddress, setShipperAddress] = useState('Ribamontan Al Mar | Cantabria | 39150');
-  const [shipperPhone, setShipperPhone] = useState('+34602493512');
-  const [shipperEmail, setShipperEmail] = useState('remitente@portx.com');
+  const [shipperName, setShipperName] = useState('');
+  const [shipperAddress, setShipperAddress] = useState('');
+  const [shipperPhone, setShipperPhone] = useState('');
+  const [shipperEmail, setShipperEmail] = useState('');
 
   // Package & Cargo Details
-  const [weightKg, setWeightKg] = useState(1.1);
-  const [dimensions, setDimensions] = useState('L: 0 × W: 0 × H: 0 cm');
-  const [packageType, setPackageType] = useState('Transporte de Mascotas');
-  const [referenceNumber, setReferenceNumber] = useState('VY 1591');
+  const [weightKg, setWeightKg] = useState(5.0);
+  const [dimensions, setDimensions] = useState('Estándar');
+  const [packageType, setPackageType] = useState('Carga General / Paquetería');
+  const [referenceNumber, setReferenceNumber] = useState('');
 
-  // Pet Details (Optional / Specific)
-  const [petName, setPetName] = useState('Rocky');
+  // Pet Details (Optional)
+  const [petName, setPetName] = useState('');
   const [species, setSpecies] = useState<'dog' | 'cat' | 'bird' | 'other'>('dog');
-  const [breed, setBreed] = useState('Cachorro');
-  const [microchipNumber, setMicrochipNumber] = useState('981098107482910');
-  const [healthPassportNumber, setHealthPassportNumber] = useState('ES-VET-2026-9041');
+  const [breed, setBreed] = useState('');
+  const [microchipNumber, setMicrochipNumber] = useState('');
+  const [healthPassportNumber, setHealthPassportNumber] = useState('');
 
   // Handler & Internal Notes
   const [courierHandlerName, setCourierHandlerName] = useState('Despacho Asignado PortX');
-  const [notes, setNotes] = useState('Seguimiento activo con telemetría en tiempo real.');
+  const [notes, setNotes] = useState('');
 
-  const generateRandomCode = () => {
-    const letters = 'VY';
-    const num = Math.floor(10000000 + Math.random() * 90000000);
-    const newCode = `${letters}${num}`;
+  const generateUniqueCustomerCode = () => {
+    let newCode = '';
+    let num = 0;
+    do {
+      num = Math.floor(10000000 + Math.random() * 90000000);
+      newCode = `VY${num}`;
+    } while (shipments.some((s) => s.trackingNumber.trim().toUpperCase() === newCode));
+
     setTrackingNumber(newCode);
     setBookingRef(`BK-${num.toString().substring(0, 4)}`);
     setBolNumber(`VY ${num.toString().substring(0, 4)}`);
     setReferenceNumber(`VY ${num.toString().substring(0, 4)}`);
   };
+
+  const generateRandomCode = generateUniqueCustomerCode;
 
   useEffect(() => {
     if (shipmentToEdit) {
@@ -116,11 +123,12 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
       setStatus(shipmentToEdit.status);
       setMode(shipmentToEdit.mode || 'road_transport');
 
-      setDepartureTimeFormatted(shipmentToEdit.departureTimeFormatted || 'Sep 15');
-      setArrivalTimeFormatted(shipmentToEdit.arrivalTimeFormatted || 'Sep 15');
-      setDepartedAt(shipmentToEdit.departedAt ? shipmentToEdit.departedAt.split('T')[0] : '');
-      setEstimatedArrival(shipmentToEdit.estimatedArrival ? shipmentToEdit.estimatedArrival.split('T')[0] : '');
-      setClientNotice(shipmentToEdit.clientNotice || 'Jaula de Transporte Electrónica Para Mascotas IPATA Pendiente');
+      const today = new Date();
+      setDepartureTimeFormatted(shipmentToEdit.departureTimeFormatted || today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+      setArrivalTimeFormatted(shipmentToEdit.arrivalTimeFormatted || new Date(Date.now() + 24 * 3600 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+      setDepartedAt(shipmentToEdit.departedAt ? shipmentToEdit.departedAt.split('T')[0] : today.toISOString().split('T')[0]);
+      setEstimatedArrival(shipmentToEdit.estimatedArrival ? shipmentToEdit.estimatedArrival.split('T')[0] : new Date(Date.now() + 24 * 3600 * 1000).toISOString().split('T')[0]);
+      setClientNotice(shipmentToEdit.clientNotice || '');
 
       setOriginCity(shipmentToEdit.origin.city);
       setOriginCountry(shipmentToEdit.origin.country || 'España');
@@ -128,40 +136,51 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
       setDestCity(shipmentToEdit.destination.city);
       setDestCountry(shipmentToEdit.destination.country || 'España');
       setDestPortCode(shipmentToEdit.destination.portCode || 'ESSEV');
-      setCurrentLocationName(shipmentToEdit.currentLocation.name || `${shipmentToEdit.origin.city}, España`);
+      setCurrentLocationName(shipmentToEdit.currentLocation.name || `${shipmentToEdit.origin.city}`);
 
       setConsigneeName(shipmentToEdit.consignee.name);
-      setReceiverDoorAddress(shipmentToEdit.doorstepDelivery?.receiverDoorAddress || shipmentToEdit.consignee.address || 'Pl. de la Romera, 5, 6b');
-      setReceiverPostalCode(shipmentToEdit.doorstepDelivery?.receiverPostalCode || '21006');
-      setConsigneePhone(shipmentToEdit.consignee.phone || '+34602493512');
+      setReceiverDoorAddress(shipmentToEdit.doorstepDelivery?.receiverDoorAddress || shipmentToEdit.consignee.address || '');
+      setReceiverPostalCode(shipmentToEdit.doorstepDelivery?.receiverPostalCode || '');
+      setConsigneePhone(shipmentToEdit.consignee.phone || '');
       setConsigneeEmail(shipmentToEdit.consignee.email || '');
 
       setShipperName(shipmentToEdit.sender.name);
-      setShipperAddress(shipmentToEdit.sender.address || `${shipmentToEdit.origin.city} | España | 39150`);
-      setShipperPhone(shipmentToEdit.sender.phone || '+34602493512');
+      setShipperAddress(shipmentToEdit.sender.address || '');
+      setShipperPhone(shipmentToEdit.sender.phone || '');
       setShipperEmail(shipmentToEdit.sender.email || '');
 
-      setWeightKg(shipmentToEdit.cargo.weightKg || 1.1);
-      setDimensions(shipmentToEdit.cargo.dimensions || 'L: 0 × W: 0 × H: 0 cm');
-      setPackageType(shipmentToEdit.cargo.description || 'Transporte de Mascotas');
-      setReferenceNumber(shipmentToEdit.bookingRef || shipmentToEdit.bolNumber || 'VY 1591');
+      setWeightKg(shipmentToEdit.cargo.weightKg || 5.0);
+      setDimensions(shipmentToEdit.cargo.dimensions || 'L: 30 × W: 20 × H: 15 cm');
+      setPackageType(shipmentToEdit.cargo.description || 'Mercancía y Paquetería');
+      setReferenceNumber(shipmentToEdit.bookingRef || shipmentToEdit.bolNumber || shipmentToEdit.trackingNumber);
 
       if (shipmentToEdit.petInfo) {
-        setPetName(shipmentToEdit.petInfo.petName || 'Rocky');
+        setPetName(shipmentToEdit.petInfo.petName || '');
         setSpecies(shipmentToEdit.petInfo.species || 'dog');
-        setBreed(shipmentToEdit.petInfo.breed || 'Cachorro');
-        setMicrochipNumber(shipmentToEdit.petInfo.microchipNumber || '981098107482910');
-        setHealthPassportNumber(shipmentToEdit.petInfo.healthPassportNumber || 'ES-VET-2026-9041');
+        setBreed(shipmentToEdit.petInfo.breed || '');
+        setMicrochipNumber(shipmentToEdit.petInfo.microchipNumber || '');
+        setHealthPassportNumber(shipmentToEdit.petInfo.healthPassportNumber || '');
+      } else {
+        setPetName('');
+        setBreed('');
+        setMicrochipNumber('');
+        setHealthPassportNumber('');
       }
 
       setNotes(shipmentToEdit.notes || '');
     } else {
-      // Default initial state matching Gradlyn Global sample (VY22261591)
-      const randomSuffix = Math.floor(10000000 + Math.random() * 90000000);
-      setTrackingNumber(`VY${randomSuffix}`);
-      setBookingRef(`BK-${randomSuffix.toString().substring(0, 4)}`);
-      setBolNumber(`VY ${randomSuffix.toString().substring(0, 4)}`);
-      setReferenceNumber(`VY ${randomSuffix.toString().substring(0, 4)}`);
+      // Create Brand New Customer Shipment with Guaranteed Unique Tracking Number
+      let uniqueCode = '';
+      let num = 0;
+      do {
+        num = Math.floor(10000000 + Math.random() * 90000000);
+        uniqueCode = `VY${num}`;
+      } while (shipments.some((s) => s.trackingNumber.trim().toUpperCase() === uniqueCode));
+
+      setTrackingNumber(uniqueCode);
+      setBookingRef(`BK-${num.toString().substring(0, 4)}`);
+      setBolNumber(`VY ${num.toString().substring(0, 4)}`);
+      setReferenceNumber(`VY ${num.toString().substring(0, 4)}`);
       setStatus('in_transit');
       setMode('road_transport');
 
@@ -173,28 +192,34 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
       setDepartedAt(today.toISOString().split('T')[0]);
       setEstimatedArrival(new Date(Date.now() + 24 * 3600 * 1000).toISOString().split('T')[0]);
 
-      setClientNotice('Jaula de Transporte Electrónica Para Mascotas IPATA Pendiente');
-
-      setOriginCity('Cantabria');
+      // Fresh, clean fields for the customer's real information
+      setClientNotice('');
+      setOriginCity('Madrid');
       setOriginCountry('España');
-      setDestCity('Huelva');
+      setDestCity('Barcelona');
       setDestCountry('España');
-      setCurrentLocationName('Ribamontan Al Mar, Cantabria');
+      setCurrentLocationName('En centro de tránsito');
 
-      setConsigneeName('Encarnación Maria Camino López');
-      setReceiverDoorAddress('Pl. de la Romera, 5, 6b');
-      setReceiverPostalCode('21006');
-      setConsigneePhone('+34602493512');
-      setConsigneeEmail('cliente@gmail.com');
+      setConsigneeName('');
+      setReceiverDoorAddress('');
+      setReceiverPostalCode('');
+      setConsigneePhone('');
+      setConsigneeEmail('');
 
-      setShipperName('Herbas Tejrina Shirley Laura');
-      setShipperAddress('Ribamontan Al Mar | Cantabria | 39150');
-      setShipperPhone('+34602493512');
+      setShipperName('');
+      setShipperAddress('');
+      setShipperPhone('');
+      setShipperEmail('');
 
-      setWeightKg(1.1);
-      setDimensions('L: 0 × W: 0 × H: 0 cm');
-      setPackageType('Transporte de Mascotas');
-      setNotes('Seguimiento activo en tiempo real conforme a la normativa PortX Global.');
+      setWeightKg(5.0);
+      setDimensions('L: 30 × W: 20 × H: 15 cm');
+      setPackageType('Paquetería / Carga General');
+      setNotes('');
+
+      setPetName('');
+      setBreed('');
+      setMicrochipNumber('');
+      setHealthPassportNumber('');
     }
     setCreatedSuccessNumber(null);
   }, [shipmentToEdit, isOpen]);
@@ -204,37 +229,68 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const originPort = ports.find((p) => p.code === originPortCode) || ports[0];
-    const destPort = ports.find((p) => p.code === destPortCode) || ports[1];
+    const trimmedCode = trackingNumber.trim().toUpperCase();
+    if (!trimmedCode) {
+      alert('Por favor introduzca un número de seguimiento.');
+      return;
+    }
 
-    const petInfoData = {
-      petName,
+    // Enforce unique tracking number per customer across all database shipments
+    const isDuplicate = shipments.some(
+      (s) => s.id !== shipmentToEdit?.id && s.trackingNumber.trim().toUpperCase() === trimmedCode
+    );
+    if (isDuplicate) {
+      alert(`El código de seguimiento "${trimmedCode}" ya pertenece a otro cliente. Cada envío debe tener un código único.`);
+      return;
+    }
+
+    const findPortByCityOrCode = (cityName: string, portCode: string, defaultIndex: number) => {
+      const cityClean = (cityName || '').trim().toLowerCase();
+      if (cityClean) {
+        const byCity = ports.find((p) => 
+          p.city.toLowerCase() === cityClean || 
+          p.name.toLowerCase().includes(cityClean) ||
+          cityClean.includes(p.city.toLowerCase())
+        );
+        if (byCity) return byCity;
+      }
+      return ports.find((p) => p.code === portCode) || ports[defaultIndex] || ports[0];
+    };
+
+    const originPort = findPortByCityOrCode(originCity, originPortCode, 0);
+    const destPort = findPortByCityOrCode(destCity, destPortCode, 1);
+
+    const depFormatted = departureTimeFormatted.trim() || new Date(departedAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const arrFormatted = arrivalTimeFormatted.trim() || new Date(estimatedArrival || Date.now() + 24 * 3600 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    const petInfoData = petName.trim() ? {
+      petName: petName.trim(),
       species,
       speciesLabel: species === 'dog' ? 'Perro (Canino)' : species === 'cat' ? 'Gato (Felino)' : 'Animal de Compañía',
-      breed,
+      breed: breed.trim() || 'Compañero',
       age: '1 año',
       gender: 'Macho' as const,
-      microchipNumber,
-      healthPassportNumber,
+      microchipNumber: microchipNumber.trim(),
+      healthPassportNumber: healthPassportNumber.trim(),
       rabiesVaccinationValid: true,
       vetClearanceApproved: true,
-      crateModel: 'IATA Sky Kennel Oficial',
-      feedingInstructions: 'Agua fresca e hidratación pautada',
+      crateModel: 'Jaula Homologada PortX',
+      feedingInstructions: 'Pautas de hidratación y cuidado al día',
       specialCareNotes: notes,
-      lastHydrationTime: 'Hace 20 min',
+      lastHydrationTime: 'Reciente',
       companionHandlerName: courierHandlerName
-    };
+    } : undefined;
 
     const doorstepData = {
       isDoorstepDelivery: true,
       doorstepStatus: (status === 'delivered' ? 'delivered_at_doorstep' : status === 'out_for_delivery' ? 'arriving_at_door' : 'in_local_van') as any,
-      receiverDoorAddress,
+      receiverDoorAddress: receiverDoorAddress.trim() || destCity,
       receiverCity: destCity,
       receiverProvince: destCountry,
-      receiverPostalCode,
+      receiverPostalCode: receiverPostalCode.trim() || undefined,
       receiverContactPerson: consigneeName,
       receiverPhone: consigneePhone || '+34602493512',
-      estimatedDoorArrivalTime: arrivalTimeFormatted,
+      estimatedDoorArrivalTime: arrFormatted,
       courierHandlerName,
       courierHandlerPhone: '+34602493512',
       vanVehiclePlate: 'VAN-PTX-01',
@@ -249,14 +305,15 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
 
     if (isEditing && shipmentToEdit) {
       updateShipment(shipmentToEdit.id, {
-        trackingNumber: trackingNumber.trim(),
+        trackingNumber: trimmedCode,
         bookingRef,
         bolNumber,
         mode,
         status,
+        statusLabel: status === 'in_transit' ? 'In Transit' : status === 'delivered' ? 'Delivered' : status === 'out_for_delivery' ? 'Out for Delivery' : 'En Reparto',
         sender: {
-          company: shipperName,
-          name: shipperName,
+          company: shipperName || 'Remitente',
+          name: shipperName || 'Remitente',
           address: shipperAddress,
           city: originCity,
           country: originCountry,
@@ -264,8 +321,8 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
           phone: shipperPhone
         },
         consignee: {
-          company: consigneeName,
-          name: consigneeName,
+          company: consigneeName || 'Destinatario',
+          name: consigneeName || 'Destinatario',
           address: receiverDoorAddress,
           city: destCity,
           country: destCountry,
@@ -281,7 +338,7 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
           lng: originPort.lng
         },
         destination: {
-          portName: `${receiverDoorAddress}, ${destCity}`,
+          portName: `${receiverDoorAddress || destCity}, ${destCity}`,
           portCode: destPortCode,
           city: destCity,
           country: destCountry,
@@ -289,21 +346,21 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
           lng: destPort.lng
         },
         currentLocation: {
-          name: currentLocationName,
-          lat: destPort.lat,
-          lng: destPort.lng,
+          name: currentLocationName.trim() || originCity,
+          lat: (originPort.lat + destPort.lat) / 2,
+          lng: (originPort.lng + destPort.lng) / 2,
           updatedAt: 'Ahora mismo',
           weather: 'Despejado'
         },
         carrier: {
           name: 'PortX Global Logistics',
           vesselOrFlightName: courierHandlerName,
-          voyageOrFlightNumber: referenceNumber
+          voyageOrFlightNumber: referenceNumber || trimmedCode
         },
-        containerNumber: referenceNumber,
-        sealNumber: microchipNumber,
+        containerNumber: referenceNumber || trimmedCode,
+        sealNumber: microchipNumber || `SEAL-${trimmedCode.slice(-4)}`,
         cargo: {
-          description: packageType,
+          description: packageType || 'Mercancía General',
           pieces: 1,
           weightKg,
           dimensions,
@@ -311,85 +368,87 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
         },
         departedAt: departedAt ? new Date(departedAt).toISOString() : new Date().toISOString(),
         estimatedArrival: estimatedArrival ? new Date(estimatedArrival).toISOString() : new Date(Date.now() + 24 * 3600 * 1000).toISOString(),
-        departureTimeFormatted: departureTimeFormatted || 'Sep 15',
-        arrivalTimeFormatted: arrivalTimeFormatted || 'Sep 15',
-        notes,
-        clientNotice,
+        departureTimeFormatted: depFormatted,
+        arrivalTimeFormatted: arrFormatted,
+        temperatureCelsius: 21.0,
+        customsCleared: true,
+        notes: notes.trim() || undefined,
+        clientNotice: clientNotice.trim() || undefined,
         petInfo: petInfoData,
         doorstepDelivery: doorstepData
       });
       onClose();
     } else {
       const created = createShipment({
-        trackingNumber: trackingNumber.trim(),
-        bookingRef,
-        bolNumber,
+        trackingNumber: trimmedCode,
+        bookingRef: bookingRef.trim() || `BK-${trimmedCode.slice(-4)}`,
+        bolNumber: bolNumber.trim() || trimmedCode,
         mode,
         status,
-        statusLabel: status === 'in_transit' ? 'In Transit' : status === 'delivered' ? 'Delivered' : 'En Reparto',
+        statusLabel: status === 'in_transit' ? 'In Transit' : status === 'delivered' ? 'Delivered' : status === 'out_for_delivery' ? 'Out for Delivery' : 'En Reparto',
         sender: {
-          company: shipperName,
-          name: shipperName,
-          address: shipperAddress,
-          city: originCity,
-          country: originCountry,
-          email: shipperEmail,
-          phone: shipperPhone
+          company: shipperName.trim() || 'Remitente',
+          name: shipperName.trim() || 'Remitente',
+          address: shipperAddress.trim(),
+          city: originCity.trim() || 'Origen',
+          country: originCountry.trim() || 'España',
+          email: shipperEmail.trim(),
+          phone: shipperPhone.trim()
         },
         consignee: {
-          company: consigneeName,
-          name: consigneeName,
-          address: receiverDoorAddress,
-          city: destCity,
-          country: destCountry,
-          email: consigneeEmail,
-          phone: consigneePhone
+          company: consigneeName.trim() || 'Destinatario',
+          name: consigneeName.trim() || 'Destinatario',
+          address: receiverDoorAddress.trim(),
+          city: destCity.trim() || 'Destino',
+          country: destCountry.trim() || 'España',
+          email: consigneeEmail.trim(),
+          phone: consigneePhone.trim()
         },
         origin: {
-          portName: `${originCity}, ${originCountry}`,
+          portName: `${originCity.trim() || 'Origen'}, ${originCountry.trim()}`,
           portCode: originPortCode,
-          city: originCity,
-          country: originCountry,
+          city: originCity.trim() || 'Origen',
+          country: originCountry.trim() || 'España',
           lat: originPort.lat,
           lng: originPort.lng
         },
         destination: {
-          portName: `${receiverDoorAddress}, ${destCity}`,
+          portName: `${receiverDoorAddress.trim() || destCity.trim()}, ${destCity.trim()}`,
           portCode: destPortCode,
-          city: destCity,
-          country: destCountry,
+          city: destCity.trim() || 'Destino',
+          country: destCountry.trim() || 'España',
           lat: destPort.lat,
           lng: destPort.lng
         },
         currentLocation: {
-          name: currentLocationName,
-          lat: destPort.lat,
-          lng: destPort.lng,
-          updatedAt: 'Ahora mismo',
+          name: currentLocationName.trim() || originCity.trim() || 'En ruta de transporte',
+          lat: (originPort.lat + destPort.lat) / 2,
+          lng: (originPort.lng + destPort.lng) / 2,
+          updatedAt: 'Actualizado hace un momento',
           weather: 'Despejado'
         },
         carrier: {
           name: 'PortX Global Logistics',
-          vesselOrFlightName: courierHandlerName,
-          voyageOrFlightNumber: referenceNumber
+          vesselOrFlightName: courierHandlerName || 'Flota PortX',
+          voyageOrFlightNumber: referenceNumber.trim() || trimmedCode
         },
-        containerNumber: referenceNumber,
-        sealNumber: microchipNumber,
+        containerNumber: referenceNumber.trim() || trimmedCode,
+        sealNumber: microchipNumber.trim() || `SEAL-${trimmedCode.slice(-4)}`,
         cargo: {
-          description: packageType,
+          description: packageType.trim() || 'Mercancía General',
           pieces: 1,
           weightKg,
-          dimensions,
+          dimensions: dimensions.trim() || 'Estándar',
           volumeCbm: 0.1
         },
         departedAt: departedAt ? new Date(departedAt).toISOString() : new Date().toISOString(),
         estimatedArrival: estimatedArrival ? new Date(estimatedArrival).toISOString() : new Date(Date.now() + 24 * 3600 * 1000).toISOString(),
-        departureTimeFormatted: departureTimeFormatted || 'Sep 15',
-        arrivalTimeFormatted: arrivalTimeFormatted || 'Sep 15',
+        departureTimeFormatted: depFormatted,
+        arrivalTimeFormatted: arrFormatted,
         temperatureCelsius: 21.0,
         customsCleared: true,
-        notes,
-        clientNotice,
+        notes: notes.trim() || undefined,
+        clientNotice: clientNotice.trim() || undefined,
         petInfo: petInfoData,
         doorstepDelivery: doorstepData
       });
@@ -609,11 +668,10 @@ export const AdminShipmentModal: React.FC<AdminShipmentModalProps> = ({
             </p>
             <input
               type="text"
-              required
               value={clientNotice}
               onChange={(e) => setClientNotice(e.target.value)}
-              placeholder="Ej: Jaula de Transporte Electrónica Para Mascotas IPATA Pendiente"
-              className="w-full bg-white text-stone-900 p-3 rounded-xl border border-red-400 font-bold text-sm focus:border-red-600 focus:outline-none shadow-2xs"
+              placeholder="Ej: Tránsito en curso / Inspección completada (Opcional)"
+              className="w-full bg-white text-stone-900 p-3 rounded-xl border border-red-300 font-bold text-sm focus:border-red-600 focus:outline-none shadow-2xs"
             />
           </div>
 

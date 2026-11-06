@@ -80,8 +80,8 @@ export const TrackingSection: React.FC = () => {
     return { isCompleted, isCurrent, isReached: stepIndex <= activeLevel };
   };
 
-  const departureFormatted = currentShipment?.departureTimeFormatted || (currentShipment?.departedAt ? new Date(currentShipment.departedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Sep 15');
-  const arrivalFormatted = currentShipment?.arrivalTimeFormatted || (currentShipment?.estimatedArrival ? new Date(currentShipment.estimatedArrival).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Sep 15');
+  const departureFormatted = currentShipment?.departureTimeFormatted || (currentShipment?.departedAt ? new Date(currentShipment.departedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+  const arrivalFormatted = currentShipment?.arrivalTimeFormatted || (currentShipment?.estimatedArrival ? new Date(currentShipment.estimatedArrival).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : new Date(Date.now() + 24 * 3600 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
   const currentDateFormatted = new Date().toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
 
   // -------------------------------------------------------------
@@ -211,7 +211,7 @@ export const TrackingSection: React.FC = () => {
 
                 {/* Full-Width Highlight Banner */}
                 <div className="w-full bg-red-600 text-white py-2.5 px-4 rounded-lg font-bold text-xs sm:text-sm text-center shadow-xs tracking-wide">
-                  {currentShipment.clientNotice || 'Jaula de Transporte Electrónica Para Mascotas IPATA Pendiente'}
+                  {currentShipment.clientNotice ? currentShipment.clientNotice : currentShipment.statusLabel || 'En tránsito hacia el destino'}
                 </div>
 
                 {/* 5-Step Stepper Progress Bar */}
@@ -298,13 +298,15 @@ export const TrackingSection: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Yellow Notice matching Gradlyn Global screenshot */}
-                      <div className="bg-[#fff3cd] text-[#856404] border border-[#ffeeba] p-2.5 sm:p-3 rounded-xl text-xs font-bold leading-snug shadow-2xs sm:max-w-[210px]">
-                        {currentShipment.clientNotice || 'Jaula de Transporte Electrónica Para Mascotas IPATA Pendiente'}
-                      </div>
+                      {/* Yellow Notice / Official Advisory: only show if clientNotice or notes exist */}
+                      {(currentShipment.clientNotice || currentShipment.notes) && (
+                        <div className="bg-[#fff3cd] text-[#856404] border border-[#ffeeba] p-2.5 sm:p-3 rounded-xl text-xs font-bold leading-snug shadow-2xs sm:max-w-[240px]">
+                          {currentShipment.clientNotice || currentShipment.notes}
+                        </div>
+                      )}
                     </div>
 
-                    {/* Special Handling / Puppy Attention Note if present */}
+                    {/* Special Handling Note if present */}
                     {currentShipment.yellowStickyNote && (
                       <div className="mt-3 bg-amber-50 text-amber-900 border border-amber-200 p-2.5 rounded-lg text-xs leading-relaxed">
                         <span className="font-bold text-amber-800 block text-[11px] uppercase tracking-wider mb-0.5">Special Care Instructions:</span>
@@ -382,7 +384,7 @@ export const TrackingSection: React.FC = () => {
                     Destination Address
                   </span>
                   <span className="text-xs text-stone-400 font-medium">
-                    {currentShipment.destination.country || 'España'}
+                    {currentShipment.destination.country || ''}
                   </span>
                 </div>
 
@@ -390,14 +392,18 @@ export const TrackingSection: React.FC = () => {
                   <User className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                   <div className="min-w-0 flex-1">
                     <h4 className="font-bold text-[#18181b] text-base leading-snug">
-                      {currentShipment.consignee.name}
+                      {currentShipment.consignee.name || 'Destinatario'}
                     </h4>
                     <p className="text-xs text-stone-600 mt-1 leading-relaxed">
-                      {currentShipment.doorstepDelivery?.receiverDoorAddress || currentShipment.consignee.address || 'Pl. de la Romera, 5, 6b'}
+                      {currentShipment.doorstepDelivery?.receiverDoorAddress || currentShipment.consignee.address || `${currentShipment.destination.city}, ${currentShipment.destination.country}`}
                     </p>
                     <div className="flex items-center gap-1.5 text-xs text-red-700 font-semibold mt-2.5">
                       <MapPin className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                      <span>| {currentShipment.destination.city} | {currentShipment.doorstepDelivery?.receiverPostalCode || '21006'}</span>
+                      <span>
+                        {currentShipment.destination.city}
+                        {currentShipment.doorstepDelivery?.receiverPostalCode ? ` | ${currentShipment.doorstepDelivery.receiverPostalCode}` : ''}
+                        {currentShipment.destination.country ? ` | ${currentShipment.destination.country}` : ''}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -410,7 +416,7 @@ export const TrackingSection: React.FC = () => {
                     Origin Address
                   </span>
                   <span className="text-xs text-stone-400 font-medium">
-                    {currentShipment.origin.country || 'España'}
+                    {currentShipment.origin.country || ''}
                   </span>
                 </div>
 
@@ -418,11 +424,16 @@ export const TrackingSection: React.FC = () => {
                   <User className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
                   <div className="min-w-0 flex-1">
                     <h4 className="font-bold text-[#18181b] text-base leading-snug">
-                      {currentShipment.sender.name}
+                      {currentShipment.sender.name || 'Remitente'}
                     </h4>
+                    {currentShipment.sender.address && (
+                      <p className="text-xs text-stone-600 mt-1 leading-relaxed">
+                        {currentShipment.sender.address}
+                      </p>
+                    )}
                     <div className="flex items-center gap-1.5 text-xs text-red-700 font-semibold mt-2">
                       <MapPin className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                      <span>{currentShipment.origin.city} | {currentShipment.origin.country} | 39150</span>
+                      <span>{currentShipment.origin.city} | {currentShipment.origin.country}</span>
                     </div>
                   </div>
                 </div>
@@ -455,7 +466,7 @@ export const TrackingSection: React.FC = () => {
                     <div>
                       <span className="text-[11px] text-stone-500 font-medium block">Dimensions</span>
                       <span className="text-xs font-bold text-[#18181b] font-mono">
-                        {currentShipment.cargo.dimensions || 'L: 0 × W: 0 × H: 0 cm'}
+                        {currentShipment.cargo.dimensions || 'Estándar'}
                       </span>
                     </div>
                   </div>
@@ -466,7 +477,9 @@ export const TrackingSection: React.FC = () => {
                     <div>
                       <span className="text-[11px] text-stone-500 font-medium block">Package Type</span>
                       <span className="text-xs font-bold text-[#18181b] line-clamp-2">
-                        {currentShipment.petInfo ? `${currentShipment.petInfo.breed} (${currentShipment.petInfo.speciesLabel || 'Mascota'})` : 'Transporte de Mascotas'}
+                        {currentShipment.petInfo
+                          ? `${currentShipment.petInfo.breed || currentShipment.petInfo.petName} (${currentShipment.petInfo.speciesLabel || 'Mascota'})`
+                          : currentShipment.cargo.description || 'Mercancía / Paquete'}
                       </span>
                     </div>
                   </div>

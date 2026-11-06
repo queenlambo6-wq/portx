@@ -327,7 +327,7 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     const found = shipments.find((s) => {
       if (!s) return false;
-      const sTn = s.trackingNumber.toUpperCase();
+      const sTn = (s.trackingNumber || '').trim().toUpperCase();
       const sTnNorm = sTn.replace(/[^A-Z0-9]/g, '');
       if (sTn === clean || (normalized.length >= 3 && sTnNorm === normalized)) return true;
       if (s.bookingRef && (s.bookingRef.toUpperCase() === clean || s.bookingRef.toUpperCase().replace(/[^A-Z0-9]/g, '') === normalized)) return true;
@@ -336,115 +336,172 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (s.petInfo?.microchipNumber && s.petInfo.microchipNumber.toUpperCase().replace(/[^A-Z0-9]/g, '') === normalized) return true;
       if (s.petInfo?.healthPassportNumber && s.petInfo.healthPassportNumber.toUpperCase().replace(/[^A-Z0-9]/g, '') === normalized) return true;
       if (s.petInfo?.petName && s.petInfo.petName.trim().toUpperCase() === clean) return true;
+      if (s.id && s.id.toUpperCase() === clean) return true;
       return false;
     });
 
-    if (found) return found;
-
-    // Resilient fallback for any custom code entered by the user/guest to see the live tracking view
-    if (normalized.length >= 3) {
-      const template = INITIAL_SHIPMENTS[0];
-      const autoShipment: Shipment = {
-        ...template,
-        id: `sh-auto-${normalized}`,
-        trackingNumber: trackingNumber.trim(),
-        bookingRef: `BK-${normalized.slice(-6)}`,
-        bolNumber: trackingNumber.trim().startsWith('VY') ? `VY ${normalized.slice(-4)}` : trackingNumber.trim(),
-        containerNumber: trackingNumber.trim(),
-        status: 'in_transit',
-        statusLabel: 'En tránsito hacia el destino'
-      };
-      setShipments((prev) => [autoShipment, ...prev]);
-      return autoShipment;
-    }
-
-    return undefined;
+    // Return ONLY real tracking info stored in the database
+    return found;
   };
 
   const createShipment = (
     newShipmentData: Omit<Shipment, 'id' | 'createdAt' | 'progressPercent' | 'milestones'>
   ): Shipment => {
     const id = `sh-${Date.now()}`;
-    const trackingNumber = newShipmentData.trackingNumber || `PET-ESP-${Math.floor(1000 + Math.random() * 9000)}`;
+    const trackingNumber = newShipmentData.trackingNumber || `PTX-${Math.floor(100000 + Math.random() * 900000)}`;
     const nowStr = new Date().toISOString();
 
+    const isPet = !!(newShipmentData.petInfo?.petName || newShipmentData.cargo?.description?.toLowerCase().includes('mascota') || newShipmentData.cargo?.description?.toLowerCase().includes('pet'));
     const petName = newShipmentData.petInfo?.petName || 'Mascota';
     const breed = newShipmentData.petInfo?.breed || 'Animal de Compañía';
-    const originCity = newShipmentData.origin.city || 'Madrid';
-    const destCity = newShipmentData.destination.city || 'Barcelona';
-    const doorAddr = newShipmentData.doorstepDelivery?.receiverDoorAddress || `${destCity} (Domicilio del Receptor)`;
-    const courier = newShipmentData.doorstepDelivery?.courierHandlerName || 'Carlos Méndez (Cuidador Especializado)';
+    const originCity = newShipmentData.origin.city || 'Origen';
+    const destCity = newShipmentData.destination.city || 'Destino';
+    const doorAddr = newShipmentData.doorstepDelivery?.receiverDoorAddress || newShipmentData.consignee?.address || `${destCity}`;
+    const courier = newShipmentData.doorstepDelivery?.courierHandlerName || newShipmentData.carrier?.vesselOrFlightName || 'PortX Logistics Courier';
 
     const t0 = new Date(Date.now() - 8 * 3600 * 1000).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
     const t1 = new Date(Date.now() - 4 * 3600 * 1000).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
     const t2 = new Date(Date.now() - 1 * 3600 * 1000).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
     const tNow = new Date().toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' });
 
-    const milestones: Milestone[] = [
-      {
-        id: `m-${Date.now()}-1`,
-        timestamp: t0,
-        location: `Centro Canino y Felino de ${originCity}`,
-        status: 'booked',
-        description: `Ingreso de ${petName} (${breed}) e inspección veterinaria de bienestar superada con éxito. Documentación y microchip validados.`,
-        isCompleted: true,
-        isCurrent: newShipmentData.status === 'booked',
-        checkpointType: 'origin_port',
-        operator: 'Servicio Veterinario Homologado'
-      },
-      {
-        id: `m-${Date.now()}-2`,
-        timestamp: t1,
-        location: `Salida de Base Logística ${originCity}`,
-        status: 'in_transit',
-        description: `Acomodación en furgoneta climatizada a 21.0°C con arnés de seguridad y bebedero térmico. Salida en autovía hacia ${destCity}.`,
-        isCompleted: newShipmentData.status !== 'booked',
-        isCurrent: newShipmentData.status === 'in_transit',
-        checkpointType: 'in_transit_hub',
-        operator: courier
+    let milestones: Milestone[] = [];
+
+    if (isPet) {
+      milestones = [
+        {
+          id: `m-${Date.now()}-1`,
+          timestamp: t0,
+          location: `Centro Operativo de ${originCity}`,
+          status: 'booked',
+          description: `Ingreso de ${petName} (${breed}) e inspección veterinaria de bienestar superada con éxito. Documentación y microchip validados.`,
+          isCompleted: true,
+          isCurrent: newShipmentData.status === 'booked',
+          checkpointType: 'origin_port',
+          operator: 'Servicio Veterinario Homologado'
+        },
+        {
+          id: `m-${Date.now()}-2`,
+          timestamp: t1,
+          location: `Salida de Base Logística ${originCity}`,
+          status: 'in_transit',
+          description: `Acomodación en furgoneta climatizada a 21.0°C con arnés de seguridad y bebedero térmico. Salida en autovía hacia ${destCity}.`,
+          isCompleted: newShipmentData.status !== 'booked',
+          isCurrent: newShipmentData.status === 'in_transit',
+          checkpointType: 'in_transit_hub',
+          operator: courier
+        }
+      ];
+
+      if (newShipmentData.status === 'in_transit' || newShipmentData.status === 'out_for_delivery' || newShipmentData.status === 'delivered') {
+        milestones.push({
+          id: `m-${Date.now()}-3`,
+          timestamp: t2,
+          location: `Área de Descanso en Ruta hacia ${destCity}`,
+          status: 'in_transit',
+          description: `Paseo higiénico de 20 minutos, hidratación con agua fresca y control de bienestar. ${petName} se encuentra en perfecto estado.`,
+          isCompleted: true,
+          isCurrent: newShipmentData.status === 'in_transit',
+          checkpointType: 'in_transit_hub',
+          operator: courier
+        });
       }
-    ];
 
-    if (newShipmentData.status === 'in_transit' || newShipmentData.status === 'out_for_delivery' || newShipmentData.status === 'delivered') {
-      milestones.push({
-        id: `m-${Date.now()}-3`,
-        timestamp: t2,
-        location: `Área de Descanso en Ruta hacia ${destCity}`,
-        status: 'in_transit',
-        description: `Paseo higiénico de 20 minutos, hidratación con agua fresca y control de constantes vitales. ${petName} se encuentra en perfecto estado, alegre y descansado/a.`,
-        isCompleted: true,
-        isCurrent: newShipmentData.status === 'in_transit',
-        checkpointType: 'in_transit_hub',
-        operator: courier
-      });
-    }
+      if (newShipmentData.status === 'out_for_delivery' || newShipmentData.status === 'delivered') {
+        milestones.push({
+          id: `m-${Date.now()}-4`,
+          timestamp: tNow,
+          location: `Reparto Local a Domicilio (${destCity})`,
+          status: 'out_for_delivery',
+          description: `Furgoneta en ruta hacia la puerta del receptor en ${doorAddr}. Llamada previa de aviso realizada.`,
+          isCompleted: true,
+          isCurrent: newShipmentData.status === 'out_for_delivery',
+          checkpointType: 'destination_port',
+          operator: courier
+        });
+      }
 
-    if (newShipmentData.status === 'out_for_delivery' || newShipmentData.status === 'delivered') {
-      milestones.push({
-        id: `m-${Date.now()}-4`,
-        timestamp: tNow,
-        location: `Reparto Local a Domicilio (${destCity})`,
-        status: 'out_for_delivery',
-        description: `Furgoneta en ruta hacia la puerta del receptor en ${doorAddr}. Llamada previa de aviso realizada.`,
-        isCompleted: true,
-        isCurrent: newShipmentData.status === 'out_for_delivery',
-        checkpointType: 'destination_port',
-        operator: courier
-      });
-    }
+      if (newShipmentData.status === 'delivered') {
+        milestones.push({
+          id: `m-${Date.now()}-5`,
+          timestamp: tNow,
+          location: `Entregado en Mano en Puerta`,
+          status: 'delivered',
+          description: `Entrega formalizada con éxito en mano en la puerta de ${doorAddr}. Firma del destinatario registrada y certificado de bienestar archivado.`,
+          isCompleted: true,
+          isCurrent: true,
+          checkpointType: 'final_delivery',
+          operator: courier
+        });
+      }
+    } else {
+      // Standard Commercial Cargo / Freight Milestones
+      const cargoDesc = newShipmentData.cargo?.description || 'Mercancía General';
+      milestones = [
+        {
+          id: `m-${Date.now()}-1`,
+          timestamp: t0,
+          location: `Terminal Logística de ${originCity}`,
+          status: 'booked',
+          description: `Recepción, pesaje y verificación de ${cargoDesc}. Documentación de expedición y aduanas registrada.`,
+          isCompleted: true,
+          isCurrent: newShipmentData.status === 'booked',
+          checkpointType: 'origin_port',
+          operator: 'Control de Carga PortX'
+        },
+        {
+          id: `m-${Date.now()}-2`,
+          timestamp: t1,
+          location: `Salida de Terminal Central ${originCity}`,
+          status: 'in_transit',
+          description: `Carga estibada y asegurada en vehículo de transporte. Salida en tránsito con destino a ${destCity}.`,
+          isCompleted: newShipmentData.status !== 'booked',
+          isCurrent: newShipmentData.status === 'in_transit',
+          checkpointType: 'departure',
+          operator: courier
+        }
+      ];
 
-    if (newShipmentData.status === 'delivered') {
-      milestones.push({
-        id: `m-${Date.now()}-5`,
-        timestamp: tNow,
-        location: `Entregado en Mano en Puerta`,
-        status: 'delivered',
-        description: `Entrega formalizada con éxito en mano en la puerta de ${doorAddr}. Firma del destinatario registrada y certificado de bienestar archivado.`,
-        isCompleted: true,
-        isCurrent: true,
-        checkpointType: 'final_delivery',
-        operator: courier
-      });
+      if (newShipmentData.status === 'in_transit' || newShipmentData.status === 'out_for_delivery' || newShipmentData.status === 'delivered') {
+        milestones.push({
+          id: `m-${Date.now()}-3`,
+          timestamp: t2,
+          location: `Punto de Control en Tránsito hacia ${destCity}`,
+          status: 'in_transit',
+          description: `Escaneo de control en ruta completado sin incidencias. Tráfico fluido hacia la terminal de destino.`,
+          isCompleted: true,
+          isCurrent: newShipmentData.status === 'in_transit',
+          checkpointType: 'in_transit_hub',
+          operator: courier
+        });
+      }
+
+      if (newShipmentData.status === 'out_for_delivery' || newShipmentData.status === 'delivered') {
+        milestones.push({
+          id: `m-${Date.now()}-4`,
+          timestamp: tNow,
+          location: `Centro de Distribución Local (${destCity})`,
+          status: 'out_for_delivery',
+          description: `Asignado a reparto de última milla. En camino hacia la dirección: ${doorAddr}.`,
+          isCompleted: true,
+          isCurrent: newShipmentData.status === 'out_for_delivery',
+          checkpointType: 'destination_port',
+          operator: courier
+        });
+      }
+
+      if (newShipmentData.status === 'delivered') {
+        milestones.push({
+          id: `m-${Date.now()}-5`,
+          timestamp: tNow,
+          location: `Dirección de Entrega (${destCity})`,
+          status: 'delivered',
+          description: `Entrega completada satisfactoriamente en ${doorAddr}. Albarán firmado y archivado.`,
+          isCompleted: true,
+          isCurrent: true,
+          checkpointType: 'final_delivery',
+          operator: courier
+        });
+      }
     }
 
     let progressPercent = 25;

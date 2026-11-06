@@ -15,14 +15,14 @@ export const LiveRouteMap: React.FC<LiveRouteMapProps> = ({ shipment, className 
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Extract coordinates with robust fallbacks
-  const originLat = shipment.origin.lat || 43.4623;
-  const originLng = shipment.origin.lng || -3.8099;
-  const destLat = shipment.destination.lat || 37.2614;
-  const destLng = shipment.destination.lng || -6.9447;
+  const originLat = shipment.origin.lat || 40.4168;
+  const originLng = shipment.origin.lng || -3.7038;
+  const destLat = shipment.destination.lat || 41.3879;
+  const destLng = shipment.destination.lng || 2.1699;
   
-  // Current live position: either shipment.currentLocation or intermediate point along route
-  const currentLat = shipment.currentLocation.lat || 43.4431;
-  const currentLng = shipment.currentLocation.lng || -3.7312;
+  // Real live position of the shipment
+  const currentLat = shipment.currentLocation?.lat || (originLat + destLat) / 2;
+  const currentLng = shipment.currentLocation?.lng || (originLng + destLng) / 2;
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -44,7 +44,7 @@ export const LiveRouteMap: React.FC<LiveRouteMapProps> = ({ shipment, className 
 
     mapInstanceRef.current = map;
 
-    // Add CARTO Positron Light basemap tiles (identical to Gradlyn Global reference)
+    // Add CARTO Positron Light basemap tiles
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
       subdomains: 'abcd',
@@ -102,8 +102,8 @@ export const LiveRouteMap: React.FC<LiveRouteMapProps> = ({ shipment, className 
     originMarker.bindPopup(`
       <div style="font-family: sans-serif; font-size: 12px; line-height: 1.4; padding: 4px;">
         <strong style="color: #dc2626; font-size: 11px; text-transform: uppercase;">ORIGIN</strong><br/>
-        <strong style="color: #18181b;">${shipment.origin.city}, ${shipment.origin.country}</strong><br/>
-        <span style="color: #64748b; font-size: 11px;">${shipment.sender.name}</span>
+        <strong style="color: #18181b;">${shipment.origin.city}${shipment.origin.country ? `, ${shipment.origin.country}` : ''}</strong><br/>
+        <span style="color: #64748b; font-size: 11px;">${shipment.sender?.name || ''}</span>
       </div>
     `);
 
@@ -112,8 +112,8 @@ export const LiveRouteMap: React.FC<LiveRouteMapProps> = ({ shipment, className 
     destMarker.bindPopup(`
       <div style="font-family: sans-serif; font-size: 12px; line-height: 1.4; padding: 4px;">
         <strong style="color: #18181b; font-size: 11px; text-transform: uppercase;">DESTINATION</strong><br/>
-        <strong style="color: #18181b;">${shipment.destination.city}, ${shipment.destination.country}</strong><br/>
-        <span style="color: #64748b; font-size: 11px;">${shipment.doorstepDelivery?.receiverDoorAddress || shipment.consignee.address || 'Huelva'}</span>
+        <strong style="color: #18181b;">${shipment.destination.city}${shipment.destination.country ? `, ${shipment.destination.country}` : ''}</strong><br/>
+        <span style="color: #64748b; font-size: 11px;">${shipment.doorstepDelivery?.receiverDoorAddress || shipment.consignee?.address || shipment.destination.city}</span>
       </div>
     `);
 
@@ -125,21 +125,23 @@ export const LiveRouteMap: React.FC<LiveRouteMapProps> = ({ shipment, className 
           <span style="width: 7px; height: 7px; background: #dc2626; border-radius: 50%; display: inline-block;"></span>
           <strong style="color: #dc2626; font-size: 11px;">LIVE DISPATCH TELEMETRY</strong>
         </div>
-        <strong style="color: #18181b;">${shipment.currentLocation.name}</strong><br/>
-        <span style="color: #52525b; font-size: 11px;">Temp: 21.0°C Climatizado · En tránsito</span>
+        <strong style="color: #18181b;">${shipment.currentLocation?.name || 'En tránsito'}</strong><br/>
+        <span style="color: #52525b; font-size: 11px;">${shipment.statusLabel || 'En ruta'}</span>
+        ${shipment.temperatureCelsius !== undefined ? `<br/><span style="color: #059669; font-size: 11px;">Temperatura: ${shipment.temperatureCelsius}°C</span>` : ''}
       </div>
     `);
 
-    // Generate realistic multi-waypoint transit corridor between Origin and Destination
-    // If Cantabria to Huelva (North to South Spain), route passes through Burgos, Valladolid/Madrid, Mérida, Sevilla corridor
-    const routePoints: [number, number][] = [
-      [originLat, originLng],
-      [42.3439, -3.6969], // Burgos corridor
-      [40.4168, -3.7038], // Madrid central hub
-      [38.9161, -6.3437], // Mérida corridor
-      [37.3891, -5.9845], // Sevilla junction
-      [destLat, destLng]   // Huelva delivery door
-    ];
+    // Dynamically interpolate realistic route points between Origin and Destination
+    const pointsCount = 6;
+    const routePoints: [number, number][] = [];
+    for (let i = 0; i <= pointsCount; i++) {
+      const fraction = i / pointsCount;
+      const lat = originLat + (destLat - originLat) * fraction;
+      const lng = originLng + (destLng - originLng) * fraction;
+      // Slight natural curvature perpendicular to the line
+      const curveOffset = Math.sin(fraction * Math.PI) * 0.12;
+      routePoints.push([lat + curveOffset, lng]);
+    }
 
     // Background soft glow line
     L.polyline(routePoints, {
@@ -151,7 +153,7 @@ export const LiveRouteMap: React.FC<LiveRouteMapProps> = ({ shipment, className 
     }).addTo(map);
 
     // Primary sharp route polyline
-    const routeLine = L.polyline(routePoints, {
+    L.polyline(routePoints, {
       color: '#dc2626',
       weight: 3.5,
       opacity: 0.9,
@@ -272,21 +274,27 @@ export const LiveRouteMap: React.FC<LiveRouteMapProps> = ({ shipment, className 
       <div className="absolute bottom-4 left-4 right-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 z-10 pointer-events-none">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/95 backdrop-blur-md rounded-xl border border-stone-200/90 shadow-sm pointer-events-auto text-[11px]">
           <ShieldCheck className="w-3.5 h-3.5 text-red-600 shrink-0" />
-          <span className="font-bold text-[#18181b]">Ruta Certificada PortX</span>
-          <span className="text-stone-300">|</span>
-          <span className="text-stone-600 font-medium flex items-center gap-1">
-            <Thermometer className="w-3 h-3 text-red-600" />
-            21.0°C Cabina Climatizada
+          <span className="font-bold text-[#18181b]">
+            {shipment.origin.city} → {shipment.destination.city}
           </span>
+          {shipment.temperatureCelsius !== undefined && (
+            <>
+              <span className="text-stone-300">|</span>
+              <span className="text-stone-600 font-medium flex items-center gap-1">
+                <Thermometer className="w-3 h-3 text-red-600" />
+                {shipment.temperatureCelsius}°C
+              </span>
+            </>
+          )}
         </div>
 
-        {/* Real CARTO / OpenStreetMap attribution matching Gradlyn reference */}
+        {/* Real CARTO / OpenStreetMap attribution */}
         <div className="bg-white/80 backdrop-blur-xs px-2.5 py-1 rounded-lg text-[10px] text-stone-500 font-mono pointer-events-auto border border-stone-200/60 shadow-2xs self-end">
           Leaflet | © CARTO © OpenStreetMap
         </div>
       </div>
 
-      {/* Watermark in corner matching Gradlyn Global */}
+      {/* Watermark in corner */}
       <div className="absolute top-14 right-4 text-[10px] font-mono font-bold text-stone-400/40 uppercase select-none pointer-events-none rotate-[-25deg] hidden sm:block">
         API KEY · carto.com/basemaps
       </div>
