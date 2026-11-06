@@ -21,6 +21,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { ShipmentStatus } from '../../types';
+import { LiveRouteMap } from './LiveRouteMap';
 
 export const TrackingSection: React.FC = () => {
   const {
@@ -32,7 +33,6 @@ export const TrackingSection: React.FC = () => {
 
   const [searchInput, setSearchInput] = useState(currentTrackingQuery);
   const [copied, setCopied] = useState(false);
-  const [mapZoom, setMapZoom] = useState(1);
 
   // Sync search input when global tracking query changes
   useEffect(() => {
@@ -365,80 +365,8 @@ export const TrackingSection: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Right Side: Map Canvas */}
-                <div className="md:col-span-7 bg-[#fbfbfb] relative overflow-hidden flex items-center justify-center min-h-[300px]">
-
-                  <div className="absolute top-4 right-4 text-[11px] font-mono font-bold text-stone-400/50 uppercase select-none pointer-events-none rotate-[-35deg]">
-                    API KEY · carto.com/basemaps
-                  </div>
-                  <div className="absolute bottom-4 left-4 text-[10px] font-mono text-stone-400/60 select-none pointer-events-none">
-                    Leaflet | © OpenStreetMap contributors © CARTO
-                  </div>
-
-                  {/* Zoom Controls */}
-                  <div className="absolute top-4 left-4 flex flex-col bg-white rounded-lg border border-stone-300 shadow-sm z-10 overflow-hidden">
-                    <button
-                      onClick={() => setMapZoom((prev) => Math.min(prev + 0.2, 1.8))}
-                      className="p-1.5 text-stone-700 hover:bg-stone-100 border-b border-stone-200 cursor-pointer"
-                      title="Zoom in"
-                    >
-                      <Plus className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => setMapZoom((prev) => Math.max(prev - 0.2, 0.8))}
-                      className="p-1.5 text-stone-700 hover:bg-stone-100 cursor-pointer"
-                      title="Zoom out"
-                    >
-                      <Minus className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  {/* SVG Geographic Map & Route Line Canvas */}
-                  <div
-                    className="w-full h-full p-4 flex items-center justify-center transition-transform duration-300"
-                    style={{ transform: `scale(${mapZoom})` }}
-                  >
-                    <svg className="w-full h-full max-h-[360px]" viewBox="0 0 500 320" fill="none">
-                      <path d="M40 80 Q 120 40 200 90 T 360 80 T 480 120" stroke="#f1f1f1" strokeWidth="3" fill="none" />
-                      <path d="M20 180 Q 140 160 220 220 T 420 200" stroke="#f1f1f1" strokeWidth="2.5" fill="none" />
-                      <path d="M80 260 Q 220 280 320 240 T 460 270" stroke="#f1f1f1" strokeWidth="2" fill="none" />
-
-                      {/* Route Arc in Red */}
-                      <path
-                        d="M 90 240 Q 220 180 340 90"
-                        stroke="#ef4444"
-                        strokeWidth="3.5"
-                        strokeLinecap="round"
-                        fill="none"
-                      />
-
-                      {/* Origin Node */}
-                      <circle cx="90" cy="240" r="6" fill="#dc2626" />
-                      <circle cx="90" cy="240" r="12" fill="#dc2626" fillOpacity="0.2" />
-                      <text x="90" y="265" fill="#52525b" fontSize="10" fontWeight="bold" textAnchor="middle">
-                        {currentShipment.origin.city}
-                      </text>
-
-                      {/* Destination Node */}
-                      <circle cx="340" cy="90" r="6" fill="#18181b" />
-                      <circle cx="340" cy="90" r="12" fill="#18181b" fillOpacity="0.2" />
-                      <text x="340" y="70" fill="#52525b" fontSize="10" fontWeight="bold" textAnchor="middle">
-                        {currentShipment.destination.city}
-                      </text>
-
-                      {/* Moving Marker in Red */}
-                      <g transform="translate(265, 128)">
-                        <circle cx="0" cy="0" r="18" fill="#f87171" fillOpacity="0.3" className="animate-ping" />
-                        <circle cx="0" cy="0" r="12" fill="#dc2626" />
-                        <path
-                          d="M -5 -2 L 0 -7 L 5 -2 L 7 2 L 2 2 L 0 6 L -2 2 L -7 2 Z"
-                          fill="white"
-                          transform="rotate(45)"
-                        />
-                      </g>
-                    </svg>
-                  </div>
-                </div>
+                {/* Right Side: Real Interactive Leaflet Live Route Map */}
+                <LiveRouteMap shipment={currentShipment} className="md:col-span-7" />
 
               </div>
 
