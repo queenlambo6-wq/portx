@@ -101,9 +101,6 @@ export const Navbar: React.FC = () => {
               {/* Action Button: Track Order -> */}
               <button
                 onClick={() => {
-                  if (!currentTrackingQuery) {
-                    setCurrentTrackingQuery('VY22261591');
-                  }
                   setIsAdminMode(false);
                   setActiveView('track');
                 }}

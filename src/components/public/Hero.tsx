@@ -219,7 +219,7 @@ export const Hero: React.FC = () => {
                     type="text"
                     value={trackingCode}
                     onChange={(e) => setTrackingCode(e.target.value)}
-                    placeholder="Enter tracking number (e.g. VY22261591)"
+                    placeholder="Enter code (example: ABC123456)"
                     className="w-full bg-white text-[#18181b] placeholder-stone-400 px-4 py-3 rounded-xl border border-stone-300 focus:border-red-600 focus:outline-none text-sm font-mono font-medium shadow-2xs"
                   />
                 </div>
@@ -233,18 +233,8 @@ export const Hero: React.FC = () => {
               </form>
 
               <div className="mt-3 flex items-center justify-between text-[11px] text-stone-500 font-medium">
-                <span>Direct real-time GPS lookup</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCurrentTrackingQuery('VY22261591');
-                    setIsAdminMode(false);
-                    setActiveView('track');
-                  }}
-                  className="font-mono font-bold text-red-600 hover:underline cursor-pointer bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded border border-red-200 transition-colors"
-                >
-                  Sample: VY22261591
-                </button>
+                <span>Direct real-time GPS telemetry lookup</span>
+                <span className="text-stone-400">24/7 Global Dispatch</span>
               </div>
 
             </div>

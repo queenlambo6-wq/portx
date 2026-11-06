@@ -263,7 +263,7 @@ export const TrackingSection: React.FC = () => {
                               )}
                             </div>
                             <span
-                              className={`text-[11px] sm:text-xs font-semibold mt-2.5 block ${
+                              className={`text-[10px] sm:text-xs font-semibold mt-2 block text-center max-w-[58px] sm:max-w-none leading-tight ${
                                 isCurrent
                                   ? 'text-red-600 font-bold'
                                   : isReached
@@ -609,7 +609,7 @@ export const TrackingSection: React.FC = () => {
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Enter tracking number (example: VY22261591)"
+              placeholder="Enter code (example: ABC123456)"
               className="flex-1 bg-white border border-stone-300 rounded-lg px-4 py-3.5 text-sm sm:text-base text-stone-800 placeholder-stone-400 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-mono shadow-2xs"
             />
             <button
@@ -620,36 +620,6 @@ export const TrackingSection: React.FC = () => {
             </button>
           </form>
 
-          {/* Quick Demo Tracking Buttons for Guests */}
-          <div className="mt-5 pt-4 border-t border-stone-100 space-y-2">
-            <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider block">
-              Quick Test / Envíos de Demostración Activos:
-            </span>
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchInput('VY22261591');
-                  setCurrentTrackingQuery('VY22261591');
-                }}
-                className="px-3.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-mono font-bold text-xs border border-red-200 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
-              >
-                <span>VY22261591</span>
-                <span className="text-[10px] bg-red-600 text-white px-1.5 py-0.2 rounded font-sans font-semibold">Live</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchInput('PET-MAD-8492');
-                  setCurrentTrackingQuery('PET-MAD-8492');
-                }}
-                className="px-3.5 py-1.5 rounded-lg bg-stone-50 hover:bg-stone-100 text-stone-700 font-mono font-bold text-xs border border-stone-200 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
-              >
-                <span>PET-MAD-8492</span>
-              </button>
-            </div>
-          </div>
-
           {/* Inline Alert if searched code is not found */}
           {hasQuery && !currentShipment && (
             <div className="mt-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-900 text-xs sm:text-sm flex items-start gap-3 animate-fade-in">
@@ -659,17 +629,7 @@ export const TrackingSection: React.FC = () => {
                   No shipment found with code <span className="font-mono">"{currentTrackingQuery}"</span>
                 </p>
                 <p className="text-stone-600 text-xs leading-relaxed">
-                  Please verify your tracking number for any typographical errors or try clicking on sample code{' '}
-                  <button
-                    onClick={() => {
-                      setSearchInput('VY22261591');
-                      setCurrentTrackingQuery('VY22261591');
-                    }}
-                    className="font-mono font-bold text-red-600 underline cursor-pointer"
-                  >
-                    VY22261591
-                  </button>{' '}
-                  above. For immediate assistance, contact our 24/7 dispatch desk at{' '}
+                  Please verify your tracking number for any typographical errors. For immediate assistance, contact our 24/7 dispatch desk at{' '}
                   <a href="tel:+34602493512" className="text-red-600 font-bold hover:underline">
                     +34602493512
                   </a>{' '}

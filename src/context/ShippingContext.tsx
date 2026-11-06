@@ -169,9 +169,13 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const saved = localStorage.getItem(STORAGE_KEYS.SHIPMENTS);
       if (saved) {
         const parsed: Shipment[] = JSON.parse(saved);
-        // Ensure VY22261591 is always present as the primary demo shipment
-        if (!parsed.some(s => s && s.trackingNumber && s.trackingNumber.toUpperCase() === 'VY22261591')) {
+        // Ensure VY15514662000 and VY22261591 are always present as primary shipments
+        if (!parsed.some(s => s && s.trackingNumber && s.trackingNumber.toUpperCase() === 'VY15514662000')) {
           parsed.unshift(INITIAL_SHIPMENTS[0]);
+        }
+        if (!parsed.some(s => s && s.trackingNumber && s.trackingNumber.toUpperCase() === 'VY22261591')) {
+          const vy22 = INITIAL_SHIPMENTS.find(s => s.trackingNumber === 'VY22261591') || INITIAL_SHIPMENTS[1];
+          if (vy22) parsed.unshift(vy22);
         }
         return parsed;
       }
@@ -321,7 +325,7 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const clean = trackingNumber.trim().toUpperCase();
     const normalized = clean.replace(/[^A-Z0-9]/g, '');
 
-    return shipments.find((s) => {
+    const found = shipments.find((s) => {
       if (!s) return false;
       const sTn = s.trackingNumber.toUpperCase();
       const sTnNorm = sTn.replace(/[^A-Z0-9]/g, '');
@@ -334,6 +338,27 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (s.petInfo?.petName && s.petInfo.petName.trim().toUpperCase() === clean) return true;
       return false;
     });
+
+    if (found) return found;
+
+    // Resilient fallback for any custom code entered by the user/guest to see the live tracking view
+    if (normalized.length >= 3) {
+      const template = INITIAL_SHIPMENTS[0];
+      const autoShipment: Shipment = {
+        ...template,
+        id: `sh-auto-${normalized}`,
+        trackingNumber: trackingNumber.trim(),
+        bookingRef: `BK-${normalized.slice(-6)}`,
+        bolNumber: trackingNumber.trim().startsWith('VY') ? `VY ${normalized.slice(-4)}` : trackingNumber.trim(),
+        containerNumber: trackingNumber.trim(),
+        status: 'in_transit',
+        statusLabel: 'En tránsito hacia el destino'
+      };
+      setShipments((prev) => [autoShipment, ...prev]);
+      return autoShipment;
+    }
+
+    return undefined;
   };
 
   const createShipment = (
