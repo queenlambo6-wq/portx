@@ -134,6 +134,7 @@ export interface Shipment {
   milestones: Milestone[];
   notes?: string;
   clientNotice?: string; // Official advisory for the receiver/client in case of delays or notes
+  yellowStickyNote?: string; // Highlighted sticky notice on tracking dossier
   customsCleared: boolean;
   createdAt: string;
   petInfo?: PetDetails;

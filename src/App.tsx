@@ -105,7 +105,7 @@ const MainAppContent: React.FC = () => {
         {activeView === 'contact' && (
           <div className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
             <div className="text-center max-w-3xl mx-auto mb-14">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-md bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold uppercase tracking-wider mb-2">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-md bg-red-100 text-red-700 border border-red-200 text-xs font-bold uppercase tracking-wider mb-2">
                 <Building2 className="w-3.5 h-3.5" />
                 {t.contactBadge}
               </div>
@@ -119,7 +119,7 @@ const MainAppContent: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
               <div className="p-6 bg-white rounded-2xl border border-stone-200 shadow-2xs">
-                <div className="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center mb-4">
+                <div className="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center mb-4">
                   <Phone className="w-5 h-5" />
                 </div>
                 <h3 className="font-bold text-[#232331] text-base">
@@ -128,7 +128,7 @@ const MainAppContent: React.FC = () => {
                 <p className="text-xs text-[#767676] mt-1">
                   {language === 'es' ? 'Atención directa para cotizaciones inmediatas, fletes marítimos, aéreos e intermodales.' : language === 'de' ? 'Direkte telefonische Frachtberatung, Notfall-Routing und Buchungen.' : 'Direct voice line for urgent freight quotes, dispatching, and vessel bookings.'}
                 </p>
-                <a href="tel:+34602493512" className="inline-flex items-center gap-1.5 text-sm text-orange-600 font-bold mt-4 hover:underline">
+                <a href="tel:+34602493512" className="inline-flex items-center gap-1.5 text-sm text-red-600 font-bold mt-4 hover:underline">
                   <Phone className="w-3.5 h-3.5" />
                   +34602493512
                 </a>
@@ -168,7 +168,7 @@ const MainAppContent: React.FC = () => {
             </div>
 
             {/* Contact Form CTA */}
-            <div className="bg-white border-2 border-orange-200 rounded-2xl p-8 max-w-3xl mx-auto text-center shadow-md">
+            <div className="bg-white border-2 border-red-200 rounded-2xl p-8 max-w-3xl mx-auto text-center shadow-md">
               <h2 className="text-xl font-bold text-[#232331]">{t.contactCtaTitle}</h2>
               <p className="text-xs text-[#767676] mt-2 max-w-lg mx-auto">
                 {t.contactCtaSubtitle}
@@ -176,7 +176,7 @@ const MainAppContent: React.FC = () => {
               <div className="mt-6 flex justify-center gap-4">
                 <button
                   onClick={() => handleOpenBooking()}
-                  className="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs shadow-md shadow-orange-600/20 flex items-center gap-2 cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/20 flex items-center gap-2 cursor-pointer"
                 >
                   <span>{t.getQuoteBtn}</span>
                   <ArrowRight className="w-4 h-4" />

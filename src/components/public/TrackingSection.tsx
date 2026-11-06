@@ -288,17 +288,29 @@ export const TrackingSection: React.FC = () => {
                 {/* Left Side: Tracking History & Sticky Note */}
                 <div className="md:col-span-5 p-6 border-b md:border-b-0 md:border-r border-stone-200 flex flex-col justify-between">
                   <div>
-                    <h3 className="text-2xl font-black text-[#18181b] font-heading leading-tight">
-                      Tracking History
-                    </h3>
-                    <div className="text-xs font-mono text-stone-500 font-bold mt-0.5">
-                      {currentShipment.trackingNumber}
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                      <div>
+                        <h3 className="text-2xl font-black text-[#18181b] font-heading leading-tight">
+                          Tracking History
+                        </h3>
+                        <div className="text-xs font-mono text-stone-500 font-bold mt-0.5">
+                          {currentShipment.trackingNumber}
+                        </div>
+                      </div>
+
+                      {/* Yellow Notice matching Gradlyn Global screenshot */}
+                      <div className="bg-[#fff3cd] text-[#856404] border border-[#ffeeba] p-2.5 sm:p-3 rounded-xl text-xs font-bold leading-snug shadow-2xs sm:max-w-[210px]">
+                        {currentShipment.clientNotice || 'Jaula de Transporte Electrónica Para Mascotas IPATA Pendiente'}
+                      </div>
                     </div>
 
-                    {/* Yellow/Warm Notice */}
-                    <div className="mt-4 bg-[#fff3cd] text-[#856404] border border-[#ffeeba] p-3 rounded-xl text-xs font-bold leading-relaxed shadow-2xs">
-                      {currentShipment.clientNotice || 'Jaula de Transporte Electrónica Para Mascotas IPATA Pendiente'}
-                    </div>
+                    {/* Special Handling / Puppy Attention Note if present */}
+                    {currentShipment.yellowStickyNote && (
+                      <div className="mt-3 bg-amber-50 text-amber-900 border border-amber-200 p-2.5 rounded-lg text-xs leading-relaxed">
+                        <span className="font-bold text-amber-800 block text-[11px] uppercase tracking-wider mb-0.5">Special Care Instructions:</span>
+                        {currentShipment.yellowStickyNote}
+                      </div>
+                    )}
 
                     {/* Timeline List */}
                     <div className="mt-6 space-y-4">
@@ -597,7 +609,7 @@ export const TrackingSection: React.FC = () => {
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Enter code (example: ABC123456)"
+              placeholder="Enter tracking number (example: VY22261591)"
               className="flex-1 bg-white border border-stone-300 rounded-lg px-4 py-3.5 text-sm sm:text-base text-stone-800 placeholder-stone-400 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-mono shadow-2xs"
             />
             <button
@@ -608,6 +620,36 @@ export const TrackingSection: React.FC = () => {
             </button>
           </form>
 
+          {/* Quick Demo Tracking Buttons for Guests */}
+          <div className="mt-5 pt-4 border-t border-stone-100 space-y-2">
+            <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider block">
+              Quick Test / Envíos de Demostración Activos:
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchInput('VY22261591');
+                  setCurrentTrackingQuery('VY22261591');
+                }}
+                className="px-3.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-mono font-bold text-xs border border-red-200 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+              >
+                <span>VY22261591</span>
+                <span className="text-[10px] bg-red-600 text-white px-1.5 py-0.2 rounded font-sans font-semibold">Live</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchInput('PET-MAD-8492');
+                  setCurrentTrackingQuery('PET-MAD-8492');
+                }}
+                className="px-3.5 py-1.5 rounded-lg bg-stone-50 hover:bg-stone-100 text-stone-700 font-mono font-bold text-xs border border-stone-200 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+              >
+                <span>PET-MAD-8492</span>
+              </button>
+            </div>
+          </div>
+
           {/* Inline Alert if searched code is not found */}
           {hasQuery && !currentShipment && (
             <div className="mt-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-900 text-xs sm:text-sm flex items-start gap-3 animate-fade-in">
@@ -617,7 +659,17 @@ export const TrackingSection: React.FC = () => {
                   No shipment found with code <span className="font-mono">"{currentTrackingQuery}"</span>
                 </p>
                 <p className="text-stone-600 text-xs leading-relaxed">
-                  Please verify your tracking number for any typographical errors or contact our 24/7 logistics dispatch desk at{' '}
+                  Please verify your tracking number for any typographical errors or try clicking on sample code{' '}
+                  <button
+                    onClick={() => {
+                      setSearchInput('VY22261591');
+                      setCurrentTrackingQuery('VY22261591');
+                    }}
+                    className="font-mono font-bold text-red-600 underline cursor-pointer"
+                  >
+                    VY22261591
+                  </button>{' '}
+                  above. For immediate assistance, contact our 24/7 dispatch desk at{' '}
                   <a href="tel:+34602493512" className="text-red-600 font-bold hover:underline">
                     +34602493512
                   </a>{' '}

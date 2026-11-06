@@ -167,7 +167,15 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [shipments, setShipments] = useState<Shipment[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SHIPMENTS);
-      return saved ? JSON.parse(saved) : INITIAL_SHIPMENTS;
+      if (saved) {
+        const parsed: Shipment[] = JSON.parse(saved);
+        // Ensure VY22261591 is always present as the primary demo shipment
+        if (!parsed.some(s => s && s.trackingNumber && s.trackingNumber.toUpperCase() === 'VY22261591')) {
+          parsed.unshift(INITIAL_SHIPMENTS[0]);
+        }
+        return parsed;
+      }
+      return INITIAL_SHIPMENTS;
     } catch {
       return INITIAL_SHIPMENTS;
     }
@@ -216,13 +224,72 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [ports] = useState<PortHub[]>(INITIAL_PORTS);
   const [portCalls] = useState<PortCallSchedule[]>(INITIAL_PORT_CALLS);
 
-  const [currentTrackingQuery, setCurrentTrackingQuery] = useState<string>('');
-  const [activeView, setActiveView] = useState<string>('home'); // 'home' | 'track' | 'services' | 'calculator' | 'network' | 'about' | 'contact'
+  // Parse URL on initial boot for guest tracking links (e.g. /tracking/VY22261591 or ?tracking=VY22261591)
+  const getInitialUrlState = () => {
+    if (typeof window === 'undefined') return { query: '', view: 'home' };
+    try {
+      const path = window.location.pathname || '';
+      const pathMatch = path.match(/\/(?:tracking|track)\/([a-zA-Z0-9_-]+)/i);
+      if (pathMatch && pathMatch[1]) {
+        return { query: pathMatch[1], view: 'track' };
+      }
+      if (path === '/tracking' || path === '/track') {
+        return { query: '', view: 'track' };
+      }
+      const searchParams = new URLSearchParams(window.location.search);
+      const qCode = searchParams.get('tracking') || searchParams.get('code') || searchParams.get('t');
+      if (qCode) {
+        return { query: qCode, view: 'track' };
+      }
+      const hash = window.location.hash.replace(/^#/, '');
+      if (hash && hash !== 'track' && hash !== 'home') {
+        const hashMatch = hash.match(/(?:tracking\/)?([a-zA-Z0-9_-]+)/i);
+        if (hashMatch && hashMatch[1]) {
+          return { query: hashMatch[1], view: 'track' };
+        }
+      }
+    } catch {
+      // Fallback
+    }
+    return { query: '', view: 'home' };
+  };
+
+  const initialUrlState = getInitialUrlState();
+  const [currentTrackingQuery, setCurrentTrackingQueryState] = useState<string>(initialUrlState.query);
+  const [activeView, setActiveViewState] = useState<string>(initialUrlState.view);
   const [isAdminMode, setIsAdminMode] = useState<boolean>(false);
-  const [adminSubView, setAdminSubView] = useState<string>('dashboard'); // 'dashboard' | 'shipments' | 'milestones' | 'fleet' | 'inquiries' | 'ports' | 'manifests'
+  const [adminSubView, setAdminSubView] = useState<string>('dashboard');
   const [searchFilter, setSearchFilter] = useState<string>('');
   const [selectedShipmentForDetail, setSelectedShipmentForDetail] = useState<Shipment | null>(null);
   const [selectedShipmentForPrint, setSelectedShipmentForPrint] = useState<Shipment | null>(null);
+
+  const setCurrentTrackingQuery = (q: string) => {
+    setCurrentTrackingQueryState(q);
+    if (typeof window !== 'undefined') {
+      try {
+        if (q.trim()) {
+          window.history.replaceState(null, '', `?tracking=${encodeURIComponent(q.trim())}`);
+        } else if (activeView === 'track') {
+          window.history.replaceState(null, '', '?tracking=');
+        }
+      } catch {
+        // Safe fallback
+      }
+    }
+  };
+
+  const setActiveView = (view: string) => {
+    setActiveViewState(view);
+    if (view === 'track' && !currentTrackingQuery) {
+      // If navigating to track without query, default to empty or keep current
+    } else if (view === 'home' && typeof window !== 'undefined') {
+      try {
+        window.history.replaceState(null, '', window.location.pathname);
+      } catch {
+        // Safe fallback
+      }
+    }
+  };
 
   // Sync to LocalStorage
   useEffect(() => {

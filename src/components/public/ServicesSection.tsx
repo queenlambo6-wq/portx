@@ -292,8 +292,8 @@ export const ServicesSection: React.FC<{ onOpenBookingModal: (mode: TransportMod
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-md bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold uppercase tracking-wider mb-3">
-            <Heart className="w-3.5 h-3.5 fill-orange-600 text-orange-600" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-md bg-red-100 text-red-700 border border-red-200 text-xs font-bold uppercase tracking-wider mb-3">
+            <Heart className="w-3.5 h-3.5 fill-red-600 text-red-600" />
             <span>{t.servicesBadge}</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-black text-[#232331] font-heading tracking-tight">
@@ -309,16 +309,16 @@ export const ServicesSection: React.FC<{ onOpenBookingModal: (mode: TransportMod
           {services.map((service) => (
             <div
               key={service.id}
-              className="bg-[#f8f5f1] border border-stone-200 hover:border-orange-400 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl flex flex-col justify-between group"
+              className="bg-[#f8f5f1] border border-stone-200 hover:border-red-400 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl flex flex-col justify-between group"
             >
               <div>
                 <div className="w-14 h-14 rounded-xl bg-white border border-stone-200 flex items-center justify-center mb-5 shadow-xs group-hover:scale-105 transition-transform">
                   {service.icon}
                 </div>
-                <h3 className="text-lg font-bold text-[#232331] font-heading group-hover:text-orange-600 transition-colors">
+                <h3 className="text-lg font-bold text-[#232331] font-heading group-hover:text-red-600 transition-colors">
                   {service.title}
                 </h3>
-                <p className="text-xs font-semibold text-orange-700 mt-1">
+                <p className="text-xs font-semibold text-red-700 mt-1">
                   {service.tagline}
                 </p>
                 <p className="text-xs text-[#767676] mt-3 leading-relaxed">
@@ -348,7 +348,7 @@ export const ServicesSection: React.FC<{ onOpenBookingModal: (mode: TransportMod
                 <button
                   type="button"
                   onClick={() => onOpenBookingModal(service.id as TransportMode)}
-                  className="py-2.5 px-3 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl transition-colors shadow-xs flex items-center justify-center cursor-pointer"
+                  className="py-2.5 px-3 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl transition-colors shadow-xs flex items-center justify-center cursor-pointer"
                   title="Reservar este traslado"
                 >
                   <ArrowRight className="w-4 h-4" />
@@ -359,19 +359,19 @@ export const ServicesSection: React.FC<{ onOpenBookingModal: (mode: TransportMod
         </div>
 
         {/* Service Guarantees Banner */}
-        <div className="mt-14 p-6 rounded-2xl bg-orange-50 border border-orange-200 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xs">
+        <div className="mt-14 p-6 rounded-2xl bg-red-50 border border-red-200 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xs">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-orange-600 text-white flex items-center justify-center shrink-0 shadow-md">
+            <div className="w-12 h-12 rounded-xl bg-red-600 text-white flex items-center justify-center shrink-0 shadow-md">
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="font-bold text-sm text-orange-950">Garantía Total de Bienestar y Entrega en Puerta</h4>
-              <p className="text-xs text-orange-800 mt-0.5 max-w-xl">
+              <h4 className="font-bold text-sm text-stone-950">Garantía Total de Bienestar y Entrega en Puerta</h4>
+              <p className="text-xs text-stone-800 mt-0.5 max-w-xl">
                 Todos los traslados incluyen furgoneta climatizada a 21°C, cuidador acreditado, hidratación programada y entrega en mano en la misma puerta del destinatario con aviso telefónico previo.
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3 text-xs font-bold text-orange-900 shrink-0">
+          <div className="flex items-center gap-3 text-xs font-bold text-stone-900 shrink-0">
             <span className="flex items-center gap-1">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               IATA LAR Certificado
@@ -391,12 +391,12 @@ export const ServicesSection: React.FC<{ onOpenBookingModal: (mode: TransportMod
           <div className="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto border border-stone-200">
             <div className="flex items-start justify-between pb-4 border-b border-stone-200">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center">
                   {selectedService.icon}
                 </div>
                 <div>
                   <h3 className="text-xl font-black text-[#232331] font-heading">{selectedService.title}</h3>
-                  <p className="text-xs text-orange-600 font-semibold">{selectedService.tagline}</p>
+                  <p className="text-xs text-red-600 font-semibold">{selectedService.tagline}</p>
                 </div>
               </div>
               <button
@@ -447,7 +447,7 @@ export const ServicesSection: React.FC<{ onOpenBookingModal: (mode: TransportMod
               <ul className="space-y-1.5 text-xs text-[#767676]">
                 {selectedService.keyFeatures.map((feat, idx) => (
                   <li key={idx} className="flex items-start gap-2">
-                    <span className="text-orange-600 font-bold">•</span>
+                    <span className="text-red-600 font-bold">•</span>
                     <span>{feat}</span>
                   </li>
                 ))}
@@ -469,7 +469,7 @@ export const ServicesSection: React.FC<{ onOpenBookingModal: (mode: TransportMod
                   setSelectedService(null);
                   onOpenBookingModal(mode);
                 }}
-                className="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer"
+                className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer"
               >
                 {t.bookModeBtn}
               </button>

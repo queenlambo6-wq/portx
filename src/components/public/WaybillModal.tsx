@@ -22,8 +22,8 @@ export const WaybillModal: React.FC<WaybillModalProps> = ({ shipment, onClose })
         {/* Floating Print & Close bar (hidden during print) */}
         <div className="flex items-center justify-between pb-4 mb-6 border-b border-slate-200 print:hidden">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-orange-600 flex items-center gap-1.5">
-              <Heart className="w-4 h-4 fill-orange-600" />
+            <span className="text-xs font-bold uppercase tracking-wider text-red-600 flex items-center gap-1.5">
+              <Heart className="w-4 h-4 fill-red-600" />
               Certificado Oficial de Transporte Animal & Entrega en Puerta
             </span>
             <span className="text-slate-300">·</span>
@@ -33,7 +33,7 @@ export const WaybillModal: React.FC<WaybillModalProps> = ({ shipment, onClose })
           <div className="flex items-center gap-3">
             <button
               onClick={handlePrint}
-              className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-lg flex items-center gap-2 shadow-sm cursor-pointer"
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-lg flex items-center gap-2 shadow-sm cursor-pointer"
             >
               <Printer className="w-4 h-4 text-white" />
               <span>Imprimir Certificado (PDF)</span>
@@ -54,7 +54,7 @@ export const WaybillModal: React.FC<WaybillModalProps> = ({ shipment, onClose })
           <div className="flex flex-col sm:flex-row justify-between items-start border-b-2 border-slate-900 pb-4 gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded bg-orange-600 flex items-center justify-center text-white">
+                <div className="w-9 h-9 rounded bg-red-600 flex items-center justify-center text-white">
                   <Heart className="w-6 h-6 fill-white" />
                 </div>
                 <div>
@@ -72,7 +72,7 @@ export const WaybillModal: React.FC<WaybillModalProps> = ({ shipment, onClose })
             </div>
 
             <div className="text-right sm:border-l sm:border-slate-300 sm:pl-6">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-orange-600 block">
+              <span className="text-[10px] uppercase font-bold tracking-widest text-red-600 block">
                 GUÍA DE TRANSPORTE Y ENTREGA EN PUERTA
               </span>
               <div className="text-lg font-black font-mono text-slate-900 mt-0.5">
@@ -101,13 +101,13 @@ export const WaybillModal: React.FC<WaybillModalProps> = ({ shipment, onClose })
             </div>
 
             {/* Consignee & Doorstep Address */}
-            <div className="p-3 bg-orange-50/50">
-              <span className="text-[9px] uppercase font-bold text-orange-700 block mb-0.5 flex items-center gap-1">
-                <Home className="w-3 h-3 text-orange-600" />
+            <div className="p-3 bg-red-50/50">
+              <span className="text-[9px] uppercase font-bold text-red-700 block mb-0.5 flex items-center gap-1">
+                <Home className="w-3 h-3 text-red-600" />
                 <span>2. Destinatario y Dirección Exacta de Entrega en Puerta</span>
               </span>
               <div className="font-bold text-slate-950 text-xs">{shipment.consignee.name}</div>
-              <div className="text-[11px] text-orange-950 font-bold mt-0.5">
+              <div className="text-[11px] text-stone-950 font-bold mt-0.5">
                 {shipment.doorstepDelivery?.receiverDoorAddress || shipment.destination.portName}
               </div>
               <div className="text-[10px] text-slate-600 mt-0.5">
@@ -131,7 +131,7 @@ export const WaybillModal: React.FC<WaybillModalProps> = ({ shipment, onClose })
             </div>
             <div className="p-2 border-r border-slate-400">
               <span className="font-bold text-slate-500 block">Climatización de Cabina:</span>
-              <span className="font-semibold text-orange-700 font-mono">{shipment.temperatureCelsius || 21.5}°C Constante</span>
+              <span className="font-semibold text-red-700 font-mono">{shipment.temperatureCelsius || 21.5}°C Constante</span>
             </div>
             <div className="p-2">
               <span className="font-bold text-slate-500 block">Hora Estimada en Puerta:</span>
@@ -201,16 +201,16 @@ export const WaybillModal: React.FC<WaybillModalProps> = ({ shipment, onClose })
               </div>
             </div>
 
-            <div className="p-3 bg-orange-50/60 rounded-lg border border-orange-200 space-y-1">
-              <span className="font-bold text-orange-950 block text-[10px] uppercase flex items-center gap-1">
+            <div className="p-3 bg-red-50/60 rounded-lg border border-red-200 space-y-1">
+              <span className="font-bold text-stone-950 block text-[10px] uppercase flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Recepción y Firma en Mano en la Puerta del Destinatario</span>
               </span>
-              <p className="text-orange-900 leading-tight">
+              <p className="text-stone-900 leading-tight">
                 El receptor confirma la entrega en mano en la puerta de su domicilio, habiendo comprobado el microchip 
                 y el estado saludable, alegre y tranquilo de la mascota.
               </p>
-              <div className="mt-3 pt-2 border-t border-orange-300 flex justify-between items-center text-[10px]">
+              <div className="mt-3 pt-2 border-t border-red-300 flex justify-between items-center text-[10px]">
                 <span>Firma del Receptor en Puerta:</span>
                 <span className="font-mono text-emerald-800 font-bold">
                   {shipment.doorstepDelivery?.handoverProof?.signedBy || 'Firma Digital en Puerta'}

@@ -237,9 +237,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   placeholder="Ej: Calle Gran Vía 32, Planta 3ª, Puerta B, Madrid"
                   value={doorstepAddress}
                   onChange={(e) => setDoorstepAddress(e.target.value)}
-                  className="w-full bg-white text-[#232331] p-2.5 rounded-lg border border-orange-300 focus:border-orange-500 focus:outline-none font-medium"
+                  className="w-full bg-white text-[#232331] p-2.5 rounded-lg border border-red-300 focus:border-red-500 focus:outline-none font-medium"
                 />
-                <span className="text-[11px] text-orange-800 mt-1 block">
+                <span className="text-[11px] text-red-800 mt-1 block">
                   El conductor de la furgoneta subirá directamente a esta puerta para realizar la entrega en mano.
                 </span>
               </div>
@@ -252,7 +252,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   value={specialInstructions}
                   onChange={(e) => setSpecialInstructions(e.target.value)}
                   placeholder="Alimentación pautada, mantas familiares, necesidades de paseo..."
-                  className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-orange-500 focus:bg-white focus:outline-none"
+                  className="w-full bg-[#f8f5f1] text-[#232331] p-2.5 rounded-xl border border-stone-300 focus:border-red-500 focus:bg-white focus:outline-none"
                 ></textarea>
               </div>
 
@@ -266,7 +266,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow-md transition-colors flex items-center gap-2 cursor-pointer"
+                  className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-md transition-colors flex items-center gap-2 cursor-pointer"
                 >
                   <span>{t.submitBookingBtn}</span>
                   <ArrowRight className="w-4 h-4" />
@@ -289,7 +289,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             <div className="bg-[#f8f5f1] p-4 rounded-xl border border-stone-200 text-left max-w-md mx-auto space-y-2 text-xs">
               <div className="flex justify-between">
                 <span className="text-[#767676] font-medium">{t.quoteRefLabel}</span>
-                <span className="font-bold text-orange-600 font-mono">{submittedInquiry.quoteRef}</span>
+                <span className="font-bold text-red-600 font-mono">{submittedInquiry.quoteRef}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[#767676] font-medium">Mascota:</span>
@@ -311,7 +311,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer"
+                className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer"
               >
                 {t.doneBtn}
               </button>

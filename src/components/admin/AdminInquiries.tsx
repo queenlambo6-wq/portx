@@ -63,7 +63,7 @@ export const AdminInquiries: React.FC = () => {
               onClick={() => setFilter(tab)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-colors cursor-pointer ${
                 filter === tab
-                  ? 'bg-orange-600 text-white shadow-2xs'
+                  ? 'bg-red-600 text-white shadow-2xs'
                   : 'bg-white text-stone-600 hover:text-[#232331] border border-stone-200'
               }`}
             >
@@ -85,7 +85,7 @@ export const AdminInquiries: React.FC = () => {
               <span className="font-bold">{language === 'es' ? `¡Solicitud ${convertedShipmentNotice.inqRef} convertida a envío activo!` : `Inquiry ${convertedShipmentNotice.inqRef} converted to active shipment!`}</span>
               <span className="block text-stone-600 font-mono mt-0.5 font-medium">
                 {language === 'es' ? 'Código de Seguimiento asignado: ' : 'New Tracking Code: '}
-                <strong className="text-orange-600 font-bold">{convertedShipmentNotice.trackingNumber}</strong>.
+                <strong className="text-red-600 font-bold">{convertedShipmentNotice.trackingNumber}</strong>.
               </span>
             </div>
           </div>
@@ -103,12 +103,12 @@ export const AdminInquiries: React.FC = () => {
         {filtered.map((inq) => (
           <div
             key={inq.id}
-            className="bg-white rounded-2xl border border-stone-200 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-orange-300 transition-all shadow-2xs hover:shadow-md"
+            className="bg-white rounded-2xl border border-stone-200 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-red-300 transition-all shadow-2xs hover:shadow-md"
           >
             {/* Left Info */}
             <div className="space-y-3 flex-1">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="font-mono font-bold text-orange-600 text-sm">
+                <span className="font-mono font-bold text-red-600 text-sm">
                   {inq.quoteRef}
                 </span>
                 <span
@@ -160,7 +160,7 @@ export const AdminInquiries: React.FC = () => {
               {inq.status !== 'converted' && (
                 <button
                   onClick={() => handleConvert(inq.id, inq.quoteRef)}
-                  className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>{language === 'es' ? 'Convertir a Envío Activo' : language === 'de' ? 'In Sendung umwandeln' : 'Convert to Active Shipment'}</span>

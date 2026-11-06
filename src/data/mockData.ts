@@ -743,6 +743,148 @@ export const INITIAL_FLEET: FleetVehicle[] = [
 
 export const INITIAL_SHIPMENTS: Shipment[] = [
   {
+    id: 'sh-gradlyn-vy1591',
+    trackingNumber: 'VY22261591',
+    bookingRef: 'BK-1591',
+    bolNumber: 'VY 1591',
+    mode: 'road_transport',
+    status: 'in_transit',
+    statusLabel: 'En tránsito hacia el destino',
+    departureTimeFormatted: 'Sep 15',
+    arrivalTimeFormatted: 'Sep 15',
+    clientNotice: 'Jaula de Transporte Electrónica Para Mascotas IPATA Pendiente',
+    yellowStickyNote: 'The crate contains Rocky, a puppy that requires special attention. Please ensure the crate is handled with care and kept in a climate-controlled area.',
+    sender: {
+      name: 'Herbas Tejrina Shirley Laura',
+      company: 'Herbas Tejrina Shirley Laura',
+      address: 'Ribamontan Al Mar | Cantabria | 39150',
+      city: 'Cantabria',
+      country: 'España',
+      phone: '+34602493512',
+      email: 'remitente@portx.com'
+    },
+    consignee: {
+      name: 'Encarnación Maria Camino López',
+      company: 'Encarnación Maria Camino López',
+      address: 'Pl. de la Romera, 5, 6b',
+      city: 'Huelva',
+      country: 'España',
+      phone: '+34602493512',
+      email: 'cliente@gmail.com'
+    },
+    origin: {
+      portName: 'Cantabria',
+      portCode: 'ESBIO',
+      city: 'Cantabria',
+      country: 'España',
+      lat: 43.4623,
+      lng: -3.8099
+    },
+    destination: {
+      portName: 'Huelva',
+      portCode: 'ESSEV',
+      city: 'Huelva',
+      country: 'España',
+      lat: 37.2614,
+      lng: -6.9447
+    },
+    currentLocation: {
+      name: 'Ribamontan Al Mar, Cantabria',
+      lat: 43.4542,
+      lng: -3.7431,
+      updatedAt: 'Hace 10 minutos',
+      weather: '21°C · Clima Climatizado Controlado'
+    },
+    carrier: {
+      name: 'PortX Global Logistics',
+      vesselOrFlightName: 'Furgoneta Puerta a Puerta PortX #01',
+      voyageOrFlightNumber: 'VAN-VY-1591',
+      imoNumber: 'VET-CERT-2026-904'
+    },
+    containerNumber: 'IATA-KENNEL-VY1591',
+    sealNumber: 'SEAL-VET-CLEARED-902',
+    cargo: {
+      description: 'Cachorro en jaula electrónica IPATA con control térmico',
+      pieces: 1,
+      weightKg: 1.1,
+      volumeCbm: 0.1,
+      dimensions: 'L: 0 × W: 0 × H: 0 cm',
+      hsCode: '0106.19',
+      hazardous: false
+    },
+    departedAt: '2026-09-15T08:00:00Z',
+    estimatedArrival: '2026-09-15T18:00:00Z',
+    temperatureCelsius: 21.0,
+    progressPercent: 50,
+    customsCleared: true,
+    createdAt: '2026-09-14T10:00:00Z',
+    notes: 'Seguimiento activo con telemetría en tiempo real.',
+    petInfo: {
+      petName: 'Rocky',
+      species: 'dog',
+      speciesLabel: 'Perro (Cachorro)',
+      breed: 'Cachorro',
+      age: '3 meses',
+      gender: 'Macho',
+      microchipNumber: '981098107482910',
+      healthPassportNumber: 'ES-VET-2026-9041',
+      rabiesVaccinationValid: true,
+      vetClearanceApproved: true,
+      crateModel: 'Jaula Electrónica IPATA Homologada',
+      feedingInstructions: 'Agua fresca filtrada y control térmico constante a 21°C.',
+      specialCareNotes: 'Rocky es un cachorro que requiere atención especial. Mantener en cabina climatizada.',
+      lastHydrationTime: 'Hace 15 minutos',
+      lastWalkOrRestStop: 'Punto de descanso y chequeo veterinario',
+      companionHandlerName: 'Despacho Asignado PortX',
+      avatarUrl: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80'
+    },
+    doorstepDelivery: {
+      isDoorstepDelivery: true,
+      doorstepStatus: 'in_local_van',
+      receiverDoorAddress: 'Pl. de la Romera, 5, 6b',
+      receiverCity: 'Huelva',
+      receiverProvince: 'Andalucía',
+      receiverPostalCode: '21006',
+      receiverContactPerson: 'Encarnación Maria Camino López',
+      receiverPhone: '+34602493512',
+      estimatedDoorArrivalTime: 'Sep 15',
+      courierHandlerName: 'Despacho Asignado PortX',
+      courierHandlerPhone: '+34602493512',
+      vanVehiclePlate: 'VAN-VY-1591',
+      handoverProof: {
+        deliveredAt: 'En tránsito',
+        signedBy: 'Pendiente en entrega',
+        signatureVerified: false,
+        photoAtDoorTaken: false,
+        petWelfareRating: 'Excelente'
+      }
+    },
+    milestones: [
+      {
+        id: 'm-vy-1',
+        timestamp: 'Sep 15, 08:30',
+        location: 'Cantabria',
+        status: 'booked',
+        description: 'Recogida y recepción de Rocky. Comprobación de documentación sanitaria y microchip.',
+        isCompleted: true,
+        isCurrent: false,
+        checkpointType: 'origin_port',
+        operator: 'PortX Cantabria Desk'
+      },
+      {
+        id: 'm-vy-2',
+        timestamp: 'Sep 15, 11:45',
+        location: 'Ribamontan Al Mar, Cantabria',
+        status: 'in_transit',
+        description: 'En tránsito en furgoneta climatizada a 21°C con jaula electrónica IPATA. Todo en orden.',
+        isCompleted: true,
+        isCurrent: true,
+        checkpointType: 'in_transit_hub',
+        operator: 'PortX Courier'
+      }
+    ]
+  },
+  {
     id: 'sh-1',
     trackingNumber: 'PET-MAD-8492',
     bookingRef: 'BK-PET-2026-9041',

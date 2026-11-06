@@ -17,7 +17,7 @@ export const AboutSection: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         {/* Left Column: Heritage & Stats */}
         <div className="lg:col-span-6 space-y-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-md bg-orange-100 text-orange-700 border border-orange-200 text-xs font-bold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-md bg-red-100 text-red-700 border border-red-200 text-xs font-bold uppercase tracking-wider">
             <Building2 className="w-3.5 h-3.5" />
             {t.aboutBadge}
           </div>
@@ -34,7 +34,7 @@ export const AboutSection: React.FC = () => {
           {/* Pillars List */}
           <div className="grid grid-cols-2 gap-4 pt-2">
             <div className="p-4 bg-white rounded-xl border border-stone-200 shadow-2xs">
-              <ShieldCheck className="w-5 h-5 text-orange-600 mb-2" />
+              <ShieldCheck className="w-5 h-5 text-red-600 mb-2" />
               <h4 className="text-sm font-bold text-[#232331] font-heading">{t.pillarAeoTitle}</h4>
               <p className="text-xs text-[#767676] mt-1">{t.pillarAeoDesc}</p>
             </div>
@@ -53,12 +53,12 @@ export const AboutSection: React.FC = () => {
               <span className="text-xs font-bold uppercase tracking-wider text-[#232331]">
                 {t.accreditationsTitle}
               </span>
-              <span className="text-xs font-mono font-bold text-orange-600">ISO 9001 / 14001</span>
+              <span className="text-xs font-mono font-bold text-red-600">ISO 9001 / 14001</span>
             </div>
 
             <div className="space-y-4">
               <div className="flex items-start gap-4 p-3.5 bg-[#f8f5f1] rounded-xl border border-stone-200">
-                <div className="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0">
                   <Award className="w-5 h-5" />
                 </div>
                 <div>
