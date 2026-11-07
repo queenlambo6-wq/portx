@@ -28,6 +28,8 @@ export const TrackingSection: React.FC = () => {
     currentTrackingQuery,
     setCurrentTrackingQuery,
     getShipmentByTrackingNumber,
+    fetchShipmentByCode,
+    isLoadingTracking,
     setSelectedShipmentForPrint
   } = useShipping();
 
@@ -43,6 +45,13 @@ export const TrackingSection: React.FC = () => {
   const hasQuery = currentTrackingQuery.trim().length > 0;
   // User only sees the shipment they have the tracking number for
   const currentShipment = searchedShipment;
+
+  // Auto-fetch from server if not found in local memory (multi-browser synchronization)
+  useEffect(() => {
+    if (hasQuery && !searchedShipment) {
+      fetchShipmentByCode(currentTrackingQuery);
+    }
+  }, [hasQuery, searchedShipment, currentTrackingQuery, fetchShipmentByCode]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -561,8 +570,16 @@ export const TrackingSection: React.FC = () => {
             </button>
           </form>
 
+          {/* Loading indicator while querying central server database */}
+          {hasQuery && isLoadingTracking && !currentShipment && (
+            <div className="mt-6 p-4 rounded-xl bg-stone-50 border border-stone-200 text-stone-700 text-xs sm:text-sm flex items-center gap-3 animate-fade-in">
+              <div className="w-5 h-5 border-2 border-red-600 border-t-transparent rounded-full animate-spin shrink-0"></div>
+              <span className="font-medium">Sincronizando y verificando registro en la red central PortX...</span>
+            </div>
+          )}
+
           {/* Inline Alert if searched code is not found */}
-          {hasQuery && !currentShipment && (
+          {hasQuery && !isLoadingTracking && !currentShipment && (
             <div className="mt-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-900 text-xs sm:text-sm flex items-start gap-3 animate-fade-in">
               <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
               <div className="space-y-1">

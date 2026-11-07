@@ -67,7 +67,16 @@ const DEFAULT_ACCOUNTS = [
 // Purge legacy storage keys to ensure fresh Spanish cities and pet delivery data
 if (typeof window !== 'undefined') {
   try {
-    ['portx_shipments_v1', 'portx_shipments_v2', 'portx_shipments_v3', 'portx_shipments_v4', 'portx_ports_v1', 'portx_ports_v2', 'portx_ports_v3'].forEach(k => {
+    [
+      'portx_shipments_v1',
+      'portx_shipments_v2',
+      'portx_shipments_v3',
+      'portx_shipments_v4',
+      'portx_pet_v5_shipments',
+      'portx_ports_v1',
+      'portx_ports_v2',
+      'portx_ports_v3'
+    ].forEach(k => {
       localStorage.removeItem(k);
     });
   } catch (err) {
@@ -76,11 +85,11 @@ if (typeof window !== 'undefined') {
 }
 
 const STORAGE_KEYS = {
-  SHIPMENTS: 'portx_pet_v5_shipments',
-  INQUIRIES: 'portx_pet_v5_inquiries',
-  FLEET: 'portx_pet_v5_fleet',
-  PORTS: 'portx_pet_v5_ports',
-  AUTH_USER: 'portx_pet_v5_auth_user',
+  SHIPMENTS: 'portx_pet_v6_shipments',
+  INQUIRIES: 'portx_pet_v6_inquiries',
+  FLEET: 'portx_pet_v6_fleet',
+  PORTS: 'portx_pet_v6_ports',
+  AUTH_USER: 'portx_pet_v6_auth_user',
   ACCOUNTS: 'portx_auth_accounts_v1',
   LANGUAGE: 'portx_language_v1'
 };
@@ -107,6 +116,8 @@ interface ShippingContextType {
   
   // Shipment Actions
   getShipmentByTrackingNumber: (trackingNumber: string) => Shipment | undefined;
+  fetchShipmentByCode: (code: string) => Promise<Shipment | undefined>;
+  isLoadingTracking: boolean;
   createShipment: (newShipment: Omit<Shipment, 'id' | 'createdAt' | 'progressPercent' | 'milestones'>) => Shipment;
   updateShipment: (id: string, updates: Partial<Shipment>) => void;
   updateShipmentStatus: (id: string, newStatus: ShipmentStatus, locationName: string, notes?: string, clientNotice?: string) => void;
@@ -163,23 +174,35 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   });
 
   const [authError, setAuthError] = useState<string | null>(null);
+  const [isLoadingTracking, setIsLoadingTracking] = useState(false);
 
   const [shipments, setShipments] = useState<Shipment[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SHIPMENTS);
-      if (saved) {
-        const parsed: Shipment[] = JSON.parse(saved);
-        // Ensure VY15514662000 and VY22261591 are always present as primary shipments
-        if (!parsed.some(s => s && s.trackingNumber && s.trackingNumber.toUpperCase() === 'VY15514662000')) {
-          parsed.unshift(INITIAL_SHIPMENTS[0]);
-        }
-        if (!parsed.some(s => s && s.trackingNumber && s.trackingNumber.toUpperCase() === 'VY22261591')) {
-          const vy22 = INITIAL_SHIPMENTS.find(s => s.trackingNumber === 'VY22261591') || INITIAL_SHIPMENTS[1];
-          if (vy22) parsed.unshift(vy22);
-        }
-        return parsed;
+      let list: Shipment[] = saved ? JSON.parse(saved) : [...INITIAL_SHIPMENTS];
+
+      // Fix or ensure the user's Douala -> Mankon shipment VY61242379-100 is always accurate
+      const vy6124Index = list.findIndex(
+        (s) => s && s.trackingNumber && s.trackingNumber.trim().toUpperCase() === 'VY61242379-100'
+      );
+      const seedDouala = INITIAL_SHIPMENTS.find((s) => s.trackingNumber === 'VY61242379-100') || INITIAL_SHIPMENTS[0];
+      if (vy6124Index === -1) {
+        list.unshift(seedDouala);
+      } else if (list[vy6124Index].origin?.city?.toLowerCase() === 'cantabria') {
+        // Replace corrupted Cantabria copy from older browser test with real Douala data
+        list[vy6124Index] = seedDouala;
       }
-      return INITIAL_SHIPMENTS;
+
+      // Ensure primary demo shipments exist
+      if (!list.some((s) => s && s.trackingNumber && s.trackingNumber.toUpperCase() === 'VY15514662000')) {
+        const vy1551 = INITIAL_SHIPMENTS.find((s) => s.trackingNumber === 'VY15514662000');
+        if (vy1551) list.push(vy1551);
+      }
+      if (!list.some((s) => s && s.trackingNumber && s.trackingNumber.toUpperCase() === 'VY22261591')) {
+        const vy22 = INITIAL_SHIPMENTS.find((s) => s.trackingNumber === 'VY22261591');
+        if (vy22) list.push(vy22);
+      }
+      return list;
     } catch {
       return INITIAL_SHIPMENTS;
     }
@@ -319,6 +342,95 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       console.warn('Failed to save fleet to storage:', e);
     }
   }, [fleet]);
+
+  // Fetch central server database and listen on BroadcastChannel for multi-browser & multi-tab sync
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchServerShipments = async () => {
+      try {
+        const res = await fetch('/api/shipments');
+        if (res.ok) {
+          const serverList: Shipment[] = await res.json();
+          if (Array.isArray(serverList) && serverList.length > 0 && isMounted) {
+            setShipments((prev) => {
+              const map = new Map<string, Shipment>();
+              // Put INITIAL_SHIPMENTS first
+              INITIAL_SHIPMENTS.forEach(s => map.set(s.trackingNumber.toUpperCase(), s));
+              // Put previous local records
+              prev.forEach(s => {
+                // Discard stale Cantabria version of VY61242379-100
+                if (s.trackingNumber?.toUpperCase() === 'VY61242379-100' && s.origin?.city?.toLowerCase() === 'cantabria') {
+                  return;
+                }
+                map.set(s.trackingNumber.toUpperCase(), s);
+              });
+              // Put server records (server is authoritative)
+              serverList.forEach((s: Shipment) => {
+                if (s.trackingNumber?.toUpperCase() === 'VY61242379-100' && s.origin?.city?.toLowerCase() === 'cantabria') {
+                  return;
+                }
+                map.set(s.trackingNumber.toUpperCase(), s);
+              });
+              return Array.from(map.values());
+            });
+          }
+        }
+      } catch {
+        // Fallback to local
+      }
+    };
+
+    fetchServerShipments();
+
+    // BroadcastChannel for cross-tab sync in same browser
+    let channel: BroadcastChannel | null = null;
+    try {
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        channel = new BroadcastChannel('portx_shipment_sync');
+        channel.onmessage = (msg) => {
+          if (msg.data?.type === 'SHIPMENTS_UPDATED' && Array.isArray(msg.data.shipments)) {
+            setShipments(msg.data.shipments);
+          }
+        };
+      }
+    } catch {
+      // Safe fallback
+    }
+
+    return () => {
+      isMounted = false;
+      channel?.close();
+    };
+  }, []);
+
+  const fetchShipmentByCode = async (code: string): Promise<Shipment | undefined> => {
+    if (!code) return undefined;
+    const clean = code.trim().toUpperCase();
+    setIsLoadingTracking(true);
+    try {
+      const res = await fetch(`/api/shipments/${encodeURIComponent(clean)}`);
+      if (res.ok) {
+        const remoteShipment: Shipment = await res.json();
+        if (remoteShipment && remoteShipment.trackingNumber) {
+          setShipments((prev) => {
+            const exists = prev.some(s => s.trackingNumber.toUpperCase() === remoteShipment.trackingNumber.toUpperCase());
+            const next = exists
+              ? prev.map(s => s.trackingNumber.toUpperCase() === remoteShipment.trackingNumber.toUpperCase() ? remoteShipment : s)
+              : [remoteShipment, ...prev];
+            return next;
+          });
+          setIsLoadingTracking(false);
+          return remoteShipment;
+        }
+      }
+    } catch {
+      // Offline fallback
+    } finally {
+      setIsLoadingTracking(false);
+    }
+    return undefined;
+  };
 
   const getShipmentByTrackingNumber = (trackingNumber: string) => {
     if (!trackingNumber) return undefined;
@@ -519,14 +631,51 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       milestones
     };
 
-    setShipments((prev) => [created, ...prev]);
+    setShipments((prev) => {
+      const next = [created, ...prev.filter(s => s.trackingNumber.toUpperCase() !== created.trackingNumber.toUpperCase())];
+      try {
+        if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+          const bc = new BroadcastChannel('portx_shipment_sync');
+          bc.postMessage({ type: 'SHIPMENTS_UPDATED', shipments: next });
+          bc.close();
+        }
+      } catch {}
+      return next;
+    });
+
+    // Persist to central server database
+    try {
+      fetch('/api/shipments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(created)
+      }).catch(err => console.warn('[Client] Server sync notice:', err));
+    } catch {}
+
     return created;
   };
 
   const updateShipment = (id: string, updates: Partial<Shipment>) => {
-    setShipments((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, ...updates } : s))
-    );
+    setShipments((prev) => {
+      const next = prev.map((s) => (s.id === id ? { ...s, ...updates } : s));
+      try {
+        if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+          const bc = new BroadcastChannel('portx_shipment_sync');
+          bc.postMessage({ type: 'SHIPMENTS_UPDATED', shipments: next });
+          bc.close();
+        }
+      } catch {}
+      return next;
+    });
+
+    // Persist updates to central server database
+    try {
+      fetch(`/api/shipments/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates)
+      }).catch(err => console.warn('[Client] Server update notice:', err));
+    } catch {}
   };
 
   const updateShipmentStatus = (
@@ -624,7 +773,23 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const deleteShipment = (id: string) => {
-    setShipments((prev) => prev.filter((s) => s.id !== id));
+    setShipments((prev) => {
+      const next = prev.filter((s) => s.id !== id);
+      try {
+        if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+          const bc = new BroadcastChannel('portx_shipment_sync');
+          bc.postMessage({ type: 'SHIPMENTS_UPDATED', shipments: next });
+          bc.close();
+        }
+      } catch {}
+      return next;
+    });
+
+    try {
+      fetch(`/api/shipments/${id}`, {
+        method: 'DELETE'
+      }).catch(err => console.warn('[Client] Server delete notice:', err));
+    } catch {}
   };
 
   const submitInquiry = (
@@ -852,6 +1017,8 @@ export const ShippingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         adminSubView,
         setAdminSubView,
         getShipmentByTrackingNumber,
+        fetchShipmentByCode,
+        isLoadingTracking,
         createShipment,
         updateShipment,
         updateShipmentStatus,
